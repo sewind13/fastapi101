@@ -1,0 +1,48 @@
+# Local config (secrets, env-specific)
+config/
+
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+
+# Build / distribution
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# PyInstaller
+*.spec
+
+# Testing / coverage
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+
+# IDE / editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# macOS / Windows system files
+.DS_Store
+Thumbs.db
+
+# data
+data/
