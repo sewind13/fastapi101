@@ -1,5 +1,7 @@
 ## 1. Add dependency
 - `uv add fastapi --extra standard`
+- `uv add fastapi pydantic-settings "uvicorn[standard]"`
+- `uv add "pydantic[email]"`
 
 ## 2. Core Concepts
 - Use Pydantic to specify schema and process data validation.
@@ -7,7 +9,7 @@
 - Dependency Injection (DI) make code clearner.
 
 ## 3. Run FastAPI
-- `uv run uvicorn main:app --reload`
+- `uv run uvicorn app.main:app --reload`
 
 ## 4. Production structure
 ```

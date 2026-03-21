@@ -161,10 +161,18 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "pydantic", extra = ["email"] },
+    { name = "pydantic-settings" },
+    { name = "uvicorn", extra = ["standard"] },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastapi", extras = ["standard"], specifier = ">=0.135.1" }]
+requires-dist = [
+    { name = "fastapi", extras = ["standard"], specifier = ">=0.135.1" },
+    { name = "pydantic", extras = ["email"], specifier = ">=2.12.5" },
+    { name = "pydantic-settings", specifier = ">=2.13.1" },
+    { name = "uvicorn", extras = ["standard"], specifier = ">=0.42.0" },
+]
 
 [[package]]
 name = "fastar"
