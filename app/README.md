@@ -54,3 +54,6 @@ asyncio_default_fixture_loop_scope = function
 
 # 7. Login JWT
 - Add dependency `uv add pyjwt`
+
+# 8. Move to Postguest (Neon)
+- Add dependency `uv add "psycopg[binary]"`

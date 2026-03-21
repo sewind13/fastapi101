@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30 # อายุ Token 30 นาที
 
+    # -- Postguest (Neon) database
+    DATABASE_URL: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_nested_delimiter="__",  # Use double underscore to denote nested settings (e.g., db__URL for DatabaseSettings.URL)

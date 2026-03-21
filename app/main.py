@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Request
 from app.api.v1 import items, users, auth
 from app.core.config import settings
-from app.core.db import engine
+from app.core.db import engine, init_db
 
 from sqlmodel import SQLModel
 from contextlib import asynccontextmanager
@@ -16,7 +16,8 @@ from fastapi.middleware.gzip import GZipMiddleware # Compress data before sendin
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # สร้าง Table ทั้งหมด (เฉพาะช่วง Development ถ้า Production จะใช้ Alembic)
-    SQLModel.metadata.create_all(engine)
+    # SQLModel.metadata.create_all(engine) # This for sqllite
+    init_db()
     yield
 
 app = FastAPI(
