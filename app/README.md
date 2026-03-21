@@ -49,3 +49,6 @@ asyncio_default_fixture_loop_scope = function
 
 # 6. Change to use real database
 - Add dependency `uv add sqlmodel`
+
+# 7. Login JWT
+- Add dependency `uv add pyjwt`

@@ -5,15 +5,22 @@ from app.models.item import Item
 from app.schemas.item import ItemPublic
 from app.schemas.item import ItemCreate
 
+from app.models.user import User as UserModel
+
+from app.core.deps import get_current_user # นำเข้าด่านตรวจ
 
 router = APIRouter()
 
 
 @router.post("/", response_model=ItemPublic, status_code=status.HTTP_201_CREATED)
-def create_item(item_in: ItemCreate, session: Session = Depends(get_session)):
+def create_item(
+    item_in: ItemCreate, 
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user)):
+
     try:
         # แปลง Pydantic เป็น SQLModel
-        db_item = Item(**item_in.model_dump(), owner_id=1)
+        db_item = Item(**item_in.model_dump(), owner_id=current_user.id)
         
         session.add(db_item)
         session.commit() # จุดที่มักจะเกิด Error
@@ -30,10 +37,11 @@ def create_item(item_in: ItemCreate, session: Session = Depends(get_session)):
 @router.get("/", response_model=list[ItemPublic])
 def read_items(
     session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user),
     limit: int = Query(default=100, le=500), # เพิ่ม Pagination เพื่อรองรับข้อมูลจำนวนมาก
     offset: int = 0
 ):
-    # การดึงข้อมูลควรมี limit เสมอเพื่อไม่ให้ Server ค้างถ้ามีข้อมูลหลักแสน
-    statement = select(Item).order_by(Item.created_at.desc()).offset(offset).limit(limit)
+    # ดึงเฉพาะ Item "ที่เป็นของคน Login เท่านั้น" (Privacy)
+    statement = select(Item).where(Item.owner_id == current_user.id).offset(offset).limit(limit)
     items = session.exec(statement).all()
     return items

@@ -1,3 +1,4 @@
+from app.core.deps import get_current_user # นำเข้าด่านตรวจ
 from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
 from datetime import datetime # เพิ่มเพื่อรองรับการแสดงเวลา

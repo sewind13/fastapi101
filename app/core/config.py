@@ -7,6 +7,11 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     API_V1_STR: str = "/api/v1"
 
+    # -- For JWT login
+    SECRET_KEY: str = "your-super-secret-key-don-t-tell-anyone" # ใน Prod จริงให้ใช้ openssl rand -hex 32
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30 # อายุ Token 30 นาที
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_nested_delimiter="__",  # Use double underscore to denote nested settings (e.g., db__URL for DatabaseSettings.URL)

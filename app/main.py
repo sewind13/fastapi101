@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Request
-from app.api.v1 import items, users
+from app.api.v1 import items, users, auth
 from app.core.config import settings
 from app.core.db import engine
 
@@ -33,6 +33,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["Authentication"])
 
 # -- Set Routers --
 # Group 1: Items
