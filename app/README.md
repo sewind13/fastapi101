@@ -29,6 +29,7 @@ project_root/
 
 ## 5. Test
 - Add dependency `uv add --dev pytest pytest-asyncio httpx`
+- Add dependency `uv add pytest-cov`
 - Directory structure
 ```
 ├── app/
@@ -46,6 +47,7 @@ asyncio_mode = auto
 asyncio_default_fixture_loop_scope = function
 ```
 - Run test `uv run pytest`
+- Run coverage `uv run pytest --cov=app`
 
 # 6. Change to use real database
 - Add dependency `uv add sqlmodel`

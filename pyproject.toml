@@ -10,6 +10,7 @@ dependencies = [
     "pydantic-settings>=2.13.1",
     "pydantic[email]>=2.12.5",
     "pyjwt>=2.12.1",
+    "pytest-cov>=7.1.0",
     "sqlmodel>=0.0.37",
     "uvicorn[standard]>=0.42.0",
 ]
