@@ -71,3 +71,8 @@ asyncio_default_fixture_loop_scope = function
   - Run the update `uv run alembic upgrade head`
   - Database will have new field
   - After that we have to update schema file manually
+
+# 10 .sh command
+- Create file `.sh`
+- Give permission to run a file `chmod +x run.sh`
+- Run script `./run.sh` 
