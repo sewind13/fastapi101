@@ -76,3 +76,18 @@ asyncio_default_fixture_loop_scope = function
 - Create file `.sh`
 - Give permission to run a file `chmod +x run.sh`
 - Run script `./run.sh` 
+
+# 11 Make file
+- Create file `Makefile`
+- Example code in the file
+"""
+up:
+	docker compose up --build
+
+down:
+	docker compose down
+
+migrate:
+	docker compose exec web uv run alembic upgrade head
+"""
+- Use by call `make up` or `make migrate`
