@@ -1,4 +1,4 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional
 from datetime import datetime
 
@@ -18,4 +18,7 @@ class Item(SQLModel, table=True):
 
     # Optional: ถ้าต้องการดึงข้อมูล User ออกมาพร้อม Item ได้ง่ายๆ
     # owner: Optional["User"] = Relationship(back_populates="items")
+
+    # Relationship: Item นี้เป็นของ User คนไหน
+    owner: Optional["User"] = Relationship(back_populates="items")
 

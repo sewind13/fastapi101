@@ -4,6 +4,7 @@ from app.core.db import get_session
 from app.models.item import Item
 from app.schemas.item import ItemPublic
 from app.schemas.item import ItemCreate
+from typing import List
 
 from app.models.user import User as UserModel
 
@@ -19,8 +20,8 @@ def create_item(
     current_user: UserModel = Depends(get_current_user)):
 
     try:
-        # แปลง Pydantic เป็น SQLModel
-        db_item = Item(**item_in.model_dump(), owner_id=current_user.id)
+        # สร้าง Item โดยระบุ owner_id เป็น id ของคนรันคำสั่ง
+        db_item = Item.model_validate(item_in, update={"owner_id": current_user.id})
         
         session.add(db_item)
         session.commit() # จุดที่มักจะเกิด Error
@@ -45,3 +46,41 @@ def read_items(
     statement = select(Item).where(Item.owner_id == current_user.id).offset(offset).limit(limit)
     items = session.exec(statement).all()
     return items
+
+@router.get("/me", response_model=List[ItemPublic])
+def read_my_items(
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user),
+    # เพิ่ม Parameter สำหรับรับค่าจาก URL (Query Parameters)
+    offset: int = 0,    # เริ่มดึงจากลำดับที่เท่าไหร่ (เริ่มต้นที่ 0)
+    limit: int = Query(default=100, le=100) # ดึงทีละกี่ชิ้น (ค่าเริ่มต้น 100, สูงสุดไม่เกิน 100)
+):
+    """
+    ดึงรายการ Item ของฉัน พร้อมระบบแบ่งหน้า (Pagination)
+    """
+    # 1. สร้าง Statement พร้อมเงื่อนไขกรองเจ้าของ
+    statement = select(Item).where(Item.owner_id == current_user.id)
+    
+    # 2. ใส่ความสามารถในการข้าม (offset) และจำกัดจำนวน (limit)
+    statement = statement.offset(offset).limit(limit)
+    
+    # 3. รัน Query และดึงผลลัพธ์
+    items = session.exec(statement).all()
+    
+    return items
+
+@router.get("/me-fast", response_model=List[ItemPublic])
+def read_my_items_relationship(
+    *,
+    current_user: UserModel = Depends(get_current_user),
+    offset: int = 0,
+    limit: int = Query(default=10, le=100) # ตั้ง default เล็กๆ ไว้ก่อน
+):
+    """
+    ดึงรายการ Item ผ่าน Relationship พร้อมระบบแบ่งหน้า (Python Slicing)
+    """
+    # current_user.items จะคืนค่าเป็น List ของ Item ทั้งหมด
+    # เราใช้ Python Slicing [start:end] เพื่อเลือกเฉพาะช่วงที่ต้องการ
+    items_slice = current_user.items[offset : offset + limit]
+    
+    return items_slice

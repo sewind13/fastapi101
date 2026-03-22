@@ -57,3 +57,17 @@ asyncio_default_fixture_loop_scope = function
 
 # 8. Move to Postguest (Neon)
 - Add dependency `uv add "psycopg[binary]"`
+
+# 9. Database Migrations with Alembic
+- Add dependency `uv add alembic`
+- Create basic config `uv run alembic init alembic`
+  - It will create folder `alembic` and file `alembic.ini`
+- Setup the file `alembic/env.py`
+- Create revision `uv run alembic revision --autogenerate -m "Initial migration"`
+  - It will create a file under directory `alembic/versions`
+- If we add new field
+  - Update `alembic revision --autogenerate -m "add phone field to user"`
+  - It will create a file under directory `alembic/versions`
+  - Run the update `uv run alembic upgrade head`
+  - Database will have new field
+  - After that we have to update schema file manually

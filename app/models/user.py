@@ -1,6 +1,6 @@
-from sqlmodel import SQLModel, Field
+from sqlmodel import SQLModel, Field, Relationship
 from pydantic import EmailStr
-from typing import Optional
+from typing import Optional, List
 
 class User(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
@@ -13,5 +13,9 @@ class User(SQLModel, table=True):
     
     # เราจะเก็บผลลัพธ์จากการ Hash เท่านั้น
     hashed_password: str 
+
+    phone: Optional[str] = Field(default=None)
     
     is_active: bool = Field(default=True)
+
+    items: List["Item"] = Relationship(back_populates="owner")

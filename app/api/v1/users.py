@@ -24,10 +24,16 @@ def register_user(user_in: UserCreate, session: Session = Depends(get_session)):
     hashed_pw = get_password_hash(user_in.password)
 
     # 3. สร้าง User Object และบันทึก
+    # db_user = UserModel(
+    #     username=user_in.username,
+    #     email=user_in.email,
+    #     hashed_password=hashed_pw
+    # )
+
+    user_data = user_in.model_dump(exclude={"password"})
     db_user = UserModel(
-        username=user_in.username,
-        email=user_in.email,
-        hashed_password=hashed_pw
+        **user_data, 
+        hashed_password=get_password_hash(user_in.password)
     )
     
     try:
