@@ -7,6 +7,7 @@ from app.schemas.item import ItemCreate
 from typing import List
 
 from app.models.user import User as UserModel
+from app.core.exception import ItemNotFoundError
 
 from app.core.deps import get_current_user # นำเข้าด่านตรวจ
 
@@ -45,6 +46,11 @@ def read_items(
     # ดึงเฉพาะ Item "ที่เป็นของคน Login เท่านั้น" (Privacy)
     statement = select(Item).where(Item.owner_id == current_user.id).offset(offset).limit(limit)
     items = session.exec(statement).all()
+
+    if not items:
+        # ใช้ Custom Error ของเรา
+        raise ItemNotFoundError()
+
     return items
 
 @router.get("/me", response_model=List[ItemPublic])

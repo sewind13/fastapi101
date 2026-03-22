@@ -11,6 +11,10 @@ from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware # Specify which domain can retrieve data
 from fastapi.middleware.gzip import GZipMiddleware # Compress data before sending (faster response and save bandwidth)
 
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
+
+
 
 # Lifespan to manager database when start/stop
 @asynccontextmanager
@@ -36,6 +40,35 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix=f"{settings.API_V1_STR}/auth", tags=["Authentication"])
+
+
+# -- Global error handler
+# 1. ดักจับ Error ทั่วไป (เช่น 404, 401)
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content={
+            "success": False,
+            "error_code": exc.status_code,
+            "message": exc.detail,
+            "path": request.url.path
+        },
+    )
+
+# 2. ดักจับ Validation Error (เช่น ลืมส่ง Email หรือส่งเบอร์โทรผิด Format)
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={
+            "success": False,
+            "message": "ข้อมูลที่ส่งมาไม่ถูกต้อง",
+            "details": exc.errors(), # บอกละเอียดว่าผิดที่ฟิลด์ไหน
+        },
+    )
+# --
+
 
 # -- Set Routers --
 # Group 1: Items
