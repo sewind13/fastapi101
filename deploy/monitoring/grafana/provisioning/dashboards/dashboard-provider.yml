@@ -1,0 +1,11 @@
+apiVersion: 1
+
+providers:
+  - name: fastapi-template-dashboards
+    orgId: 1
+    folder: FastAPI Template
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /var/lib/grafana/dashboards

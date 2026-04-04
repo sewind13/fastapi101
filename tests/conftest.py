@@ -1,61 +1,56 @@
-# tests/conftest.py
+import os
+
 import pytest
-from httpx import ASGITransport, AsyncClient
-from sqlmodel import SQLModel, Session, create_engine, StaticPool
-from app.main import app
-from app.core.db import get_session
-from app.core.security import create_access_token
 
-# 1. สร้าง DB จำลองใน Memory
-sqlite_url = "sqlite://"
-engine = create_engine(
-    sqlite_url,
-    connect_args={"check_same_thread": False},
-    poolclass=StaticPool,
+os.environ.setdefault("APP__ENV", "testing")
+os.environ.setdefault("API__PUBLIC_REGISTRATION_ENABLED", "true")
+os.environ.setdefault("METRICS__ENABLED", "true")
+os.environ.setdefault("METRICS__AUTH_TOKEN", "")
+os.environ.setdefault(
+    "SECURITY__SECRET_KEY",
+    "test-secret-key-32-characters-minimum!!",
 )
+os.environ.setdefault("SECURITY__REQUIRE_VERIFIED_EMAIL_FOR_LOGIN", "false")
 
-@pytest.fixture(name="session")
-def session_fixture():
-    # สร้างตารางใหม่ทุกครั้งที่เริ่ม Test
-    SQLModel.metadata.create_all(engine)
-    with Session(engine) as session:
-        yield session
-    # ลบทิ้งเมื่อ Test จบ
-    SQLModel.metadata.drop_all(engine)
+from app.core.rate_limit import login_rate_limiter, token_rate_limiter
+from app.core.security import create_access_token, get_password_hash
+from app.db.models.account import Account
+from app.db.models.user import User
 
-@pytest.fixture(name="client")
-async def client_fixture(session: Session):
-    # 2. Override get_session ให้ใช้ DB จำลอง
-    def get_session_override():
-        yield session
-    
-    app.dependency_overrides[get_session] = get_session_override
-    
-    async with AsyncClient(
-        transport=ASGITransport(app=app), 
-        base_url="http://test"
-    ) as ac:
-        yield ac
-    
-    # ล้างค่า Override หลังจบ Test
-    app.dependency_overrides.clear()
 
-@pytest.fixture
-def token_headers(session: Session):
-    """Fixture สำหรับสร้าง Token จำลอง เพื่อใช้ใน Test ที่ต้อง Login"""
-    from app.models.user import User
-    from app.core.security import get_password_hash
-    
-    # สร้าง User จำลองใน DB
+def create_test_user(
+    session,
+    *,
+    username: str = "testuser",
+    email: str = "test@example.com",
+    password: str = "password123",
+    role: str = "user",
+) -> User:
+    account = Account(name=f"{username}-account")
+    session.add(account)
+    session.flush()
     user = User(
-        username="testuser",
-        email="test@example.com",
-        hashed_password=get_password_hash("password123")
+        username=username,
+        email=email,
+        hashed_password=get_password_hash(password),
+        role=role,
+        account_id=account.id,
     )
     session.add(user)
     session.commit()
     session.refresh(user)
-    
-    # สร้าง Token
-    token = create_access_token(data={"sub": user.username})
+    return user
+
+
+def build_token_headers(user_id: int, username: str) -> dict[str, str]:
+    token = create_access_token(subject=str(user_id), username=username)
     return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture(autouse=True)
+def reset_rate_limiters():
+    login_rate_limiter.clear()
+    token_rate_limiter.clear()
+    yield
+    login_rate_limiter.clear()
+    token_rate_limiter.clear()

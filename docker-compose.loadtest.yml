@@ -1,0 +1,13 @@
+services:
+  k6:
+    image: grafana/k6:latest
+    depends_on:
+      web:
+        condition: service_started
+    environment:
+      BASE_URL: http://web:8000
+      ITEMS_ENABLED: "true"
+      USERNAME_PREFIX: k6user
+      PASSWORD: strongpassword123
+    volumes:
+      - ./loadtests:/loadtests:ro

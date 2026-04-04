@@ -1,0 +1,6 @@
+{
+  "app_name": "Acme API",
+  "db_name": "acme",
+  "jwt_issuer": "acme-api",
+  "service_name": "acme-api-service"
+}

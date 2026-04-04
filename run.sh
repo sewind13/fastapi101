@@ -1,15 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# 1. แสดงข้อความทักทายสวยๆ
-echo "🚀 Starting FastAPI 101 Docker Stack..."
+set -euo pipefail
 
-# 2. ตรวจสอบว่ามีไฟล์ .env หรือไม่ (ป้องกันแอปพังเพราะหา DB ไม่เจอ)
-if [ ! -f .env ]; then
-    echo "❌ Error: .env file not found!"
+echo "Starting FastAPI template stack..."
+
+if [[ ! -f .env ]]; then
+    echo ".env file not found. Copy .env.example to .env first."
     exit 1
 fi
 
-# 3. รัน Docker Compose (รวมการ Build และล้างขยะเก่า)
-# --build: บังคับ build ใหม่ถ้ามีการแก้โค้ด
-# --remove-orphans: ลบคอนเทนเนอร์เก่าที่ค้างอยู่
-docker compose up --build --remove-orphans
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build --remove-orphans

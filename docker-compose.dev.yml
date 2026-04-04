@@ -1,0 +1,21 @@
+services:
+  web:
+    volumes:
+      - .:/app
+      - app_venv:/app/.venv
+    command: ["./scripts/start-dev.sh"]
+
+  worker:
+    volumes:
+      - .:/app
+      - app_venv:/app/.venv
+    command: ["./scripts/start-worker-dev.sh"]
+
+  outbox-dispatcher:
+    volumes:
+      - .:/app
+      - app_venv:/app/.venv
+    command: ["./scripts/start-outbox-dispatcher-dev.sh"]
+
+volumes:
+  app_venv:

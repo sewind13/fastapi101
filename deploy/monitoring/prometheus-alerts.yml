@@ -1,0 +1,102 @@
+groups:
+  - name: fastapi-template-alerts
+    rules:
+      - alert: FastAPITemplateHigh5xxRate
+        expr: |
+          (
+            sum(rate(fastapi_template_http_requests_total{status_code=~"5.."}[5m]))
+            /
+            clamp_min(sum(rate(fastapi_template_http_requests_total[5m])), 0.001)
+          ) > 0.01
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High 5xx rate"
+          description: "5xx responses exceed 1% of total traffic for 5 minutes."
+
+      - alert: FastAPITemplateHighP95Latency
+        expr: |
+          histogram_quantile(
+            0.95,
+            sum by (le) (rate(fastapi_template_http_request_duration_seconds_bucket[5m]))
+          ) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High p95 latency"
+          description: "API p95 latency is above 500ms for 10 minutes."
+
+      - alert: FastAPITemplateHighInFlightRequests
+        expr: sum(fastapi_template_http_requests_in_progress) > 100
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High in-flight request count"
+          description: "In-flight requests remain above 100 for 10 minutes."
+
+      - alert: FastAPITemplateDatabaseReadinessFailed
+        expr: fastapi_template_readiness_dependency_status{dependency="database"} < 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Database readiness failure"
+          description: "Database readiness has been failed for more than 2 minutes."
+
+      - alert: FastAPITemplateCriticalDependencyFailed
+        expr: |
+          fastapi_template_readiness_dependency_status{dependency=~"redis|s3|queue"} < 0
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Critical dependency readiness failure"
+          description: "A critical dependency has stayed failed for more than 5 minutes."
+
+      - alert: FastAPITemplateAuthFailureSpike
+        expr: sum(rate(fastapi_template_auth_events_total{event="login", outcome="failed"}[5m])) > 5
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Elevated login failure rate"
+          description: "Login failures are elevated and may indicate attack traffic or client auth issues."
+
+      - alert: FastAPITemplateCleanupJobFailing
+        expr: sum(rate(fastapi_template_maintenance_job_runs_total{job_name="cleanup_revoked_tokens", outcome="failed"}[15m])) > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Cleanup job failures detected"
+          description: "The cleanup_revoked_tokens maintenance job has been failing."
+
+      - alert: FastAPITemplateWorkerFailureSpike
+        expr: sum(rate(fastapi_template_worker_events_total{outcome=~"failed|dead_lettered"}[10m])) > 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Worker failures detected"
+          description: "Background worker tasks are failing or being dead-lettered."
+
+      - alert: FastAPITemplateWorkerRetryQueueBacklog
+        expr: fastapi_template_worker_queue_depth{queue_name=~".*\\.retry"} > 20
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Worker retry queue backlog"
+          description: "Retry queue depth is above 20 for 10 minutes."
+
+      - alert: FastAPITemplateWorkerDeadLetterQueueBacklog
+        expr: fastapi_template_worker_queue_depth{queue_name=~".*\\.dlq"} > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Worker dead-letter queue contains messages"
+          description: "One or more worker tasks have been moved to the dead-letter queue."

@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-template-outbox-dispatcher
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: fastapi-template-outbox-dispatcher
+  template:
+    metadata:
+      labels:
+        app: fastapi-template-outbox-dispatcher
+    spec:
+      containers:
+        - name: outbox-dispatcher
+          image: ghcr.io/your-org/fastapi-template:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - ./scripts/start-outbox-dispatcher.sh
+          envFrom:
+            - secretRef:
+                name: fastapi-template-app-secrets
+            - configMapRef:
+                name: fastapi-template-app-config
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi

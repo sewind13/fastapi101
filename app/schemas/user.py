@@ -1,5 +1,8 @@
-from pydantic import BaseModel, EmailStr, Field, ConfigDict
-from typing import Optional  # <--- แยกออกมาไว้ที่นี่
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
+
+USER_ROLES = {"user", "ops_admin", "platform_admin"}
+
 
 class UserBase(BaseModel):
     username: str = Field(..., min_length=3, max_length=20)
@@ -7,12 +10,12 @@ class UserBase(BaseModel):
 
 class UserCreate(UserBase):
     password: str = Field(..., min_length=8, max_length=72, examples=["secret1234"])
-    phone: Optional[str] = None # เพิ่มเพื่อให้รับค่าจาก API ได้
+    phone: str | None = None
 
 class UserPublic(UserBase):
     id: int
     is_active: bool = True
-    phone: Optional[str] = None # เพิ่มเพื่อให้รับค่าจาก API ได้
+    email_verified: bool = False
+    phone: str | None = None
 
     model_config = ConfigDict(from_attributes=True)
-    

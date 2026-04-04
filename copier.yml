@@ -1,0 +1,13 @@
+_subdirectory: .
+app_name:
+  type: str
+  default: "Acme API"
+db_name:
+  type: str
+  default: "acme"
+jwt_issuer:
+  type: str
+  default: "acme-api"
+service_name:
+  type: str
+  default: "acme-api-service"
