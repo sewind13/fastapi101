@@ -30,6 +30,11 @@ FEATURE_POLICIES: dict[str, dict[str, Any]] = {
         "resource_key": "service_a",
         "units_per_call": 1,
         "charge_on": "success",
+    },
+    "items.archive": {
+        "resource_key": "item_archive",
+        "units_per_call": 1,
+        "charge_on": "success", 
     }
 }
 

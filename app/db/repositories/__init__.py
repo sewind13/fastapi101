@@ -1,9 +1,12 @@
 from app.db.repositories.base import BaseRepository as BaseRepository
 from app.db.repositories.exceptions import RepositoryError as RepositoryError
-from app.db.repositories.item import create_item as create_item
+from app.db.repositories.item import add_item as add_item
+from app.db.repositories.item import get_item_by_id as get_item_by_id
 from app.db.repositories.item import (
     list_items_by_owner_id as list_items_by_owner_id,
 )
+from app.db.repositories.item import save_item as create_item
+from app.db.repositories.item import save_item as save_item
 from app.db.repositories.revoked_token import is_token_revoked as is_token_revoked
 from app.db.repositories.revoked_token import revoke_token as revoke_token
 from app.db.repositories.user import (
@@ -22,7 +25,10 @@ from app.db.repositories.user import (
 __all__ = [
     "BaseRepository",
     "RepositoryError",
+    "add_item",
     "create_item",
+    "save_item",
+    "get_item_by_id",
     "list_items_by_owner_id",
     "is_token_revoked",
     "revoke_token",

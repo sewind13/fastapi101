@@ -133,6 +133,29 @@ Full catalog:
 
 - [error-codes.md](error-codes.md)
 
+## How To Add A New Error Code
+
+When you add a new business failure to the API, the stable contract is not just the message text. It is the combination of:
+
+- service error code
+- mapped HTTP status
+- standardized error body
+
+Recommended process:
+
+1. add the new code in [`app/services/exceptions.py`](../app/services/exceptions.py)
+2. return it from the service with `self.failure(...)`
+3. add the status mapping in [`app/api/errors.py`](../app/api/errors.py)
+4. verify the endpoint returns both the expected `status_code` and `error_code`
+
+Example:
+
+- `item.not_found` -> `404`
+- `item.forbidden` -> `403`
+- `item.already_archived` -> `409`
+
+This is why routes in this template usually call `unwrap_result(...)` instead of constructing error responses directly.
+
 ## Request ID
 
 Every standardized error response includes:

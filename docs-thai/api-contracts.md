@@ -155,6 +155,29 @@ validation errors อาจมี `details` เพิ่ม เช่น:
 
 catalog ฉบับเต็มอยู่ที่ [docs-thai/error-codes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/error-codes.md)
 
+## ถ้าจะเพิ่ม error code ใหม่ต้องทำอะไรบ้าง
+
+เวลามี business failure ใหม่ stable contract ของ API ไม่ได้มีแค่ข้อความ error แต่ประกอบด้วย:
+
+- service error code
+- HTTP status ที่ map ไว้
+- standardized error body
+
+flow ที่แนะนำคือ:
+
+1. เพิ่ม code ใหม่ใน [app/services/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/services/exceptions.py)
+2. ให้ service คืนผ่าน `self.failure(...)`
+3. map status ใน [app/api/errors.py](/Users/pluto/Documents/git/fastapi101/app/api/errors.py)
+4. เขียน test ให้เช็กทั้ง `status_code` และ `error_code`
+
+ตัวอย่าง:
+
+- `item.not_found` -> `404`
+- `item.forbidden` -> `403`
+- `item.already_archived` -> `409`
+
+นี่คือเหตุผลที่ route ใน template นี้มักใช้ `unwrap_result(...)` แทนการประกอบ error response เอง
+
 ## Request ID
 
 error responses มาตรฐานจะมี:

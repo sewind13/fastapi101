@@ -170,6 +170,58 @@ This gives you:
 - consistent error payloads
 - consistent logging
 
+## How To Add A New Error Correctly
+
+When a new endpoint needs a new failure case, add it in layers instead of raising an `HTTPException` directly from the route or service.
+
+Recommended flow:
+
+1. define a new error code in [`app/services/exceptions.py`](../app/services/exceptions.py)
+2. return that code from the service layer through `self.failure(...)`
+3. map that code to an HTTP status in [`app/api/errors.py`](../app/api/errors.py)
+4. let the route keep using `unwrap_result(...)`
+
+That keeps domain failure and HTTP transport failure clearly separated.
+
+### Example
+
+For `POST /api/v1/items/{item_id}/archive`, the service-level errors might be:
+
+- `item.not_found`
+- `item.forbidden`
+- `item.already_archived`
+
+At the service layer:
+
+```python
+return self.failure(
+    ErrorCode.ITEM_ALREADY_ARCHIVED,
+    "Item is already archived.",
+)
+```
+
+At the API mapping layer:
+
+```python
+ErrorCode.ITEM_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+ErrorCode.ITEM_FORBIDDEN: status.HTTP_403_FORBIDDEN,
+ErrorCode.ITEM_ALREADY_ARCHIVED: status.HTTP_409_CONFLICT,
+```
+
+The route should still stay small:
+
+```python
+return unwrap_result(result)
+```
+
+### Rule Of Thumb
+
+- new business failure -> add a new service error code
+- new HTTP status behavior -> update `ERROR_STATUS_MAP`
+- route-level validation problem -> let FastAPI/Pydantic handle it naturally
+
+If you find yourself writing `raise HTTPException(...)` in a normal service method, that is usually a sign the layering is drifting.
+
 ## Useful Existing Endpoints
 
 Examples already in the template:
@@ -187,7 +239,49 @@ Examples already in the template:
 
 - feature key: `items.create`
 - resource key: `item_create`
-- units per successful call: `1`
+
+When you want to add a policy to another feature, reuse the same pattern:
+
+1. choose a stable `feature_key` for the action, such as `items.archive`
+2. choose a stable `resource_key` for the entitlement bucket, such as `item_archive`
+3. add the mapping in `FEATURE_POLICIES`
+4. call `reserve_feature_usage(...)` from the service layer before the protected work
+5. call `commit_reserved_usage(...)` on success
+6. call `release_reserved_usage(...)` if the request fails after reservation
+
+If you are unsure how to name the keys:
+
+- `feature_key` should describe the feature action
+- `resource_key` should describe the quota or billable bucket
+
+When deciding between `commit`, `release`, and `reverse`, use this rule:
+
+- protected work succeeded -> `commit`
+- protected work failed after reservation -> `release`
+- usage was already committed and now needs correction -> `reverse`
+
+For most endpoint work in this template, you will only implement `commit` and `release`. Reversal is a separate post-commit correction workflow.
+
+See also:
+
+- [billing-entitlements-draft.md](/Users/pluto/Documents/git/fastapi101/docs/billing-entitlements-draft.md)
+
+### File-By-File Example: `items.archive -> item_archive`
+
+If you want a concrete follow-along example, use this order:
+
+1. Edit [`app/services/entitlement_service.py`](../app/services/entitlement_service.py)
+   Add `items.archive -> item_archive` to `FEATURE_POLICIES`.
+2. Edit [`app/services/item_service.py`](../app/services/item_service.py)
+   Add a feature-key constant such as `ITEMS_ARCHIVE_FEATURE_KEY = "items.archive"`.
+3. In [`app/services/item_service.py`](../app/services/item_service.py), update the archive flow.
+   Check `not_found`, `forbidden`, and `already_archived` first, then reserve usage, perform the archive write, and commit or release usage.
+4. Edit [`app/api/v1/items.py`](../app/api/v1/items.py)
+   Pass `request_id` from the route into the archive service path.
+5. Edit tests under [`tests/integration/api/test_items.py`](../tests/integration/api/test_items.py)
+   Add a success case with `item_archive` entitlement and a failure case for `billing.no_entitlement`.
+6. Test the feature through ops billing.
+   Grant `resource_key = item_archive`, archive an item, then verify balance and usage history.
 
 ## Best Practices For New API Work
 
@@ -336,6 +430,19 @@ If the endpoint is something a client or teammate should know about, update:
 - client-facing auth docs if usage changes
 - OpenAPI usage examples if needed
 
+### 9. Add Or Reuse Error Codes
+
+Before you finish the endpoint, decide whether it introduces a new service-level failure.
+
+For each new failure:
+
+1. choose a stable error code name in `app/services/exceptions.py`
+2. return it from the service through `ServiceResult`
+3. map it in `app/api/errors.py`
+4. test both the error code and the HTTP status in integration tests
+
+This is one of the most important parts of keeping the API predictable over time.
+
 ## Fast Decision Rule
 
 When you are unsure where a piece of code belongs, use this shortcut:
@@ -346,3 +453,26 @@ When you are unsure where a piece of code belongs, use this shortcut:
 - business decision -> `services`
 - HTTP wiring -> `routes`
 - discoverability -> `docs`
+
+## Beginner-Friendly Starter Flow
+
+If you are new to this template and want the safest sequence for adding an endpoint, use this order:
+
+1. write down the endpoint input, output, and auth rule
+2. update `app/schemas/...`
+3. update `app/db/models/...` only if stored state changes
+4. create and review the migration if the schema changed
+5. update `app/db/repositories/...`
+6. update `app/services/...`
+7. add error codes in `app/services/exceptions.py` if needed
+8. map error codes in `app/api/errors.py`
+9. add the route in `app/api/v1/...`
+10. add integration tests
+11. update docs or API recipes if the endpoint should be discoverable
+
+If you follow this order, you will usually avoid the most common mistakes:
+
+- putting business logic in routes
+- forgetting to map new errors
+- forgetting migration review
+- returning inconsistent error payloads

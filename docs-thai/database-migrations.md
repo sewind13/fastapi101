@@ -11,6 +11,24 @@
 
 หลักสำคัญคือ Alembic เป็น schema source of truth ของระบบ และ app ไม่ควรแอบสร้างตารางเองตอน start
 
+## Checklist ที่แนะนำที่สุด
+
+ถ้าอยากได้แค่ checklist เดียวสำหรับใช้จริง ให้ใช้ชุดนี้:
+
+```text
+[ ] แก้ SQLModel definition ก่อน
+[ ] ถ้ามี model ใหม่ ได้ import ไว้ใน app/db/models/__init__.py และ app/db/base.py แล้ว
+[ ] local Compose stack รันอยู่
+[ ] สร้าง migration ด้วย make migration m="..."
+[ ] review โค้ดใน upgrade() และ downgrade() แล้ว
+[ ] เช็ก default, nullability, และ foreign keys แล้ว
+[ ] apply migration ด้วย make migrate แล้ว
+[ ] verify schema ใน Postgres แล้ว
+[ ] รัน lint, typecheck, และ tests แล้ว
+```
+
+ชุดนี้คือ happy path ปกติสำหรับ local development
+
 ## ไฟล์ที่เกี่ยวข้อง
 
 ไฟล์หลักที่เกี่ยวกับ schema มีประมาณนี้:
@@ -89,6 +107,77 @@ uv run alembic revision --autogenerate -m "..."
 
 autogenerate เป็นตัวช่วย ไม่ใช่ final truth ดังนั้น migration ที่ซับซ้อนมักต้องแก้มือเพิ่ม
 
+### ตัวอย่าง: เพิ่ม archive fields ให้ `item`
+
+สมมติคุณเพิ่ม field ใน model แบบนี้:
+
+- `is_archived: bool = False`
+- `archived_at: datetime | None = None`
+
+ตอน review migration ควรถามอย่างน้อยว่า:
+
+- Alembic เพิ่มทั้งสอง column เข้า `item` จริงไหม
+- `is_archived` เป็น nullable/non-nullable ตรงกับที่ตั้งใจไหม
+- row เก่ามี default ที่สมเหตุสมผลไหม
+- `archived_at` เป็น nullable ไหม
+- `downgrade()` ลบ column กลับได้ครบไหม
+
+mindset ที่ดีสำหรับเคสนี้คือ:
+
+1. row เก่าต้องยังใช้ได้
+2. row ใหม่ต้องได้ default ที่คาดเดาได้
+3. rollback ต้องไม่ทิ้ง schema state แบบครึ่ง ๆ กลาง ๆ
+
+### Pattern สำคัญ: เพิ่ม non-null column ใหม่ให้ table ที่มีข้อมูลอยู่แล้ว
+
+นี่เป็นหนึ่งในจุดที่พลาดกันบ่อยที่สุด
+
+ถ้า table มีข้อมูลอยู่แล้ว การเขียนแบบนี้มักจะพัง:
+
+```python
+op.add_column("item", sa.Column("is_archived", sa.Boolean(), nullable=False))
+```
+
+เหตุผลที่พังคือ:
+
+- column ใหม่เป็น `NOT NULL`
+- row เก่ายังไม่มีค่านี้
+- Postgres จะ reject ด้วย `NotNullViolation`
+
+สำหรับ field แบบ `is_archived` pattern ที่ปลอดภัยกว่าคือ:
+
+```python
+op.add_column(
+    "item",
+    sa.Column(
+        "is_archived",
+        sa.Boolean(),
+        nullable=False,
+        server_default=sa.text("false"),
+    ),
+)
+op.add_column(
+    "item",
+    sa.Column("archived_at", sa.DateTime(timezone=True), nullable=True),
+)
+op.alter_column("item", "is_archived", server_default=None)
+```
+
+ทำไมวิธีนี้ถึงดีกว่า:
+
+- row เก่าทั้งหมดจะได้ `false`
+- column สุดท้ายยังเป็น `NOT NULL` ได้ตาม intent
+- `archived_at` ยังปล่อย nullable ได้
+- default ชั่วคราวใน DB สามารถเอาออกทีหลังได้
+
+อีก pattern ที่ถูกต้องเหมือนกันคือ:
+
+1. เพิ่ม column แบบ nullable ก่อน
+2. backfill row เก่าด้วย `UPDATE`
+3. ค่อย alter ให้เป็น `nullable=False`
+
+ถ้าเพิ่ม non-null column ให้ table ที่มีข้อมูลอยู่แล้ว ให้ใช้หนึ่งในสอง pattern นี้เสมอ
+
 ### 5. Apply migration
 
 ใช้:
@@ -126,6 +215,46 @@ uv run pytest -q
 ```
 
 ถ้า schema change ผูกกับ route หรือ service ด้วย ก็ควรลอง flow นั้นผ่าน Swagger หรือ integration tests ต่อทันที
+
+ตัวอย่างการ verify เองใน `psql`:
+
+```sql
+\d item
+SELECT id, title, is_archived, archived_at FROM item LIMIT 5;
+```
+
+กับ table อื่นก็ใช้หลักเดียวกัน:
+
+- ดูโครง table ด้วย `\d <table_name>`
+- ดูข้อมูลจริงสักไม่กี่แถวด้วย `SELECT ... LIMIT ...`
+
+## หลัง migrate สำเร็จแล้วควรทำอะไรต่อ
+
+เมื่อ `make migrate` ผ่านแล้ว ให้มองว่านี่เป็น “จุดเริ่มของการ verify” ไม่ใช่จบงานทันที
+
+step ที่แนะนำต่อคือ:
+
+1. เปิด `psql` แล้วดู table ที่เพิ่งเปลี่ยน
+2. ดูข้อมูลจริงสักไม่กี่แถว
+3. ค่อยไปทำ code ส่วนที่อิง schema ใหม่นั้นต่อ
+4. รัน tests หรือทดลอง flow จริง
+
+สำหรับตัวอย่าง `item archive` ขั้นต่อที่ใช้งานได้จริงคือ:
+
+```sql
+\d item
+SELECT id, title, is_archived, archived_at FROM item LIMIT 5;
+```
+
+จากนั้นค่อยทำส่วนอื่นของ feature ต่อ:
+
+- response schema
+- repository behavior
+- service logic
+- route wiring
+- integration tests
+
+ประเด็นสำคัญคือ migration สำเร็จ แปลแค่ว่า schema เปลี่ยนแล้ว ยังไม่ได้แปลว่า feature เสร็จสมบูรณ์
 
 ## เมื่อไหร่ควรแก้ initial migration ใหม่
 
@@ -191,6 +320,34 @@ make migrate
 ```
 
 ใช้เฉพาะกรณีที่ local data ทิ้งได้เท่านั้น
+
+rule of thumb แบบง่าย:
+
+- เริ่มจาก `make migrate` ก่อนเสมอ
+- ค่อย reset local volume เมื่อ DB นี้ทิ้งได้และ state เพี้ยนจริง ๆ
+
+### migration fail ด้วย `NotNullViolation`
+
+ถ้าเจอ error ประมาณนี้:
+
+```text
+column "is_archived" of relation "item" contains null values
+```
+
+ส่วนมากไม่ได้แปลว่าต้อง drop database ใหม่
+
+แต่แปลว่า:
+
+- migration พยายามเพิ่ม `NOT NULL` column
+- row เก่าไม่ได้รับ default หรือ backfill value
+
+วิธีแก้ปกติคือ:
+
+1. เปิดไฟล์ migration
+2. แก้ให้ใช้ pattern ที่ปลอดภัย เช่น `server_default` หรือ backfill
+3. รัน `make migrate` ใหม่
+
+ใน flow ปกติของ Postgres + Alembic ถ้า migration fail มัก rollback ทั้ง transaction อยู่แล้ว ดังนั้นการแก้ไฟล์ migration แล้วรันใหม่มักพอ ไม่จำเป็นต้องล้าง DB ทุกครั้ง
 
 ### รัน command จาก host แล้วหา `db` ไม่เจอ
 

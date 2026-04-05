@@ -172,6 +172,49 @@ pattern ที่แนะนำคือ:
 - feature key: `items.create`
 - resource key: `item_create`
 
+ถ้าจะ add policy ให้ feature ใหม่ ให้ใช้ pattern เดียวกันนี้:
+
+1. เลือก `feature_key` ของ action เช่น `items.archive`
+2. เลือก `resource_key` ของ entitlement bucket เช่น `item_archive`
+3. เพิ่ม mapping ใน `FEATURE_POLICIES`
+4. เรียก `reserve_feature_usage(...)` จาก service layer ก่อนทำงานจริง
+5. ถ้าสำเร็จเรียก `commit_reserved_usage(...)`
+6. ถ้าพลาดหลัง reserve แล้วให้เรียก `release_reserved_usage(...)`
+
+ถ้ายังไม่แน่ใจว่าจะตั้งชื่อยังไง:
+
+- `feature_key` ให้สื่อ action ของ feature
+- `resource_key` ให้สื่อ quota หรือ entitlement bucket ที่จะถูกหัก
+
+เวลาเลือกว่าจะ `commit`, `release`, หรือ `reverse` ให้ใช้ rule นี้:
+
+- งานหลักสำเร็จ -> `commit`
+- reserve ไปแล้วแต่งานหลักพลาด -> `release`
+- commit ไปแล้วและต้องแก้ย้อนหลัง -> `reverse`
+
+สำหรับ endpoint ทั่วไปใน template นี้ ส่วนมากจะทำแค่ `commit` กับ `release` ก่อน ส่วน `reverse` เป็น correction workflow ภายหลัง ไม่ใช่ failure path ปกติของ request
+
+อ่านรายละเอียดเพิ่มได้ที่:
+
+- [billing-entitlements-draft.md](/Users/pluto/Documents/git/fastapi101/docs-thai/billing-entitlements-draft.md)
+
+### ตัวอย่างรายไฟล์: `items.archive -> item_archive`
+
+ถ้าอยากได้ตัวอย่างที่ทำตามทีละไฟล์ได้ ให้ใช้ลำดับนี้:
+
+1. แก้ [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
+   เพิ่ม `items.archive -> item_archive` ใน `FEATURE_POLICIES`
+2. แก้ [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
+   เพิ่ม constant เช่น `ITEMS_ARCHIVE_FEATURE_KEY = "items.archive"`
+3. ใน [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
+   ปรับ archive flow ให้เช็ก `not_found`, `forbidden`, และ `already_archived` ก่อน แล้วค่อย reserve usage, ทำ archive write, และ commit หรือ release usage
+4. แก้ [app/api/v1/items.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/items.py)
+   ส่ง `request_id` จาก route ลงไปที่ service ของ archive
+5. แก้ tests ใน [tests/integration/api/test_items.py](/Users/pluto/Documents/git/fastapi101/tests/integration/api/test_items.py)
+   เพิ่มเคส success ที่มี `item_archive` entitlement และเคส `billing.no_entitlement`
+6. ทดลองผ่าน ops billing
+   grant `resource_key = item_archive`, archive item, แล้วเช็ก balance กับ usage history
+
 ## Tests ที่ควรมี
 
 ขั้นต่ำควรมี:
@@ -181,6 +224,60 @@ pattern ที่แนะนำคือ:
 - repository tests ถ้ามี query/locking ซับซ้อน
 - integration tests สำหรับ route จริง
 - migration sanity checks เมื่อ schema เปลี่ยน
+
+## ถ้าจะเพิ่ม error ใหม่ต้องทำยังไง
+
+ถ้า endpoint ใหม่มี failure case ใหม่ อย่าเพิ่ง `raise HTTPException(...)` ตรงจาก route หรือ service ทันที
+
+flow ที่แนะนำคือ:
+
+1. เพิ่ม error code ใหม่ใน [app/services/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/services/exceptions.py)
+2. ให้ service คืน error นั้นผ่าน `self.failure(...)`
+3. ไป map เป็น HTTP status ใน [app/api/errors.py](/Users/pluto/Documents/git/fastapi101/app/api/errors.py)
+4. ให้ route ใช้ `unwrap_result(...)` เหมือนเดิม
+
+ข้อดีคือ:
+
+- domain failure กับ HTTP transport ถูกแยกจากกันชัด
+- error payload ของ API สม่ำเสมอ
+- tests เขียนง่ายขึ้น เพราะเช็กได้ทั้ง `error_code` และ `status_code`
+
+### ตัวอย่าง
+
+สำหรับ `POST /api/v1/items/{item_id}/archive` error ที่ควรมี เช่น:
+
+- `item.not_found`
+- `item.forbidden`
+- `item.already_archived`
+
+ใน service:
+
+```python
+return self.failure(
+    ErrorCode.ITEM_ALREADY_ARCHIVED,
+    "Item is already archived.",
+)
+```
+
+ใน API mapping:
+
+```python
+ErrorCode.ITEM_NOT_FOUND: status.HTTP_404_NOT_FOUND,
+ErrorCode.ITEM_FORBIDDEN: status.HTTP_403_FORBIDDEN,
+ErrorCode.ITEM_ALREADY_ARCHIVED: status.HTTP_409_CONFLICT,
+```
+
+ส่วน route ยังควรเป็นแค่:
+
+```python
+return unwrap_result(result)
+```
+
+### Rule of thumb
+
+- business failure ใหม่ -> เพิ่ม service error code
+- ถ้าต้องการ HTTP status ใหม่ -> เพิ่มใน `ERROR_STATUS_MAP`
+- request validation ผิด -> ปล่อยให้ FastAPI/Pydantic จัดการเองตามธรรมชาติ
 
 ## ข้อผิดพลาดที่พบบ่อย
 
@@ -328,6 +425,19 @@ test ที่ควรมีสำหรับตัวอย่างนี้
 - auth-for-clients ถ้า flow การใช้งานเปลี่ยน
 - OpenAPI usage examples ถ้าจำเป็น
 
+### 9. เพิ่มหรือ reuse error codes
+
+ก่อนสรุปว่า endpoint เสร็จ ให้ถามด้วยว่า endpoint นี้เพิ่ม service-level failure ใหม่หรือไม่
+
+ถ้ามี ให้ทำครบทั้ง 4 อย่าง:
+
+1. ตั้งชื่อ error code ใน `app/services/exceptions.py`
+2. คืน error ผ่าน `ServiceResult`
+3. map ใน `app/api/errors.py`
+4. เขียน integration tests ให้เช็กทั้ง `error_code` และ `status_code`
+
+จุดนี้สำคัญมาก เพราะเป็นส่วนที่ทำให้ API stable และคาดเดาได้ในระยะยาว
+
 ## Shortcut จำง่าย
 
 ถ้ายังลังเลว่า logic นี้ควรอยู่ตรงไหน ให้ใช้กฎลัดนี้:
@@ -338,5 +448,28 @@ test ที่ควรมีสำหรับตัวอย่างนี้
 - business decision -> `services`
 - HTTP wiring -> `routes`
 - การทำให้คนอื่นค้นเจอ -> `docs`
+
+## ลำดับเริ่มต้นที่ปลอดภัยที่สุดสำหรับคนเริ่มใช้ template นี้
+
+ถ้ายังใหม่กับ repo นี้ ให้เดินตามลำดับนี้จะปลอดภัยที่สุด:
+
+1. เขียนให้ชัดก่อนว่า endpoint รับอะไร คืนอะไร และต้อง auth ยังไง
+2. แก้ `app/schemas/...`
+3. แก้ `app/db/models/...` เฉพาะกรณีที่ stored state เปลี่ยนจริง
+4. สร้างและ review migration ถ้า schema เปลี่ยน
+5. แก้ `app/db/repositories/...`
+6. แก้ `app/services/...`
+7. เพิ่ม error codes ใน `app/services/exceptions.py` ถ้าจำเป็น
+8. map error codes ใน `app/api/errors.py`
+9. เพิ่ม route ใน `app/api/v1/...`
+10. เพิ่ม integration tests
+11. อัปเดต docs หรือ API recipes ถ้า endpoint นี้ควรถูกค้นพบ
+
+ลำดับนี้ช่วยกันความผิดพลาดที่พบบ่อย เช่น:
+
+- เอา business logic ไปไว้ใน route
+- เพิ่ม error ใหม่แต่ลืม map status
+- แก้ model แล้วลืม migration
+- response error ไม่สม่ำเสมอ
 
 อ่านเวอร์ชันอังกฤษได้ที่ [docs/api-guide.md](/Users/pluto/Documents/git/fastapi101/docs/api-guide.md)

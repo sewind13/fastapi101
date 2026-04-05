@@ -19,5 +19,8 @@ class ErrorCode:
     BILLING_INVALID_RESERVATION_STATE = "billing.invalid_reservation_state"
     USER_CONFLICT = "user.conflict"
     USER_NOT_FOUND = "user.not_found"
+    ITEM_NOT_FOUND = "item.not_found"
+    ITEM_FORBIDDEN = "item.forbidden"
+    ITEM_ALREADY_ARCHIVED = "item.already_archived"
     ITEM_PERSIST_FAILED = "item.persist_failed"
     COMMON_INTERNAL_ERROR = "common.internal_error"

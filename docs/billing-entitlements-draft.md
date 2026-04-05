@@ -22,6 +22,39 @@ Recommended ownership model:
 - billable capability: `resource_key`
 - request-level consumption: `feature_key`
 
+## `feature_key` vs `resource_key`
+
+These two names are intentionally different because they answer different questions.
+
+- `feature_key`
+  identifies the application action being performed
+- `resource_key`
+  identifies the entitlement bucket or quota balance being consumed
+
+Examples:
+
+- `items.create`
+  is a `feature_key`
+- `items.archive`
+  is a `feature_key`
+- `item_create`
+  is a `resource_key`
+- `item_archive`
+  is a `resource_key`
+
+Rule of thumb:
+
+- `feature_key` should be action-shaped and stable
+- `resource_key` should be billing-shaped and stable
+- `feature_key` tells the system what the user is doing
+- `resource_key` tells the system which quota bucket to charge
+
+This separation is what makes the entitlement system reusable. Multiple features can:
+
+- map to different quota buckets
+- share the same quota bucket
+- or later evolve into different pricing policies without renaming the user-facing feature action
+
 ## Proposed Models
 
 ### `Account`
@@ -170,6 +203,160 @@ FEATURE_POLICIES = {
 ```
 
 This can later evolve into a DB-backed catalog if needed.
+
+In the example above:
+
+- `service_a.run` is the `feature_key`
+- `service_a` is the `resource_key`
+- each successful call consumes `1` unit
+
+## How To Add A Policy To A New Feature
+
+When you want to make a new feature quota-protected, the recommended flow is:
+
+1. Choose a stable `feature_key`.
+2. Choose a stable `resource_key`.
+3. Add the mapping to `FEATURE_POLICIES`.
+4. Make sure billing or ops can grant entitlements for that `resource_key`.
+5. Call `reserve_feature_usage(...)` from the service layer before the protected work.
+6. Call `commit_reserved_usage(...)` on success.
+7. Call `release_reserved_usage(...)` if the request fails after reservation.
+
+There are two valid enforcement patterns, and the right choice depends on the feature:
+
+- `validate -> reserve -> write -> commit/release`
+  Use this when business validation should win first, such as `not_found`, `forbidden`, or `already_archived`.
+- `reserve -> write -> commit/release`
+  Use this when the protected write itself is the main action and there is little or no pre-validation beyond auth.
+
+Example: adding a policy for `POST /api/v1/items/{item_id}/archive`
+
+```python
+FEATURE_POLICIES = {
+    "items.create": {
+        "resource_key": "item_create",
+        "units_per_call": 1,
+        "charge_on": "success",
+    },
+    "items.archive": {
+        "resource_key": "item_archive",
+        "units_per_call": 1,
+        "charge_on": "success",
+    },
+}
+```
+
+Recommended service flow for `items.archive`:
+
+1. Load the target item.
+2. Check `not_found`, ownership, and `already_archived`.
+3. Resolve the current user's `account_id`.
+4. Call `reserve_feature_usage(..., feature_key="items.archive", ...)`.
+5. Perform the archive write.
+6. Call `commit_reserved_usage(...)` if the archive succeeds.
+7. Call `release_reserved_usage(...)` if the archive fails after reservation.
+
+This is intentionally different from the simpler `items.create` flow. For `archive`, the current implementation preserves the more specific business errors first:
+
+- `item.not_found`
+- `item.forbidden`
+- `item.already_archived`
+
+Only requests that pass those checks go on to reserve archive quota.
+
+## Reservation And Usage Lifecycle
+
+The current system has three different moments to think about:
+
+1. reservation
+2. commit
+3. post-commit correction
+
+### Reserve
+
+`reserve_feature_usage(...)` means:
+
+- the feature policy was found
+- an active entitlement exists
+- enough quota is available
+- a `usage_reservation` row is created with status `active`
+
+At this point:
+
+- `units_used` has not increased yet
+- no committed usage event exists yet
+- the request has only reserved the right to consume quota
+
+Use reservation when you need to protect against concurrent requests before the business write completes.
+
+### Commit
+
+`commit_reserved_usage(...)` is the point where usage becomes real.
+
+In the current implementation, commit does all of the following:
+
+- increments `feature_entitlement.units_used`
+- marks the reservation as `committed`
+- creates a `usage_event` with status `committed`
+
+Commit should happen only after the protected business write succeeds.
+
+Examples:
+
+- item creation succeeded
+- item archive succeeded
+- service A completed successfully
+
+Rule of thumb:
+
+- business write succeeded -> `commit`
+
+### Release
+
+`release_reserved_usage(...)` is for a reservation that should not turn into real usage.
+
+In the current implementation, release:
+
+- marks the reservation as `released`
+- does not increment `units_used`
+- does not create a committed usage event
+
+Use release when the request reserved quota, but the protected work did not finish successfully.
+
+Examples:
+
+- DB write failed after reservation
+- downstream operation failed after reservation
+- business flow aborted after reserving quota
+
+Rule of thumb:
+
+- reserved, but the protected work failed -> `release`
+
+### Reverse
+
+`reverse` is different from `release`.
+
+Use reversal only after usage was already committed.
+
+That means:
+
+- quota was already consumed
+- a committed usage event already exists
+- and now you need a correction or reconciliation step
+
+Typical examples:
+
+- an admin refunds a usage charge
+- a later reconciliation job discovers the charge was invalid
+- a compensating workflow undoes an already-committed usage decision
+
+In other words:
+
+- before commit -> `release`
+- after commit -> `reverse`
+
+The current template primarily implements the normal `reserve -> commit/release` flow. The reporting schema already anticipates statuses like `reversed`, but reversal is a separate correction workflow, not the normal failure path for a request that has not committed yet.
 
 ## Repository Draft
 

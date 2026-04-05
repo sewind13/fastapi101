@@ -11,6 +11,24 @@ The short version:
 
 Alembic is the schema source of truth. The app should not create tables implicitly at startup.
 
+## Recommended Migration Checklist
+
+If you only want one practical checklist to follow, use this:
+
+```text
+[ ] I changed the SQLModel definition first.
+[ ] New models were imported in app/db/models/__init__.py and app/db/base.py.
+[ ] The local Compose stack is running.
+[ ] I created a migration with make migration m="...".
+[ ] I reviewed the generated upgrade() and downgrade() code.
+[ ] I checked defaults, nullability, and foreign keys carefully.
+[ ] I applied the migration with make migrate.
+[ ] I verified the schema in Postgres.
+[ ] I ran lint, typecheck, and tests.
+```
+
+This is the normal happy-path workflow for local development.
+
 ## Files Involved
 
 The main files involved in schema changes are:
@@ -91,6 +109,77 @@ Check at least these things:
 
 Autogenerate is a helper, not the final authority. You should expect to edit the migration file when the change is non-trivial.
 
+### Example: Adding Archive Fields To `item`
+
+Suppose you added these model fields:
+
+- `is_archived: bool = False`
+- `archived_at: datetime | None = None`
+
+The migration review should answer these questions:
+
+- did Alembic add both columns to the `item` table
+- is `is_archived` non-nullable or nullable as intended
+- is there a sensible default for existing rows
+- is `archived_at` nullable
+- does `downgrade()` remove the same columns cleanly
+
+For a change like this, a good review mindset is:
+
+1. existing rows should remain valid
+2. new rows should get predictable defaults
+3. rollback should not leave partial schema state behind
+
+### Important Pattern: Adding A New Non-Null Column
+
+This is one of the most common migration mistakes.
+
+If a table already contains rows, this will often fail:
+
+```python
+op.add_column("item", sa.Column("is_archived", sa.Boolean(), nullable=False))
+```
+
+Why it fails:
+
+- the new column is `NOT NULL`
+- existing rows do not have a value for it yet
+- Postgres rejects the change with a `NotNullViolation`
+
+For a column like `is_archived`, a safer migration pattern is:
+
+```python
+op.add_column(
+    "item",
+    sa.Column(
+        "is_archived",
+        sa.Boolean(),
+        nullable=False,
+        server_default=sa.text("false"),
+    ),
+)
+op.add_column(
+    "item",
+    sa.Column("archived_at", sa.DateTime(timezone=True), nullable=True),
+)
+op.alter_column("item", "is_archived", server_default=None)
+```
+
+Why this works:
+
+- existing rows get `false`
+- the column can still end up `NOT NULL`
+- `archived_at` stays nullable
+- the temporary DB default can be removed after the backfill effect is complete
+
+Another valid pattern is:
+
+1. add the column as nullable
+2. backfill old rows with `UPDATE`
+3. alter the column to `nullable=False`
+
+Use one of these patterns whenever you add a non-null column to a table that already has data.
+
 ### 5. Apply The Migration
 
 Apply the latest schema to the running local database:
@@ -128,6 +217,46 @@ uv run pytest -q
 ```
 
 If the change is tied to a route or service, also test the affected workflow through Swagger or integration tests.
+
+Useful manual DB verification in `psql`:
+
+```sql
+\d item
+SELECT id, title, is_archived, archived_at FROM item LIMIT 5;
+```
+
+For other tables, use the same idea:
+
+- inspect the table definition with `\d <table_name>`
+- inspect a few real rows with `SELECT ... LIMIT ...`
+
+## What To Do After A Successful Migration
+
+Once `make migrate` succeeds, treat that as the start of verification, not the end of the work.
+
+Recommended next steps:
+
+1. inspect the changed table in `psql`
+2. inspect a few real rows
+3. continue with the schema-dependent code changes
+4. run tests or the target workflow
+
+For the `item archive` example, a practical follow-up looks like:
+
+```sql
+\d item
+SELECT id, title, is_archived, archived_at FROM item LIMIT 5;
+```
+
+Then continue with the rest of the feature work:
+
+- response schema updates
+- repository behavior
+- service logic
+- route wiring
+- integration tests
+
+The key point is that a successful migration only proves the schema changed. It does not prove the feature is complete.
 
 ## When To Create A New Initial Migration
 
@@ -194,6 +323,34 @@ make migrate
 ```
 
 Only do this when the local data can be discarded safely.
+
+As a rule of thumb:
+
+- try `make migrate` first
+- reset the local volume only when the DB is disposable and clearly out of sync
+
+### Migration Fails With `NotNullViolation`
+
+If you see an error like this:
+
+```text
+column "is_archived" of relation "item" contains null values
+```
+
+that usually does not mean you need to drop the database.
+
+It usually means:
+
+- the migration added a `NOT NULL` column
+- existing rows were not given a default or backfill value
+
+The normal fix is:
+
+1. edit the migration file
+2. use a safe non-null pattern with `server_default` or backfill
+3. run `make migrate` again
+
+In the normal local flow, failed Alembic migrations on Postgres are typically rolled back transactionally, so fixing the migration file and rerunning is usually enough.
 
 ### Running Commands From The Host Uses The Wrong Database Host
 

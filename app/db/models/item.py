@@ -18,3 +18,6 @@ class Item(SQLModel, table=True):
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
 
     owner: Optional["User"] = Relationship(back_populates="items")
+
+    is_archived: bool = False
+    archived_at: datetime | None = None
