@@ -11,7 +11,6 @@ from app.db.repositories.item import (
     add_item,
     get_item_by_id,
     list_items_by_owner_id,
-    save_item,
 )
 from app.schemas.item import ItemCreate
 from app.services.entitlement_service import (
@@ -24,6 +23,7 @@ from app.services.result import BaseService, ServiceResult
 
 ITEMS_CREATE_FEATURE_KEY = "items.create"
 ITEMS_ARCHIVE_FEATURE_KEY = "items.archive"
+ITEMS_RESTORE_FEATURE_KEY = "items.restore"
 
 
 def _items_cache_key(*, owner_id: int, offset: int, limit: int) -> str:
@@ -48,7 +48,11 @@ class ItemService(BaseService):
     ) -> ServiceResult[Item]:
         """Create an item for the current user and commit quota usage on success."""
 
-        assert current_user.id is not None
+        if current_user.id is None:
+            return self.failure(
+                ErrorCode.COMMON_INTERNAL_ERROR,
+                "The current user does not have a persisted identifier.",
+            )
         if current_user.account_id is None:
             return self.failure(
                 ErrorCode.COMMON_INTERNAL_ERROR,
@@ -103,7 +107,11 @@ class ItemService(BaseService):
     ) -> ServiceResult[Item]:
         """Archive one item and charge archive usage only after a successful write."""
 
-        assert current_user.id is not None
+        if current_user.id is None:
+            return self.failure(
+                ErrorCode.COMMON_INTERNAL_ERROR,
+                "The current user does not have a persisted identifier.",
+            )
 
         item = get_item_by_id(session, item_id)
         if item is None:
@@ -148,7 +156,9 @@ class ItemService(BaseService):
         item.archived_at = datetime.now(UTC)
 
         try:
-            saved_item = save_item(session, item)
+            # Stage the item update first so the archive write and usage commit land
+            # in the same transaction boundary.
+            saved_item = add_item(session, item)
         except RepositoryError:
             release_result = release_reserved_usage(session, reservation_id=reservation.id or 0)
             if not release_result.ok:
@@ -180,7 +190,11 @@ class ItemService(BaseService):
     ) -> ServiceResult[list[Item]]:
         """Return the current user's item list, using read-through cache when enabled."""
 
-        assert current_user.id is not None
+        if current_user.id is None:
+            return self.failure(
+                ErrorCode.COMMON_INTERNAL_ERROR,
+                "The current user does not have a persisted identifier.",
+            )
         owner_id = current_user.id
         cache_key = _items_cache_key(owner_id=owner_id, offset=offset, limit=limit)
         items = cached_json(
@@ -197,6 +211,92 @@ class ItemService(BaseService):
             ttl_seconds=settings.cache.items_list_ttl_seconds,
         )
         return self.success(items)
+    
+
+    def restore_item_for_user(
+        self,
+        session: Session,
+        item_id: int,
+        current_user: UserModel,
+        request_id: str,
+    ) -> ServiceResult[Item]:
+        """Restore one archived item and commit restore usage only after a successful write."""
+
+        if current_user.id is None:
+            return self.failure(
+                ErrorCode.COMMON_INTERNAL_ERROR,
+                "The current user does not have a persisted identifier.",
+            )
+
+        item = get_item_by_id(session, item_id)
+        if item is None:
+            return self.failure(
+                ErrorCode.ITEM_NOT_FOUND,
+                "Item not found.",
+            )
+
+        if item.owner_id != current_user.id:
+            return self.failure(
+                ErrorCode.ITEM_FORBIDDEN,
+                "You do not have access to restore this item.",
+            )
+
+        if not item.is_archived:
+            return self.failure(
+                ErrorCode.ITEM_NOT_ARCHIVED,
+                "Item is not archived.",
+            )
+
+        if current_user.account_id is None:
+            return self.failure(
+                ErrorCode.COMMON_INTERNAL_ERROR,
+                "The current user is not linked to an account.",
+            )
+
+        reservation_result = reserve_feature_usage(
+            session,
+            account_id=current_user.account_id,
+            feature_key=ITEMS_RESTORE_FEATURE_KEY,
+            user_id=current_user.id,
+            request_id=request_id,
+        )
+        if not reservation_result.ok or reservation_result.value is None:
+            return ServiceResult(error=reservation_result.error)
+
+        reservation = reservation_result.value
+
+        item.is_archived = False
+        item.archived_at = None
+        item.restored_at = datetime.now(UTC)
+        item.restore_count += 1
+
+        try:
+            # Stage the restore update first so the restore write and usage commit land
+            # in the same transaction boundary.
+            saved_item = add_item(session, item)
+        except RepositoryError:
+            release_result = release_reserved_usage(session, reservation_id=reservation.id or 0)
+            if not release_result.ok:
+                return ServiceResult(error=release_result.error)
+            return self.failure(
+                ErrorCode.ITEM_PERSIST_FAILED,
+                "Unable to restore the example item right now.",
+            )
+
+        commit_result = commit_reserved_usage(
+            session,
+            reservation_id=reservation.id or 0,
+        )
+        if not commit_result.ok:
+            session.rollback()
+            return ServiceResult(error=commit_result.error)
+
+        try:
+            delete_prefix(_items_cache_prefix(owner_id=current_user.id), cache_name="items_list")
+        except Exception:
+            pass
+
+        return self.success(saved_item)
 
 
 def create_item_for_user(
@@ -244,4 +344,21 @@ def list_items_for_user(
         current_user=current_user,
         offset=offset,
         limit=limit,
+    )
+
+
+def restore_item_for_user(
+    session: Session,
+    item_id: int,
+    current_user: UserModel,
+    request_id: str,
+) -> ServiceResult[Item]:
+    """Convenience wrapper around ``ItemService.restore_item_for_user``."""
+
+    service = ItemService()
+    return service.restore_item_for_user(
+        session=session,
+        item_id=item_id,
+        current_user=current_user,
+        request_id=request_id,
     )

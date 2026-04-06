@@ -11,6 +11,7 @@ from app.services.item_service import (
     archive_item_for_user,
     create_item_for_user,
     list_items_for_user,
+    restore_item_for_user,
 )
 
 router = APIRouter()
@@ -100,6 +101,25 @@ def archive_item(
             item_id=item_id,
             current_user=current_user,
             # The request id lets the service tie reservation and usage events to one request.
+            request_id=get_request_id(request),
+        )
+    )
+
+
+@router.post("/{item_id}/restore", response_model=ItemPublic)
+def restore_item(
+    request: Request,
+    item_id: int,
+    session: Session = Depends(get_session),
+    current_user: UserModel = Depends(get_current_user),
+):
+    """Restore one archived item when it belongs to the current user."""
+
+    return unwrap_result(
+        restore_item_for_user(
+            session=session,
+            item_id=item_id,
+            current_user=current_user,
             request_id=get_request_id(request),
         )
     )

@@ -23,4 +23,7 @@ class ItemPublic(ItemBase):
     is_archived: bool
     archived_at: datetime | None = None
 
+    restored_at: datetime | None = None
+    restore_count: int = 0
+
     model_config = ConfigDict(from_attributes=True)

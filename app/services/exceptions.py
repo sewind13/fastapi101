@@ -22,5 +22,6 @@ class ErrorCode:
     ITEM_NOT_FOUND = "item.not_found"
     ITEM_FORBIDDEN = "item.forbidden"
     ITEM_ALREADY_ARCHIVED = "item.already_archived"
+    ITEM_NOT_ARCHIVED = "item.not_archived"
     ITEM_PERSIST_FAILED = "item.persist_failed"
     COMMON_INTERNAL_ERROR = "common.internal_error"

@@ -230,6 +230,48 @@ For other tables, use the same idea:
 - inspect the table definition with `\d <table_name>`
 - inspect a few real rows with `SELECT ... LIMIT ...`
 
+### Common `psql` Prompt Confusion
+
+If `psql` shows this prompt:
+
+```text
+app-#
+```
+
+that usually means the current SQL statement has not finished yet. The most common reason is forgetting the trailing `;`.
+
+Example:
+
+```sql
+select * from item limit 10
+```
+
+Because there is no `;`, `psql` keeps waiting for more input instead of executing the query.
+
+To fix it:
+
+1. finish the statement with `;`
+2. or reset the current query buffer with `\r`
+
+Examples:
+
+```sql
+select * from item limit 10;
+select count(*) from item;
+```
+
+or:
+
+```sql
+\r
+select * from item limit 10;
+```
+
+Prompt meaning:
+
+- `app=#` means `psql` is ready for a new command
+- `app-#` means the previous command is still open
+
 ## What To Do After A Successful Migration
 
 Once `make migrate` succeeds, treat that as the start of verification, not the end of the work.

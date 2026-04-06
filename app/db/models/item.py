@@ -19,5 +19,9 @@ class Item(SQLModel, table=True):
 
     owner: Optional["User"] = Relationship(back_populates="items")
 
-    is_archived: bool = False
-    archived_at: datetime | None = None
+    is_archived: bool = Field(default=False, nullable=False)
+    archived_at: datetime | None = Field(default=None, nullable=True)
+
+    restored_at: datetime | None = Field(default=None, nullable=True)
+    restore_count: int = Field(default=0, nullable=False)
+

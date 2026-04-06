@@ -228,6 +228,48 @@ SELECT id, title, is_archived, archived_at FROM item LIMIT 5;
 - ดูโครง table ด้วย `\d <table_name>`
 - ดูข้อมูลจริงสักไม่กี่แถวด้วย `SELECT ... LIMIT ...`
 
+### จุดที่มักงงใน `psql`
+
+ถ้า `psql` ขึ้น prompt แบบนี้:
+
+```text
+app-#
+```
+
+ส่วนใหญ่แปลว่าคำสั่ง SQL ก่อนหน้ายังไม่จบ โดยสาเหตุที่เจอบ่อยที่สุดคือ **ลืมใส่ `;` ท้ายคำสั่ง**
+
+ตัวอย่าง:
+
+```sql
+select * from item limit 10
+```
+
+เพราะไม่มี `;` ทำให้ `psql` ยังรอ input ต่อ และยังไม่ execute query
+
+วิธีแก้มี 2 แบบ:
+
+1. ปิด statement ให้ครบด้วย `;`
+2. หรือ reset query buffer ปัจจุบันด้วย `\r`
+
+ตัวอย่าง:
+
+```sql
+select * from item limit 10;
+select count(*) from item;
+```
+
+หรือ:
+
+```sql
+\r
+select * from item limit 10;
+```
+
+ความหมายของ prompt:
+
+- `app=#` คือพร้อมรับคำสั่งใหม่
+- `app-#` คือคำสั่งก่อนหน้ายังไม่จบ
+
 ## หลัง migrate สำเร็จแล้วควรทำอะไรต่อ
 
 เมื่อ `make migrate` ผ่านแล้ว ให้มองว่านี่เป็น “จุดเริ่มของการ verify” ไม่ใช่จบงานทันที

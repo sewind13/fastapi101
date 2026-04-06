@@ -29,6 +29,18 @@ def _grant_item_archive_entitlement(session, *, account_id: int, units_total: in
     assert grant_result.ok is True
 
 
+def _grant_item_restore_entitlement(session, *, account_id: int, units_total: int = 1) -> None:
+    grant_result = grant_entitlement(
+        session,
+        account_id=account_id,
+        resource_key="item_restore",
+        units_total=units_total,
+        source_type="grant",
+        source_id=f"test-item-restore-{units_total}",
+    )
+    assert grant_result.ok is True
+
+
 def _create_item(session, *, owner_id: int, title: str = "Existing Item") -> Item:
     item = Item(
         title=title,
@@ -296,3 +308,185 @@ async def test_read_items_hides_archived_items_by_default(client, session):
     returned_ids = {item["id"] for item in data}
     assert active_item.id in returned_ids
     assert archived_item.id not in returned_ids
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_restore_item_success(client, session):
+    user = create_test_user(
+        session,
+        username="item-restore-user",
+        email="item-restore@example.com",
+    )
+    assert user.id is not None
+    assert user.account_id is not None
+    _grant_item_restore_entitlement(session, account_id=user.account_id, units_total=1)
+
+    item = _create_item(session, owner_id=user.id, title="Restore Me")
+    item.is_archived = True
+    item.archived_at = item.created_at
+    item.restore_count = 0
+    session.add(item)
+    session.commit()
+    session.refresh(item)
+
+    response = await client.post(
+        f"/api/v1/items/{item.id}/restore",
+        headers=build_token_headers(user.id, user.username),
+    )
+
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == item.id
+    assert data["is_archived"] is False
+    assert data["archived_at"] is None
+    assert data["restored_at"] is not None
+    assert data["restore_count"] == 1
+
+    refreshed = session.get(Item, item.id)
+    assert refreshed is not None
+    assert refreshed.is_archived is False
+    assert refreshed.archived_at is None
+    assert refreshed.restored_at is not None
+    assert refreshed.restore_count == 1
+
+    balance_result = get_account_balance_service(
+        session,
+        account_id=user.account_id,
+        resource_key="item_restore",
+    )
+    assert balance_result.ok is True
+    assert balance_result.value == 0
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_restore_item_without_entitlement_is_forbidden(client, session):
+    user = create_test_user(
+        session,
+        username="item-restore-no-quota-user",
+        email="item-restore-no-quota@example.com",
+    )
+    assert user.id is not None
+
+    item = _create_item(session, owner_id=user.id, title="Restore No Quota")
+    item.is_archived = True
+    session.add(item)
+    session.commit()
+
+    response = await client.post(
+        f"/api/v1/items/{item.id}/restore",
+        headers=build_token_headers(user.id, user.username),
+    )
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "billing.no_entitlement"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_restore_item_forbidden_for_non_owner(client, session):
+    owner = create_test_user(
+        session,
+        username="item-restore-owner-user",
+        email="item-restore-owner@example.com",
+    )
+    attacker = create_test_user(
+        session,
+        username="item-restore-attacker-user",
+        email="item-restore-attacker@example.com",
+    )
+    assert owner.id is not None
+    assert attacker.id is not None
+    assert attacker.account_id is not None
+    _grant_item_restore_entitlement(session, account_id=attacker.account_id, units_total=1)
+
+    item = _create_item(session, owner_id=owner.id, title="Restore Private Item")
+    item.is_archived = True
+    session.add(item)
+    session.commit()
+
+    response = await client.post(
+        f"/api/v1/items/{item.id}/restore",
+        headers=build_token_headers(attacker.id, attacker.username),
+    )
+
+    assert response.status_code == 403
+    assert response.json()["error_code"] == "item.forbidden"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_restore_item_not_found(client, session):
+    user = create_test_user(
+        session,
+        username="item-restore-missing-user",
+        email="item-restore-missing@example.com",
+    )
+    assert user.id is not None
+    assert user.account_id is not None
+    _grant_item_restore_entitlement(session, account_id=user.account_id, units_total=1)
+
+    response = await client.post(
+        "/api/v1/items/999999/restore",
+        headers=build_token_headers(user.id, user.username),
+    )
+
+    assert response.status_code == 404
+    assert response.json()["error_code"] == "item.not_found"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_restore_item_not_archived(client, session):
+    user = create_test_user(
+        session,
+        username="item-restore-not-archived-user",
+        email="item-restore-not-archived@example.com",
+    )
+    assert user.id is not None
+    assert user.account_id is not None
+    _grant_item_restore_entitlement(session, account_id=user.account_id, units_total=1)
+
+    item = _create_item(session, owner_id=user.id, title="Already Active")
+
+    response = await client.post(
+        f"/api/v1/items/{item.id}/restore",
+        headers=build_token_headers(user.id, user.username),
+    )
+
+    assert response.status_code == 409
+    assert response.json()["error_code"] == "item.not_archived"
+
+
+@pytest.mark.integration
+@pytest.mark.asyncio
+async def test_restore_item_makes_item_visible_in_list_again(client, session):
+    user = create_test_user(
+        session,
+        username="item-restore-visible-user",
+        email="item-restore-visible@example.com",
+    )
+    assert user.id is not None
+    assert user.account_id is not None
+    _grant_item_restore_entitlement(session, account_id=user.account_id, units_total=1)
+
+    item = _create_item(session, owner_id=user.id, title="Back To List")
+    item.is_archived = True
+    session.add(item)
+    session.commit()
+
+    restore_response = await client.post(
+        f"/api/v1/items/{item.id}/restore",
+        headers=build_token_headers(user.id, user.username),
+    )
+    assert restore_response.status_code == 200
+
+    list_response = await client.get(
+        "/api/v1/items/",
+        headers=build_token_headers(user.id, user.username),
+    )
+    assert list_response.status_code == 200
+
+    returned_ids = {entry["id"] for entry in list_response.json()}
+    assert item.id in returned_ids

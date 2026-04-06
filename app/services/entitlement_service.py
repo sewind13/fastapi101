@@ -34,8 +34,13 @@ FEATURE_POLICIES: dict[str, dict[str, Any]] = {
     "items.archive": {
         "resource_key": "item_archive",
         "units_per_call": 1,
-        "charge_on": "success", 
-    }
+        "charge_on": "success",
+    },
+    "items.restore": {
+        "resource_key": "item_restore",
+        "units_per_call": 1,
+        "charge_on": "success",
+    },
 }
 
 
