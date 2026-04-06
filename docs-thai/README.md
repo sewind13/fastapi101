@@ -29,7 +29,8 @@
 7. ถ้าจะปรับ config อ่าน [configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md)
 8. ถ้าจะ deploy ต่อ อ่าน [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
 9. ถ้าจะ deploy แบบ production-minded ต่อ อ่าน [production-topology.md](/Users/pluto/Documents/git/fastapi101/docs-thai/production-topology.md), [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md), และ [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
-10. ถ้า service เริ่มโต อ่าน [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md) และ [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
+10. ก่อน deploy shared env จริง ให้อ่าน [security-hardening.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security-hardening.md) ควบคู่กับ [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
+11. ถ้า service เริ่มโต อ่าน [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md) และ [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
 
 ถ้าต้องการเวอร์ชันย่อมาก ๆ:
 
@@ -62,6 +63,7 @@
 - [platform-starter.md](/Users/pluto/Documents/git/fastapi101/docs-thai/platform-starter.md): อธิบายแนวคิด Core / Extensions / Advanced
 - [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md): แนวทางจัดการ secrets และการ rotate
 - [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md): ภาพรวม security baseline ของ template
+- [security-hardening.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security-hardening.md): checklist รอบแรกสำหรับปิด unsafe defaults และ review sensitive surfaces ก่อนขึ้น shared env
 - [versioning.md](/Users/pluto/Documents/git/fastapi101/docs-thai/versioning.md): วิธีคิดเรื่อง version ของ template
 
 ## สถานะความครอบคลุมของ docs-thai

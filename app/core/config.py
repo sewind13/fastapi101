@@ -673,7 +673,16 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_production_settings(self) -> "Settings":
-        if self.app.env.lower() != "production":
+        env = self.app.env.lower().strip()
+        is_local_like = env in {"development", "dev", "local", "testing", "test"}
+
+        if self.security.secret_key == DEFAULT_SECRET_KEY and not is_local_like and env != "production":
+            raise ValueError(
+                "SECURITY__SECRET_KEY must be replaced before deploying to non-local "
+                "environments."
+            )
+
+        if env != "production":
             return self
 
         errors: list[str] = []

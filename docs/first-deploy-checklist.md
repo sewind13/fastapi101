@@ -2,6 +2,10 @@
 
 Use this checklist before the first real shared-environment or production-like deployment.
 
+Related review guide:
+
+- [security-hardening.md](./security-hardening.md)
+
 ## Configuration And Secrets
 
 - [ ] `SECURITY__SECRET_KEY` replaced with a real secret

@@ -217,6 +217,42 @@ def test_production_settings_require_safe_values():
     assert "API__PUBLIC_REGISTRATION_ENABLED should be false" in message
 
 
+def test_non_local_environments_require_non_default_secret_key():
+    with pytest.raises(ValidationError) as exc_info:
+        build_settings(
+            app={"name": "FastAPI Template", "debug": False, "env": "staging"},
+            security={
+                "secret_key": "change-me-to-a-32-character-minimum-secret",
+                "algorithm": "HS256",
+                "issuer": "template-staging",
+                "audience": "template-users",
+                "access_token_expire_minutes": 30,
+                "refresh_token_expire_minutes": 10080,
+            },
+        )
+
+    assert "SECURITY__SECRET_KEY must be replaced before deploying to non-local environments." in str(
+        exc_info.value
+    )
+
+
+def test_local_like_environments_allow_default_secret_key_for_development():
+    settings = build_settings(
+        app={"name": "FastAPI Template", "debug": False, "env": "testing"},
+        security={
+            "secret_key": "change-me-to-a-32-character-minimum-secret",
+            "algorithm": "HS256",
+            "issuer": "template-testing",
+            "audience": "template-users",
+            "access_token_expire_minutes": 30,
+            "refresh_token_expire_minutes": 10080,
+        },
+    )
+
+    assert settings.app.env == "testing"
+    assert settings.security.secret_key == "change-me-to-a-32-character-minimum-secret"
+
+
 def test_production_settings_accept_safe_values():
     settings = build_settings(
         app={"name": "FastAPI Template", "debug": False, "env": "production"},

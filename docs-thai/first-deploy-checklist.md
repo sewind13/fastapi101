@@ -2,6 +2,10 @@
 
 ใช้ checklist นี้ก่อน deploy ครั้งแรกใน shared env หรือ production-like environment จริง
 
+เอกสาร review ที่ควรอ่านคู่กัน:
+
+- [security-hardening.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security-hardening.md)
+
 ## configuration และ secrets
 
 - [ ] เปลี่ยน `SECURITY__SECRET_KEY` เป็นค่าจริงแล้ว
