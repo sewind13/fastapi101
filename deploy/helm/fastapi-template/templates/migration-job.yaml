@@ -1,0 +1,28 @@
+{{- if .Values.migrationJob.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "fastapi-template.fullname" . }}-migrate
+  labels:
+    {{- include "fastapi-template.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.migrationJob.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "fastapi-template.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: migration
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            {{- toYaml .Values.migrationJob.command | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ include "fastapi-template.fullname" . }}-secrets
+            - configMapRef:
+                name: {{ include "fastapi-template.fullname" . }}-config
+{{- end }}

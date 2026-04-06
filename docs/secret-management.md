@@ -12,6 +12,8 @@ Use this guide to keep a clear split between:
 
 The template supports nested environment variables, but production deployments should not treat `.env` as the long-term secret source of truth.
 
+For a production-oriented starting point, see [/.env.prod.example](/Users/pluto/Documents/git/fastapi101/.env.prod.example). Use it as an inventory and review aid, not as a committed source of real secrets.
+
 ## What Counts As A Secret
 
 In this template, these values should normally be treated as secrets:
@@ -193,6 +195,97 @@ Also check:
 - readiness failures
 - auth failures
 - worker backlog / DLQ depth
+
+## Backup, Restore, And Rollback Story
+
+Production readiness is not only about secret rotation. You also need a clear plan for:
+
+- how data is backed up
+- how backups are verified
+- how restores are practiced
+- how release rollback differs from data recovery
+
+### Backup Scope
+
+At minimum, define backup coverage for:
+
+- Postgres
+- Redis, if Redis stores state you cannot tolerate losing
+- broker state, if your operational model depends on durable queues
+- deployment config and secret inventory metadata
+
+Recommended baseline for this template:
+
+- Postgres backups are mandatory
+- Redis backups are optional when Redis is used only for cache
+- Redis persistence matters more when it holds shared rate-limit or idempotency state and you care about preserving it across incidents
+- broker durability should be handled by your queue platform settings, not assumed by the application
+
+### Postgres Backup Expectations
+
+For production-like use, have a written answer for all of these:
+
+- backup frequency
+- retention window
+- storage location
+- encryption at rest
+- restore ownership
+- last successful restore rehearsal date
+
+Recommended pattern:
+
+- use managed Postgres backups when available
+- also define point-in-time recovery expectations if the platform supports it
+- document how to restore into a new instance for validation
+
+### Restore Drill Expectations
+
+Backups are only trustworthy when restore is rehearsed.
+
+At minimum, rehearse:
+
+1. restoring a recent Postgres backup into an isolated environment
+2. pointing a copy of the app at that restored database
+3. verifying login, one protected route, and one representative business flow
+4. confirming Alembic version state is what you expect
+
+Keep a record of:
+
+- backup timestamp used
+- restore target environment
+- validation steps run
+- issues found and follow-up work
+
+### Rollback vs Restore
+
+Treat these as different tools:
+
+- rollback:
+  move the application back to a previous working release
+- restore:
+  recover data or infrastructure state from a backup
+
+Use rollback first when:
+
+- the new app image is bad
+- the new worker build is bad
+- the migration is forward-compatible and the previous app can still run safely
+
+Use restore when:
+
+- data was corrupted or deleted
+- a destructive migration was applied incorrectly
+- an infrastructure failure requires state recovery
+
+### Minimum Recovery Runbook
+
+Before calling the template production-ready, document:
+
+1. who can trigger restore actions
+2. where backups live
+3. what recovery point objective you accept
+4. what recovery time objective you accept
+5. how to validate a restored environment before sending traffic
 
 ## What Not To Do
 

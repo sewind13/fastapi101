@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: fastapi-template-migrate
+spec:
+  backoffLimit: 1
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: ghcr.io/your-org/fastapi-template:latest
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/sh
+            - -c
+            - uv run alembic upgrade head
+          envFrom:
+            - secretRef:
+                name: fastapi-template-app-secrets
+            - configMapRef:
+                name: fastapi-template-app-config

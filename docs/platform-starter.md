@@ -188,6 +188,8 @@ The lists below are meant to help a team decide what to learn first and what can
   Protected operations API for outbox visibility and replay actions.
 - [deploy/kubernetes](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes)
   Kubernetes baseline manifests for app, worker, outbox dispatcher, ingress, HPA, network policy, and maintenance jobs.
+- [deploy/helm/fastapi-template](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template)
+  Helm baseline for teams that want chart-driven production deployment.
 - [deploy/nginx/nginx.conf](/Users/pluto/Documents/git/fastapi101/deploy/nginx/nginx.conf)
   Reverse-proxy sample for production deployments.
 

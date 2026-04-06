@@ -121,6 +121,7 @@ repo นี้ควรถูกใช้งานผ่าน 3 ชั้น:
 - outbox model/repository/service
 - `app/api/v1/ops.py`
 - `deploy/kubernetes`
+- `deploy/helm/fastapi-template`
 - `deploy/nginx/nginx.conf`
 
 ## repo นี้เหมาะกับใคร

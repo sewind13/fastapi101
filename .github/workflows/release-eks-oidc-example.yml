@@ -1,0 +1,182 @@
+name: Release To EKS With OIDC Example
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Image tag to build and deploy
+        required: true
+        default: latest
+      release_name:
+        description: Helm release name
+        required: true
+        default: fastapi-template
+      namespace:
+        description: Kubernetes namespace
+        required: true
+        default: default
+      run_worker:
+        description: Wait for worker rollout
+        required: true
+        default: "true"
+      run_outbox_dispatcher:
+        description: Wait for outbox dispatcher rollout
+        required: true
+        default: "true"
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  EKS_CLUSTER_NAME: ${{ vars.EKS_CLUSTER_NAME }}
+  AWS_ROLE_ARN: ${{ vars.AWS_ROLE_ARN }}
+  IMAGE_REPOSITORY: ghcr.io/${{ github.repository }}
+
+concurrency:
+  group: eks-release-${{ github.event.repository.name }}-${{ inputs.release_name }}-${{ inputs.namespace }}
+  cancel-in-progress: false
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate required GitHub repository variables
+        env:
+          AWS_REGION: ${{ env.AWS_REGION }}
+          EKS_CLUSTER_NAME: ${{ env.EKS_CLUSTER_NAME }}
+          AWS_ROLE_ARN: ${{ env.AWS_ROLE_ARN }}
+        run: |
+          test -n "$AWS_REGION" || { echo "Missing repository variable: AWS_REGION"; exit 1; }
+          test -n "$EKS_CLUSTER_NAME" || { echo "Missing repository variable: EKS_CLUSTER_NAME"; exit 1; }
+          test -n "$AWS_ROLE_ARN" || { echo "Missing repository variable: AWS_ROLE_ARN"; exit 1; }
+
+  build:
+    runs-on: ubuntu-latest
+    needs: preflight
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ env.IMAGE_REPOSITORY }}:${{ inputs.image_tag }}
+
+  migrate:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure AWS credentials from GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Lint Helm chart
+        run: helm lint deploy/helm/fastapi-template
+
+      - name: Run migration job from Helm chart
+        run: |
+          kubectl delete job ${{ inputs.release_name }}-migrate --namespace ${{ inputs.namespace }} --ignore-not-found
+          helm template ${{ inputs.release_name }} deploy/helm/fastapi-template \
+            --namespace ${{ inputs.namespace }} \
+            --values deploy/helm/fastapi-template/values.prod.example.yaml \
+            --set image.repository=${{ env.IMAGE_REPOSITORY }} \
+            --set image.tag=${{ inputs.image_tag }} \
+            --show-only templates/migration-job.yaml | kubectl apply -n ${{ inputs.namespace }} -f -
+          kubectl wait --namespace ${{ inputs.namespace }} --for=condition=complete job/${{ inputs.release_name }}-migrate --timeout=300s
+          kubectl logs --namespace ${{ inputs.namespace }} job/${{ inputs.release_name }}-migrate --tail=200
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - migrate
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Configure AWS credentials from GitHub OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ env.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Update kubeconfig for EKS
+        run: aws eks update-kubeconfig --name "$EKS_CLUSTER_NAME" --region "$AWS_REGION"
+
+      - name: Lint Helm chart
+        run: helm lint deploy/helm/fastapi-template
+
+      - name: Deploy with Helm
+        run: |
+          helm upgrade --install ${{ inputs.release_name }} deploy/helm/fastapi-template \
+            --namespace ${{ inputs.namespace }} \
+            --create-namespace \
+            --values deploy/helm/fastapi-template/values.prod.example.yaml \
+            --set image.repository=${{ env.IMAGE_REPOSITORY }} \
+            --set image.tag=${{ inputs.image_tag }} \
+            --set migrationJob.enabled=false
+
+      - name: Wait for API rollout
+        run: kubectl rollout status deployment/${{ inputs.release_name }}-api --namespace ${{ inputs.namespace }} --timeout=300s
+
+      - name: Wait for worker rollout
+        if: ${{ inputs.run_worker == 'true' }}
+        run: kubectl rollout status deployment/${{ inputs.release_name }}-worker --namespace ${{ inputs.namespace }} --timeout=300s
+
+      - name: Wait for outbox dispatcher rollout
+        if: ${{ inputs.run_outbox_dispatcher == 'true' }}
+        run: kubectl rollout status deployment/${{ inputs.release_name }}-outbox-dispatcher --namespace ${{ inputs.namespace }} --timeout=300s
+
+      - name: Show deployed workloads
+        run: |
+          kubectl get deploy --namespace ${{ inputs.namespace }}
+          kubectl get pods --namespace ${{ inputs.namespace }} -o wide
+
+      - name: Show release summary
+        run: |
+          echo "Release name: ${{ inputs.release_name }}"
+          echo "Namespace: ${{ inputs.namespace }}"
+          echo "Image: ${{ env.IMAGE_REPOSITORY }}:${{ inputs.image_tag }}"
+          kubectl get ingress --namespace ${{ inputs.namespace }} || true

@@ -1,0 +1,130 @@
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: ghcr.io/your-org/fastapi-template
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+hpa:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
+api:
+  enabled: true
+  command:
+    - /bin/sh
+    - -c
+    - ./scripts/start-web.sh
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+worker:
+  enabled: true
+  replicaCount: 1
+  command:
+    - /bin/sh
+    - -c
+    - ./scripts/start-worker.sh
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+outboxDispatcher:
+  enabled: true
+  replicaCount: 1
+  command:
+    - /bin/sh
+    - -c
+    - ./scripts/start-outbox-dispatcher.sh
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+migrationJob:
+  enabled: true
+  backoffLimit: 1
+  command:
+    - /bin/sh
+    - -c
+    - uv run alembic upgrade head
+
+config:
+  APP__ENV: "production"
+  APP__NAME: "FastAPI Product Template"
+  APP__DEBUG: "false"
+  API__V1_PREFIX: "/api/v1"
+  API__CORS_ORIGINS: '["https://app.example.com"]'
+  DATABASE__POOL_SIZE: "10"
+  DATABASE__MAX_OVERFLOW: "20"
+  SECURITY__ISSUER: "https://api.example.com"
+  SECURITY__AUDIENCE: "fastapi-product-template"
+  AUTH_RATE_LIMIT__ENABLED: "true"
+  AUTH_RATE_LIMIT__BACKEND: "redis"
+  AUTH_RATE_LIMIT__TRUST_PROXY_HEADERS: "true"
+  AUTH_RATE_LIMIT__TRUSTED_PROXY_CIDRS: '["10.0.0.0/8"]'
+  LOGGING__LEVEL: "INFO"
+  METRICS__ENABLED: "true"
+  METRICS__PATH: "/metrics"
+  TELEMETRY__ENABLED: "false"
+  CACHE__ENABLED: "true"
+  CACHE__BACKEND: "redis"
+  WORKER__ENABLED: "true"
+  WORKER__QUEUE_NAME: "app.default"
+  WORKER__RETRY_QUEUE_NAME: "app.default.retry"
+  WORKER__DEAD_LETTER_QUEUE_NAME: "app.default.dlq"
+  WORKER__PREFETCH_COUNT: "10"
+  WORKER__MAX_RETRIES: "3"
+  WORKER__RETRY_DELAY_MS: "30000"
+  WORKER__MAX_RETRY_DELAY_MS: "300000"
+  WORKER__REQUEUE_ON_FAILURE: "false"
+  WORKER__IDEMPOTENCY_ENABLED: "true"
+  WORKER__IDEMPOTENCY_BACKEND: "redis"
+  WORKER__IDEMPOTENCY_KEY_PREFIX: "worker_idempotency"
+  WORKER__IDEMPOTENCY_TTL_SECONDS: "86400"
+  HEALTH__ENABLE_REDIS_CHECK: "true"
+  HEALTH__ENABLE_QUEUE_CHECK: "true"
+
+secretData:
+  SECURITY__SECRET_KEY: "replace-with-a-long-random-secret"
+  DATABASE__URL: "postgresql+psycopg://app:replace-me@postgres.example.internal:5432/app"
+  AUTH_RATE_LIMIT__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/0"
+  CACHE__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/2"
+  WORKER__BROKER_URL: "amqp://user:replace-me@rabbitmq.example.internal:5672/"
+  WORKER__IDEMPOTENCY_REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/1"
+  HEALTH__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/0"
+  HEALTH__QUEUE_URL: "amqp://user:replace-me@rabbitmq.example.internal:5672/"
+  METRICS__AUTH_TOKEN: "replace-with-a-real-metrics-token"

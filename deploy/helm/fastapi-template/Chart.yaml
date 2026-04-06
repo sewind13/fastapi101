@@ -1,0 +1,6 @@
+apiVersion: v2
+name: fastapi-template
+description: Baseline Helm chart for the FastAPI production starter
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

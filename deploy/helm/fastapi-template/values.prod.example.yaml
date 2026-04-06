@@ -1,0 +1,144 @@
+image:
+  repository: ghcr.io/your-org/fastapi-template
+  tag: "2026.04.06"
+  pullPolicy: IfNotPresent
+
+replicaCount: 3
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+  hosts:
+    - host: api.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: api-example-com-tls
+      hosts:
+        - api.example.com
+
+hpa:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+
+api:
+  enabled: true
+  command:
+    - /bin/sh
+    - -c
+    - ./scripts/start-web.sh
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+worker:
+  enabled: true
+  replicaCount: 2
+  command:
+    - /bin/sh
+    - -c
+    - ./scripts/start-worker.sh
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "1"
+      memory: 1Gi
+
+outboxDispatcher:
+  enabled: true
+  replicaCount: 1
+  command:
+    - /bin/sh
+    - -c
+    - ./scripts/start-outbox-dispatcher.sh
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+migrationJob:
+  enabled: true
+  backoffLimit: 1
+  command:
+    - /bin/sh
+    - -c
+    - uv run alembic upgrade head
+
+config:
+  APP__ENV: "production"
+  APP__NAME: "Your Product API"
+  APP__DEBUG: "false"
+  APP__PUBLIC_BASE_URL: "https://api.example.com"
+  API__V1_PREFIX: "/api/v1"
+  API__CORS_ORIGINS: '["https://app.example.com"]'
+  API__PUBLIC_REGISTRATION_ENABLED: "false"
+  DATABASE__POOL_SIZE: "20"
+  DATABASE__MAX_OVERFLOW: "30"
+  DATABASE__POOL_TIMEOUT: "30"
+  DATABASE__POOL_RECYCLE: "1800"
+  SECURITY__ISSUER: "https://api.example.com"
+  SECURITY__AUDIENCE: "your-product-users"
+  AUTH_RATE_LIMIT__ENABLED: "true"
+  AUTH_RATE_LIMIT__BACKEND: "redis"
+  AUTH_RATE_LIMIT__TRUST_PROXY_HEADERS: "true"
+  AUTH_RATE_LIMIT__TRUSTED_PROXY_CIDRS: '["10.0.0.0/8"]'
+  LOGGING__LEVEL: "INFO"
+  LOGGING__AUDIT_LEVEL: "INFO"
+  METRICS__ENABLED: "true"
+  METRICS__PATH: "/metrics"
+  METRICS__INCLUDE_IN_SCHEMA: "false"
+  TELEMETRY__ENABLED: "true"
+  TELEMETRY__SERVICE_NAME: "your-product-api"
+  TELEMETRY__SERVICE_VERSION: "2026.04.06"
+  TELEMETRY__EXPORTER_OTLP_ENDPOINT: "http://otel-collector.monitoring.svc.cluster.local:4317"
+  TELEMETRY__EXPORTER_OTLP_INSECURE: "true"
+  CACHE__ENABLED: "true"
+  CACHE__BACKEND: "redis"
+  OPS__ENABLED: "true"
+  WORKER__ENABLED: "true"
+  WORKER__QUEUE_NAME: "app.default"
+  WORKER__RETRY_QUEUE_NAME: "app.default.retry"
+  WORKER__DEAD_LETTER_QUEUE_NAME: "app.default.dlq"
+  WORKER__PREFETCH_COUNT: "20"
+  WORKER__MAX_RETRIES: "3"
+  WORKER__RETRY_DELAY_MS: "30000"
+  WORKER__MAX_RETRY_DELAY_MS: "300000"
+  WORKER__REQUEUE_ON_FAILURE: "false"
+  WORKER__IDEMPOTENCY_ENABLED: "true"
+  WORKER__IDEMPOTENCY_BACKEND: "redis"
+  WORKER__IDEMPOTENCY_KEY_PREFIX: "worker_idempotency"
+  WORKER__IDEMPOTENCY_TTL_SECONDS: "86400"
+  HEALTH__TIMEOUT_SECONDS: "2.0"
+  HEALTH__ENABLE_REDIS_CHECK: "true"
+  HEALTH__ENABLE_QUEUE_CHECK: "true"
+
+secretData:
+  SECURITY__SECRET_KEY: "replace-me-from-secret-manager"
+  DATABASE__URL: "postgresql+psycopg://app:replace-me@postgres.example.internal:5432/app"
+  AUTH_RATE_LIMIT__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/0"
+  CACHE__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/2"
+  WORKER__BROKER_URL: "amqp://user:replace-me@rabbitmq.example.internal:5672/"
+  WORKER__IDEMPOTENCY_REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/1"
+  HEALTH__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/0"
+  HEALTH__QUEUE_URL: "amqp://user:replace-me@rabbitmq.example.internal:5672/"
+  METRICS__AUTH_TOKEN: "replace-me-from-secret-manager"

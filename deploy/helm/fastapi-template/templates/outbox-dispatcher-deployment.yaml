@@ -1,0 +1,34 @@
+{{- if .Values.outboxDispatcher.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fastapi-template.fullname" . }}-outbox-dispatcher
+  labels:
+    {{- include "fastapi-template.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.outboxDispatcher.replicaCount }}
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      {{- include "fastapi-template.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: outbox-dispatcher
+  template:
+    metadata:
+      labels:
+        {{- include "fastapi-template.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: outbox-dispatcher
+    spec:
+      containers:
+        - name: outbox-dispatcher
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            {{- toYaml .Values.outboxDispatcher.command | nindent 12 }}
+          envFrom:
+            - secretRef:
+                name: {{ include "fastapi-template.fullname" . }}-secrets
+            - configMapRef:
+                name: {{ include "fastapi-template.fullname" . }}-config
+          resources:
+            {{- toYaml .Values.outboxDispatcher.resources | nindent 12 }}
+{{- end }}

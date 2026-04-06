@@ -28,7 +28,8 @@
 6. อ่าน [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md) ถ้าจะเปลี่ยน schema หรือ debug ปัญหา DB ใน local
 7. ถ้าจะปรับ config อ่าน [configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md)
 8. ถ้าจะ deploy ต่อ อ่าน [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
-9. ถ้า service เริ่มโต อ่าน [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md) และ [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
+9. ถ้าจะ deploy แบบ production-minded ต่อ อ่าน [production-topology.md](/Users/pluto/Documents/git/fastapi101/docs-thai/production-topology.md), [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md), และ [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
+10. ถ้า service เริ่มโต อ่าน [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md) และ [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
 
 ถ้าต้องการเวอร์ชันย่อมาก ๆ:
 
@@ -50,6 +51,10 @@
 - [auth-for-clients.md](/Users/pluto/Documents/git/fastapi101/docs-thai/auth-for-clients.md): คู่มือ auth จากมุมของคนใช้ API
 - [configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md): อธิบายกลุ่ม config ที่ควรรู้ก่อนเริ่ม
 - [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md): แนวทางขึ้นระบบ, health checks, metrics, และ deployment mindset
+- [/.env.prod.example](/Users/pluto/Documents/git/fastapi101/.env.prod.example): baseline env example สำหรับ production-oriented config review
+- [production-topology.md](/Users/pluto/Documents/git/fastapi101/docs-thai/production-topology.md): topology ที่แนะนำสำหรับ production-like / production deployment
+- [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md): baseline observability ที่ควรเปิดเมื่อจะใช้จริง
+- [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md): checklist ก่อน deploy ครั้งแรก
 - [error-codes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/error-codes.md): สรุป error codes ที่สำคัญ
 - [load-testing.md](/Users/pluto/Documents/git/fastapi101/docs-thai/load-testing.md): แนวคิดและ workflow สำหรับทดสอบโหลด
 - [openapi.md](/Users/pluto/Documents/git/fastapi101/docs-thai/openapi.md): วิธีใช้ OpenAPI / Swagger UI
@@ -73,6 +78,9 @@
 - [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
 - [configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md)
 - [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
+- [production-topology.md](/Users/pluto/Documents/git/fastapi101/docs-thai/production-topology.md)
+- [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md)
+- [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
 - [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
 - [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md)
 - [auth-for-clients.md](/Users/pluto/Documents/git/fastapi101/docs-thai/auth-for-clients.md)
@@ -123,10 +131,13 @@
 ถ้าคุณเป็น ops/platform engineer:
 
 1. [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
-2. [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md)
-3. [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
-4. [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
-5. [load-testing.md](/Users/pluto/Documents/git/fastapi101/docs-thai/load-testing.md)
+2. [production-topology.md](/Users/pluto/Documents/git/fastapi101/docs-thai/production-topology.md)
+3. [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md)
+4. [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
+5. [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md)
+6. [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
+7. [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
+8. [load-testing.md](/Users/pluto/Documents/git/fastapi101/docs-thai/load-testing.md)
 
 ถ้าคุณเป็นคนเริ่มโปรเจกต์/tech lead:
 
