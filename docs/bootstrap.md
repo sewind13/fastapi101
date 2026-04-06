@@ -44,8 +44,12 @@ These settings are intentionally convenient for local development and should be 
 - `METRICS__ENABLED`
 - `METRICS__AUTH_TOKEN`
 - `AUTH_RATE_LIMIT__BACKEND`
+- `AUTH_RATE_LIMIT__REDIS_URL`
 - `CACHE__BACKEND`
+- `CACHE__REDIS_URL`
 - `WORKER__ENABLED`
+- `WORKER__IDEMPOTENCY_BACKEND`
+- `WORKER__IDEMPOTENCY_REDIS_URL`
 - `WEBHOOK__ENABLED`
 - `EMAIL__ENABLED`
 
@@ -64,6 +68,8 @@ EMAIL__ENABLED="false"
 ```
 
 Enable extra subsystems only after the owning team is ready to operate them.
+
+If you want Redis locally, this repository now includes an optional compose `redis` profile. That is a good fit for development and smoke testing. For shared or production environments, prefer pointing `*_REDIS_URL` settings at an external or managed Redis service instead of treating compose Redis as long-lived infrastructure.
 
 If you already have an internal Prometheus scrape path and private network controls in place, you can then turn metrics back on and set `METRICS__AUTH_TOKEN`.
 

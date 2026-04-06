@@ -41,6 +41,10 @@ make ps
 make logs
 make shell-web
 make psql-web
+make up-redis
+make down-redis
+make ps-redis
+make logs-redis
 ```
 
 ถ้ากำลังจะแก้ table หรือ column ให้เปิด [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md) ประกบไว้ก่อน เพราะไฟล์นั้นอธิบาย flow การแก้ schema และวิธี debug ปัญหา local DB โดยตรง
@@ -49,6 +53,128 @@ make psql-web
 
 ```bash
 make down
+```
+
+## ถ้าจะรัน local แบบมี Redis
+
+repo นี้มี optional compose profile ชื่อ `redis` แล้ว ใช้สำหรับลอง cache, auth rate limiting, worker idempotency หรือ health check แบบ Redis-backed ได้
+
+เริ่ม stack พร้อม Redis:
+
+```bash
+make up-redis
+```
+
+คำสั่งช่วย:
+
+```bash
+make ps-redis
+make logs-redis
+make down-redis
+```
+
+ค่าที่แนะนำถ้าจะให้ app ใน compose คุยกับ Redis ตัวนี้:
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+AUTH_RATE_LIMIT__BACKEND="redis"
+AUTH_RATE_LIMIT__REDIS_URL="redis://redis:6379/0"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+WORKER__IDEMPOTENCY_REDIS_URL="redis://redis:6379/1"
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
+
+ความหมายของแต่ละชุด config:
+
+- `CACHE__*`
+  เปิด application read cache และเก็บค่าลง Redis แทน memory ของแต่ละ process
+- `AUTH_RATE_LIMIT__*`
+  เก็บ counters ของ auth rate limit ไว้ใน Redis เพื่อให้หลาย app instances ใช้ state ชุดเดียวกัน
+- `WORKER__IDEMPOTENCY_*`
+  เก็บ idempotency keys ของ worker ไว้ใน Redis เพื่อกัน task ซ้ำข้าม process หรือรอบ retry
+- `HEALTH__*`
+  ให้ readiness/health check ลอง ping Redis แล้วรายงาน dependency นี้ได้
+
+ทำไมตัวอย่างถึงแยก `/0`, `/1`, `/2`:
+
+- `/0`
+  ใช้กับ auth rate limit และ Redis health check
+- `/1`
+  ใช้กับ worker idempotency
+- `/2`
+  ใช้กับ application cache
+
+การแยกแบบนี้ไม่บังคับ แต่ช่วยให้ debug และ inspect keys ใน local ง่ายขึ้นมาก
+
+ถ้าจะใช้ Redis ภายนอก compose หรือ managed Redis ก็ใช้ pattern เดิมได้เหมือนกัน แค่เปลี่ยน URL ให้ชี้ไปยัง service นั้น เช่น `redis://host.docker.internal:6379/0`
+
+คำแนะนำแบบ practical:
+
+- local dev: ใช้ compose Redis ได้เลย
+- shared env หรือ production-like env: ควรชี้ไป external/managed Redis มากกว่า
+
+### ตัวอย่าง `.env` แบบพร้อมใช้
+
+ถ้าอยากได้จุดเริ่มต้นที่ copy ไปใช้ได้เร็ว ลองเลือกจาก 3 profile นี้
+
+#### 1. ไม่ใช้ Redis
+
+เหมาะกับ local stack ที่ง่ายที่สุด และยังไม่ต้องการ distributed cache, distributed auth rate limiting, หรือ Redis-backed worker idempotency
+
+```env
+CACHE__ENABLED="false"
+CACHE__BACKEND="memory"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="false"
+```
+
+#### 2. ใช้ Redis แค่ cache
+
+เหมาะกับการลอง application cache ผ่าน Redis แต่ยังอยากให้ rate limit กับ worker idempotency ใช้ค่า in-process เดิม
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
+
+#### 3. ใช้ Redis เต็มชุด
+
+เหมาะกับการทดสอบทุกตัวอย่างที่ Redis-backed ใน local development
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="redis"
+AUTH_RATE_LIMIT__REDIS_URL="redis://redis:6379/0"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+WORKER__IDEMPOTENCY_REDIS_URL="redis://redis:6379/1"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
 ```
 
 ## ตอนเจอปัญหา local ที่พบบ่อย

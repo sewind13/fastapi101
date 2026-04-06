@@ -110,7 +110,49 @@ curl http://localhost:8000/api/v1/billing/me/summary \
 - balances แยกตาม `resource_key`
 - recent usage events
 
-## 8. เช็ก balance ของ resource เดียว
+## 8. archive แล้ว restore item เดิม
+
+ถ้าจะลอง flow นี้ใน environment ใหม่ ควร grant `item_archive` และ `item_restore` ให้ account ก่อน
+
+archive item:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/items/<item_id>/archive \
+  -H "Authorization: Bearer <access_token>"
+```
+
+ผลที่คาดหวังหลัง archive:
+
+- `200 OK`
+- `is_archived=true`
+- `archived_at` ไม่เป็น `null`
+
+restore item เดิม:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/items/<item_id>/restore \
+  -H "Authorization: Bearer <access_token>"
+```
+
+ผลที่คาดหวังหลัง restore:
+
+- `200 OK`
+- `is_archived=false`
+- `archived_at=null`
+- `restored_at` ไม่เป็น `null`
+- `restore_count` เพิ่มขึ้น
+
+ถ้า account ไม่มี entitlement `item_restore` จะได้:
+
+- `403 Forbidden`
+- `error_code = billing.no_entitlement`
+
+ถ้าเรียก restore กับ item ที่ยังไม่ archived จะได้:
+
+- `409 Conflict`
+- `error_code = item.not_archived`
+
+## 9. เช็ก balance ของ resource เดียว
 
 ```bash
 curl http://localhost:8000/api/v1/billing/me/balance/item_create \
@@ -119,7 +161,17 @@ curl http://localhost:8000/api/v1/billing/me/balance/item_create \
 
 ใช้ดูได้ง่ายว่าก่อนหรือหลังสร้าง item ยังเหลือ `item_create` อีกกี่หน่วย
 
-## 9. ดู usage history แบบมี filter
+ตัวอย่าง resource อื่นที่เกี่ยวกับ items flow:
+
+```bash
+curl http://localhost:8000/api/v1/billing/me/balance/item_archive \
+  -H "Authorization: Bearer <access_token>"
+
+curl http://localhost:8000/api/v1/billing/me/balance/item_restore \
+  -H "Authorization: Bearer <access_token>"
+```
+
+## 10. ดู usage history แบบมี filter
 
 ```bash
 curl "http://localhost:8000/api/v1/billing/me/usage?resource_key=item_create&status=committed&sort=desc&offset=0&limit=20" \
@@ -143,7 +195,14 @@ filters ที่รองรับ:
 - `offset`
 - `limit`
 
-## 10. ดู usage report แบบ aggregate
+ถ้าจะดูเฉพาะ restore usage:
+
+```bash
+curl "http://localhost:8000/api/v1/billing/me/usage?resource_key=item_restore&feature_key=items.restore&status=committed&sort=desc&offset=0&limit=20" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+## 11. ดู usage report แบบ aggregate
 
 ```bash
 curl "http://localhost:8000/api/v1/billing/me/usage/report?resource_key=item_create" \
@@ -158,13 +217,13 @@ report นี้จะ group ตาม:
 
 เหมาะกับการทำ dashboard หรือสรุป usage แบบไม่ต้องดึง event ทั้งหมด
 
-## 11. flow สำหรับ email verification
+## 12. flow สำหรับ email verification
 
 1. สมัคร user
 2. รับ verification email
 3. เรียก `GET /api/v1/auth/verify-email/confirm?token=...`
 
-## 12. flow สำหรับ password reset
+## 13. flow สำหรับ password reset
 
 1. `POST /api/v1/auth/password-reset/request`
 2. รับ reset email

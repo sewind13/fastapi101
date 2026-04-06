@@ -198,6 +198,8 @@ Authentication endpoint throttling.
 - `AUTH_RATE_LIMIT__REDIS_URL`
   Redis connection URL used when the rate-limit backend is `redis`.
 
+  For local development, the optional compose Redis profile uses `redis://redis:6379/0` from inside the app containers. For production-like environments, prefer an external or managed Redis URL.
+
 - `AUTH_RATE_LIMIT__KEY_PREFIX`
   Prefix used for rate-limit keys stored in the backend.
 
@@ -306,6 +308,9 @@ Health and readiness behavior.
 
 - `HEALTH__REDIS_URL`
   Connection URL used for the Redis readiness check. The app uses a real Redis client and sends `PING`.
+
+  Typical local setup:
+  reuse the same Redis instance as auth rate limiting, often on `/0`.
 
 - `HEALTH__ENABLE_S3_CHECK`
   Enables the S3 readiness check.
@@ -421,6 +426,11 @@ Application-level read cache configuration.
 - `CACHE__REDIS_URL`
   Redis connection URL used when the cache backend is `redis`.
 
+  The optional compose Redis profile in this repository uses `redis://redis:6379/2` from inside the app containers. If Redis runs outside compose, point this at the external hostname instead.
+
+  Typical local setup:
+  keep cache entries on a separate logical database such as `/2`.
+
 - `CACHE__KEY_PREFIX`
   Prefix used for cache keys stored in the backend.
 
@@ -429,6 +439,61 @@ Application-level read cache configuration.
 
 - `CACHE__ITEMS_LIST_TTL_SECONDS`
   TTL used by the example items list cache.
+
+### Common Redis Config Profiles
+
+You do not need every Redis-backed feature turned on at once.
+
+#### No Redis
+
+```env
+CACHE__ENABLED="false"
+CACHE__BACKEND="memory"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="false"
+```
+
+#### Cache Only
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
+
+#### Full Redis Setup
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="redis"
+AUTH_RATE_LIMIT__REDIS_URL="redis://redis:6379/0"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+WORKER__IDEMPOTENCY_REDIS_URL="redis://redis:6379/1"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
 
 ## `EMAIL__*`
 
@@ -608,6 +673,9 @@ Background worker configuration.
 
 - `WORKER__IDEMPOTENCY_REDIS_URL`
   Redis URL used when worker idempotency backend is `redis`.
+
+  Typical local setup:
+  keep worker idempotency keys on a separate logical database such as `/1`.
 
 - `WORKER__IDEMPOTENCY_KEY_PREFIX`
   Prefix used for worker idempotency keys.

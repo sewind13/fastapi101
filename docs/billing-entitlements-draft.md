@@ -264,6 +264,41 @@ This is intentionally different from the simpler `items.create` flow. For `archi
 
 Only requests that pass those checks go on to reserve archive quota.
 
+Example: adding a policy for `POST /api/v1/items/{item_id}/restore`
+
+```python
+FEATURE_POLICIES = {
+    "items.create": {
+        "resource_key": "item_create",
+        "units_per_call": 1,
+        "charge_on": "success",
+    },
+    "items.archive": {
+        "resource_key": "item_archive",
+        "units_per_call": 1,
+        "charge_on": "success",
+    },
+    "items.restore": {
+        "resource_key": "item_restore",
+        "units_per_call": 1,
+        "charge_on": "success",
+    },
+}
+```
+
+Recommended service flow for `items.restore`:
+
+1. Load the target item.
+2. Check `not_found`, ownership, and `not_archived`.
+3. Resolve the current user's `account_id`.
+4. Call `reserve_feature_usage(..., feature_key="items.restore", ...)`.
+5. Perform the restore write.
+6. Update `restored_at` and increment `restore_count`.
+7. Call `commit_reserved_usage(...)` if the restore succeeds.
+8. Call `release_reserved_usage(...)` if the restore fails after reservation.
+
+The current `restore` example also invalidates the owner-scoped item-list cache after the write succeeds so archived items can reappear in `GET /api/v1/items/`.
+
 ## Reservation And Usage Lifecycle
 
 The current system has three different moments to think about:

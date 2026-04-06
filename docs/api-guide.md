@@ -283,6 +283,25 @@ If you want a concrete follow-along example, use this order:
 6. Test the feature through ops billing.
    Grant `resource_key = item_archive`, archive an item, then verify balance and usage history.
 
+### File-By-File Example: `items.restore -> item_restore`
+
+Use the same pattern for the restore endpoint, but update the item lifecycle fields too:
+
+1. Edit [`app/services/entitlement_service.py`](../app/services/entitlement_service.py)
+   Add `items.restore -> item_restore` to `FEATURE_POLICIES`.
+2. Edit [`app/db/models/item.py`](../app/db/models/item.py)
+   Add lifecycle fields such as `restored_at` and `restore_count` if the endpoint needs persisted restore history.
+3. Edit [`app/services/item_service.py`](../app/services/item_service.py)
+   Add a constant such as `ITEMS_RESTORE_FEATURE_KEY = "items.restore"`, validate `not_found`, `forbidden`, and `not_archived`, then reserve usage, restore the item, update `restored_at` and `restore_count`, and commit or release usage.
+4. Edit [`app/api/v1/items.py`](../app/api/v1/items.py)
+   Pass `request_id` from the route into the restore service path.
+5. Edit [`app/api/errors.py`](../app/api/errors.py)
+   Map `item.not_archived` to `409 Conflict`.
+6. Edit tests under [`tests/integration/api/test_items.py`](../tests/integration/api/test_items.py) and [`tests/unit/services/test_item_service.py`](../tests/unit/services/test_item_service.py)
+   Add success, entitlement failure, and `not_archived` cases.
+7. Test the feature through ops billing.
+   Grant `resource_key = item_restore`, restore an archived item, then verify balance and usage history.
+
 ## Best Practices For New API Work
 
 - define schemas before writing route logic

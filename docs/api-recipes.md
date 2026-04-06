@@ -120,7 +120,49 @@ Expected result:
 - `200 OK`
 - JSON array
 
-## 8. Check Your Billing Summary
+## 8. Archive Then Restore An Item
+
+Grant both `item_archive` and `item_restore` to the account first if you are testing in a fresh environment.
+
+Archive the item:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/items/<item_id>/archive \
+  -H "Authorization: Bearer <access_token>"
+```
+
+Expected archive result:
+
+- `200 OK`
+- `is_archived=true`
+- `archived_at` is populated
+
+Restore the same item:
+
+```bash
+curl -X POST http://localhost:8000/api/v1/items/<item_id>/restore \
+  -H "Authorization: Bearer <access_token>"
+```
+
+Expected restore result:
+
+- `200 OK`
+- `is_archived=false`
+- `archived_at=null`
+- `restored_at` is populated
+- `restore_count` increments
+
+If the account does not have an active `item_restore` entitlement, expect:
+
+- `403 Forbidden`
+- error code `billing.no_entitlement`
+
+If the item is not archived when restore is called, expect:
+
+- `409 Conflict`
+- error code `item.not_archived`
+
+## 9. Check Your Billing Summary
 
 If you want one dashboard-style response for the authenticated account, call:
 
@@ -138,7 +180,7 @@ Expected result:
 
 This is the fastest way to confirm whether a test account can still call `POST /api/v1/items/`.
 
-## 9. Check Remaining Balance For A Resource
+## 10. Check Remaining Balance For A Resource
 
 ```bash
 curl http://localhost:8000/api/v1/billing/me/balance/item_create \
@@ -152,7 +194,17 @@ Expected result:
 
 Useful before and after creating items to confirm quota consumption.
 
-## 10. Browse Usage History
+You can do the same for archive and restore:
+
+```bash
+curl http://localhost:8000/api/v1/billing/me/balance/item_archive \
+  -H "Authorization: Bearer <access_token>"
+
+curl http://localhost:8000/api/v1/billing/me/balance/item_restore \
+  -H "Authorization: Bearer <access_token>"
+```
+
+## 11. Browse Usage History
 
 ```bash
 curl "http://localhost:8000/api/v1/billing/me/usage?resource_key=item_create&status=committed&sort=desc&offset=0&limit=20" \
@@ -176,7 +228,14 @@ Supported filters:
 - `offset`
 - `limit`
 
-## 11. Read An Aggregate Usage Report
+Example restore-specific query:
+
+```bash
+curl "http://localhost:8000/api/v1/billing/me/usage?resource_key=item_restore&feature_key=items.restore&status=committed&sort=desc&offset=0&limit=20" \
+  -H "Authorization: Bearer <access_token>"
+```
+
+## 12. Read An Aggregate Usage Report
 
 ```bash
 curl "http://localhost:8000/api/v1/billing/me/usage/report?resource_key=item_create" \
@@ -190,7 +249,7 @@ Expected result:
 
 This is useful for account dashboards or simple reporting without downloading the full event stream.
 
-## 12. Handle Common Errors
+## 13. Handle Common Errors
 
 Typical cases:
 
@@ -222,7 +281,7 @@ Example error body:
 }
 ```
 
-## 13. Add A New Resource By Copying The Pattern
+## 14. Add A New Resource By Copying The Pattern
 
 If you want to add a new module like `orders`, copy the structure of:
 

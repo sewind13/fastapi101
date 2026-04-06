@@ -140,6 +140,9 @@ make bootstrap-admin-in-container args="--username admin --email admin@example.c
 - `API__PUBLIC_REGISTRATION_ENABLED`
 - `METRICS__ENABLED`
 - `METRICS__AUTH_TOKEN`
+- `AUTH_RATE_LIMIT__REDIS_URL`
+- `CACHE__REDIS_URL`
+- `WORKER__IDEMPOTENCY_REDIS_URL`
 - provider credentials ต่าง ๆ
 - broker/Redis URLs ถ้าเปิด worker หรือ cache/rate limiting แบบ distributed
 
@@ -151,6 +154,8 @@ make bootstrap-admin-in-container args="--username admin --email admin@example.c
 - `METRICS__ENABLED="false"` จนกว่าจะมี internal scrape path พร้อม
 - ใช้ Postgres เป็นหลัก
 - ใช้ Redis backend เมื่อเปิด rate limiting หรือ cache ใน production จริง
+
+ถ้าจะลอง Redis ใน local repo นี้มี optional compose profile `redis` ให้แล้ว เหมาะกับ development และ smoke test แต่ถ้าเป็น shared env หรือ production-like env ควรเปลี่ยน `*_REDIS_URL` ให้ชี้ไป external/managed Redis มากกว่า
 
 ## ถ้าจะลบ example module
 

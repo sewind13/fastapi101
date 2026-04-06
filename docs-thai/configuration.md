@@ -143,6 +143,10 @@ settings groups ที่สำคัญในระบบนี้ เช่น
 
 สำหรับ production จริง ถ้ามีหลาย instance ควรใช้ backend เป็น Redis
 
+ถ้าเป็น local development repo นี้มี optional compose profile `redis` ให้ใช้ได้ โดย app containers จะคุยกับ `redis://redis:6379/0` จากใน compose network
+
+ใน local มักให้ `/0` เป็น database ของ auth rate limit และ health check เพื่อให้ดู counters ได้ง่าย
+
 ### `METRICS__*`
 
 ใช้กำหนด Prometheus metrics endpoint
@@ -171,6 +175,10 @@ settings groups ที่สำคัญในระบบนี้ เช่น
 
 เหมาะกับ read-heavy endpoints มากกว่าเขียนทุกอย่างลง cache ตั้งแต่แรก
 
+ถ้าใช้ optional compose Redis ใน local ให้ชี้ `CACHE__REDIS_URL` ไปที่ `redis://redis:6379/2` ส่วน shared env หรือ production-like env ควรใช้ external/managed Redis มากกว่า
+
+ใน local มักแยก cache ไว้ที่ `/2` เพื่อไม่ให้ปนกับ rate limit หรือ worker keys
+
 ### `EMAIL__*` และ `WEBHOOK__*`
 
 ใช้กำหนด provider integrations
@@ -183,6 +191,61 @@ settings groups ที่สำคัญในระบบนี้ เช่น
 - route-specific webhook configs
 
 ถ้ายังไม่ส่งจริง ให้คง `DRY_RUN=true` ไว้ก่อน
+
+## ตัวอย่าง Redis config profiles ที่ใช้บ่อย
+
+คุณไม่จำเป็นต้องเปิดทุกอย่างที่เป็น Redis-backed พร้อมกัน
+
+### ไม่ใช้ Redis
+
+```env
+CACHE__ENABLED="false"
+CACHE__BACKEND="memory"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="false"
+```
+
+### ใช้ Redis แค่ cache
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
+
+### ใช้ Redis เต็มชุด
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="redis"
+AUTH_RATE_LIMIT__REDIS_URL="redis://redis:6379/0"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+WORKER__IDEMPOTENCY_REDIS_URL="redis://redis:6379/1"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
 
 ### `EXTERNAL__*` และ `EXTERNAL_EVENT_POLICIES__*`
 
@@ -205,6 +268,8 @@ settings groups ที่สำคัญในระบบนี้ เช่น
 
 เปิดกลุ่มนี้เมื่อ service เริ่มมี async side effects จริง
 
+ถ้าเปิด Redis-backed idempotency โดยทั่วไปจะใช้ `WORKER__IDEMPOTENCY_REDIS_URL=redis://redis:6379/1` เพื่อแยก worker keys ออกจาก cache และ rate limit
+
 ### `HEALTH__*`
 
 ใช้กำหนด readiness checks เพิ่มเติม เช่น:
@@ -214,6 +279,8 @@ settings groups ที่สำคัญในระบบนี้ เช่น
 - queue/broker
 
 อย่าเปิดทุก check ถ้ายังไม่ได้ใช้ dependency นั้นจริง
+
+ถ้าเปิด Redis health check โดยทั่วไปจะชี้ `HEALTH__REDIS_URL` ไปที่ Redis ตัวเดียวกับ auth rate limit เช่น `redis://redis:6379/0`
 
 ## กลุ่ม config ที่เกี่ยวกับ production hardening
 

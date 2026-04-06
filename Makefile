@@ -4,6 +4,8 @@ COMPOSE_MONITORING=docker compose -f docker-compose.yml -f docker-compose.dev.ym
 COMPOSE_LOADTEST=docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.monitoring.yml -f docker-compose.loadtest.yml
 COMPOSE_WORKER_DEV=docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile worker
 COMPOSE_WORKER_PROD=docker compose -f docker-compose.yml --profile worker
+COMPOSE_REDIS_DEV=docker compose -f docker-compose.yml -f docker-compose.dev.yml --profile redis
+COMPOSE_REDIS_PROD=docker compose -f docker-compose.yml --profile redis
 COMPOSE_LOADTEST_WORKER=docker compose -f docker-compose.yml -f docker-compose.dev.yml -f docker-compose.monitoring.yml -f docker-compose.loadtest.yml --profile worker
 
 up:
@@ -20,6 +22,12 @@ up-worker:
 
 up-worker-prod:
 	$(COMPOSE_WORKER_PROD) up --build
+
+up-redis:
+	$(COMPOSE_REDIS_DEV) up --build
+
+up-redis-prod:
+	$(COMPOSE_REDIS_PROD) up --build
 
 up-monitoring:
 	$(COMPOSE_MONITORING) up --build
@@ -45,6 +53,9 @@ down-worker:
 down-worker-prod:
 	$(COMPOSE_WORKER_PROD) down
 
+down-redis:
+	$(COMPOSE_REDIS_DEV) down
+
 down-prod:
 	$(COMPOSE_BASE) down
 
@@ -59,6 +70,9 @@ logs-worker:
 
 logs-worker-prod:
 	$(COMPOSE_WORKER_PROD) logs -f worker
+
+logs-redis:
+	$(COMPOSE_REDIS_DEV) logs -f redis
 
 logs-outbox:
 	$(COMPOSE_WORKER_DEV) logs -f outbox-dispatcher
@@ -77,6 +91,9 @@ ps-worker:
 
 ps-worker-prod:
 	$(COMPOSE_WORKER_PROD) ps
+
+ps-redis:
+	$(COMPOSE_REDIS_DEV) ps
 
 migrate:
 	$(COMPOSE_DEV) exec web uv run alembic upgrade head

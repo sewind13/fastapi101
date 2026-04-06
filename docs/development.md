@@ -54,6 +54,10 @@ make bootstrap-admin-in-container-env
 make replay-dlq
 make report-outbox
 make cleanup-revoked-tokens
+make up-redis
+make down-redis
+make ps-redis
+make logs-redis
 ```
 
 If you are changing tables or columns, read [docs/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs/database-migrations.md) first. That file is the dedicated step-by-step guide for schema changes and local DB troubleshooting.
@@ -71,6 +75,128 @@ Container-oriented helpers:
 
 - `make bootstrap-admin-in-container-env args="..."`
   Same as above, but intended for use with `BOOTSTRAP_ADMIN_PASSWORD`.
+
+## Optional Redis Profile
+
+The repository now includes an optional `redis` compose profile for local cache, auth rate limiting, worker idempotency, or health-check experiments.
+
+Start the normal development stack plus Redis with:
+
+```bash
+make up-redis
+```
+
+Useful helpers:
+
+```bash
+make ps-redis
+make logs-redis
+make down-redis
+```
+
+Recommended env values when you want the app containers to talk to the compose-managed Redis service:
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+AUTH_RATE_LIMIT__BACKEND="redis"
+AUTH_RATE_LIMIT__REDIS_URL="redis://redis:6379/0"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+WORKER__IDEMPOTENCY_REDIS_URL="redis://redis:6379/1"
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
+
+What each block does:
+
+- `CACHE__*`
+  Turns on application read cache and stores cached values in Redis instead of per-process memory.
+- `AUTH_RATE_LIMIT__*`
+  Stores auth rate-limit counters in Redis so multiple app instances share the same login and token-throttling state.
+- `WORKER__IDEMPOTENCY_*`
+  Stores worker idempotency keys in Redis so retries or duplicate deliveries can be de-duplicated across processes.
+- `HEALTH__*`
+  Makes the readiness check ping Redis so the app can report when that dependency is unavailable.
+
+Why the sample URLs use different Redis database numbers:
+
+- `/0`
+  Auth rate limiting and the Redis health check.
+- `/1`
+  Worker idempotency keys.
+- `/2`
+  Application cache entries.
+
+This separation is optional, but it keeps local debugging and key inspection much easier.
+
+If you prefer an external or managed Redis instance instead of the compose profile, keep the same backends but point the URLs at that service. For example, Docker Desktop users commonly use `redis://host.docker.internal:6379/0` when Redis runs outside the compose network.
+
+Recommended split:
+
+- local development: compose Redis profile is fine
+- shared or production-like environments: prefer an external or managed Redis service
+
+### Example `.env` Profiles
+
+If you want a copy-friendly starting point, these three profiles cover the most common local setups.
+
+#### 1. No Redis
+
+Use this when you want the simplest local stack and do not need distributed cache, distributed auth rate limiting, or Redis-backed worker idempotency.
+
+```env
+CACHE__ENABLED="false"
+CACHE__BACKEND="memory"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="false"
+```
+
+#### 2. Cache Only
+
+Use this when you only want to test Redis-backed application cache and keep the rest of the system on in-process defaults.
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="memory"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="memory"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
+
+#### 3. Full Redis Setup
+
+Use this when you want all Redis-backed examples turned on in local development.
+
+```env
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+CACHE__REDIS_URL="redis://redis:6379/2"
+
+AUTH_RATE_LIMIT__ENABLED="true"
+AUTH_RATE_LIMIT__BACKEND="redis"
+AUTH_RATE_LIMIT__REDIS_URL="redis://redis:6379/0"
+
+WORKER__IDEMPOTENCY_ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+WORKER__IDEMPOTENCY_REDIS_URL="redis://redis:6379/1"
+
+HEALTH__ENABLE_REDIS_CHECK="true"
+HEALTH__REDIS_URL="redis://redis:6379/0"
+```
 
 ## Background Worker
 
