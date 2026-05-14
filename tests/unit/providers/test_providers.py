@@ -158,7 +158,9 @@ def test_sendgrid_email_provider_sends_request(monkeypatch):
         return FakeHTTPResponse()
 
     monkeypatch.setattr(settings.email, "sendgrid_api_key", "sg-key")
-    monkeypatch.setattr(settings.email, "sendgrid_api_base_url", "https://api.sendgrid.com/v3/mail/send")
+    monkeypatch.setattr(
+        settings.email, "sendgrid_api_base_url", "https://api.sendgrid.com/v3/mail/send"
+    )
     monkeypatch.setattr(settings.email, "sendgrid_timeout_seconds", 12.5)
     monkeypatch.setattr(settings.email, "sendgrid_categories", ["welcome", "signup"])
     monkeypatch.setattr(
@@ -315,7 +317,9 @@ def test_slack_webhook_provider_sends_request(monkeypatch):
         captured["timeout"] = timeout
         return FakeHTTPResponse()
 
-    monkeypatch.setattr(settings.webhook, "slack_webhook_url", "https://hooks.slack.test/services/abc")
+    monkeypatch.setattr(
+        settings.webhook, "slack_webhook_url", "https://hooks.slack.test/services/abc"
+    )
     monkeypatch.setattr(settings.webhook, "timeout_seconds", 5.0)
     monkeypatch.setattr(settings.webhook, "slack_channel", "#ops")
     monkeypatch.setattr(settings.webhook, "slack_username", "fastapi-bot")
@@ -357,7 +361,9 @@ def test_slack_worker_failure_alert_uses_route_mapping(monkeypatch):
         "slack_route_urls",
         {"worker_failure": "https://hooks.slack.test/services/worker-failure"},
     )
-    monkeypatch.setattr(settings.webhook, "slack_webhook_url", "https://hooks.slack.test/services/default")
+    monkeypatch.setattr(
+        settings.webhook, "slack_webhook_url", "https://hooks.slack.test/services/default"
+    )
     monkeypatch.setattr(settings.webhook, "timeout_seconds", 5.0)
     monkeypatch.setattr(settings.webhook, "allowed_hosts", ["hooks.slack.test"])
     monkeypatch.setattr(settings.webhook, "require_https", True)

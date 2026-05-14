@@ -74,9 +74,7 @@ def count_filtered_account_usage_events(
     created_before: datetime | None = None,
 ) -> int:
     statement = (
-        select(func.count())
-        .select_from(UsageEvent)
-        .where(UsageEvent.account_id == account_id)
+        select(func.count()).select_from(UsageEvent).where(UsageEvent.account_id == account_id)
     )
     if resource_key is not None:
         statement = statement.where(UsageEvent.resource_key == resource_key)

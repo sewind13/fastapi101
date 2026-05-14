@@ -8,9 +8,10 @@ The goal here is not to redesign the whole auth system. It is to remove unsafe d
 
 Start with these files:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings`](../app/core/settings)
 - [`app/api/deps.py`](../app/api/deps.py)
-- [`app/main.py`](../app/main.py)
+- [`app/factory.py`](../app/factory.py)
+- [`app/api/exception_handlers.py`](../app/api/exception_handlers.py)
 - [`app/api/v1/auth.py`](../app/api/v1/auth.py)
 - [`app/api/v1/ops.py`](../app/api/v1/ops.py)
 
@@ -22,7 +23,7 @@ These are the most important security-related defaults and behaviors visible in 
 
 The code defines a built-in fallback secret:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/constants.py`](../app/core/settings/constants.py)
 
 Current behavior:
 
@@ -47,7 +48,7 @@ Current behavior:
 
 Relevant files:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/base.py`](../app/core/settings/base.py)
 - [`app/api/v1/users.py`](../app/api/v1/users.py)
 
 Hardening action:
@@ -63,7 +64,7 @@ Current behavior:
 
 Relevant file:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/security.py`](../app/core/settings/security.py)
 
 Hardening action:
 
@@ -79,7 +80,7 @@ Current behavior:
 
 Relevant file:
 
-- [`app/main.py`](../app/main.py)
+- [`app/api/metrics.py`](../app/api/metrics.py)
 
 Hardening action:
 
@@ -102,7 +103,7 @@ Relevant files:
 
 - [`app/api/deps.py`](../app/api/deps.py)
 - [`app/api/v1/ops.py`](../app/api/v1/ops.py)
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/base.py`](../app/core/settings/base.py)
 
 Hardening action:
 
@@ -119,7 +120,7 @@ Current behavior:
 
 Relevant files:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/security.py`](../app/core/settings/security.py)
 - [`app/api/v1/auth.py`](../app/api/v1/auth.py)
 - [`docs/security.md`](./security.md)
 
@@ -142,7 +143,7 @@ Current behavior:
 
 Relevant file:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/worker.py`](../app/core/settings/worker.py)
 
 Hardening action:
 
@@ -157,7 +158,7 @@ Current behavior:
 
 Relevant file:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/delivery.py`](../app/core/settings/delivery.py)
 
 Hardening action:
 
@@ -173,7 +174,7 @@ Current behavior:
 
 Relevant file:
 
-- [`app/core/config.py`](../app/core/config.py)
+- [`app/core/settings/observability.py`](../app/core/settings/observability.py)
 
 Hardening action:
 

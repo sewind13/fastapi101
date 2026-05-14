@@ -6,9 +6,10 @@
 
 ## ควรเริ่ม review จากไฟล์ไหนก่อน
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings`](/Users/pluto/Documents/git/fastapi101/app/core/settings)
 - [`app/api/deps.py`](/Users/pluto/Documents/git/fastapi101/app/api/deps.py)
-- [`app/main.py`](/Users/pluto/Documents/git/fastapi101/app/main.py)
+- [`app/factory.py`](/Users/pluto/Documents/git/fastapi101/app/factory.py)
+- [`app/api/exception_handlers.py`](/Users/pluto/Documents/git/fastapi101/app/api/exception_handlers.py)
 - [`app/api/v1/auth.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/auth.py)
 - [`app/api/v1/ops.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/ops.py)
 
@@ -18,7 +19,7 @@
 
 ใน code ตอนนี้มี fallback secret ติดมาด้วย:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/constants.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/constants.py)
 
 behavior ปัจจุบัน:
 
@@ -43,7 +44,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/base.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/base.py)
 - [`app/api/v1/users.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/users.py)
 
 สิ่งที่ควรทำ:
@@ -59,7 +60,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/security.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/security.py)
 
 สิ่งที่ควรทำ:
 
@@ -75,7 +76,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/main.py`](/Users/pluto/Documents/git/fastapi101/app/main.py)
+- [`app/api/metrics.py`](/Users/pluto/Documents/git/fastapi101/app/api/metrics.py)
 
 สิ่งที่ควรทำ:
 
@@ -98,7 +99,7 @@ behavior ปัจจุบัน:
 
 - [`app/api/deps.py`](/Users/pluto/Documents/git/fastapi101/app/api/deps.py)
 - [`app/api/v1/ops.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/ops.py)
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/base.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/base.py)
 
 สิ่งที่ควรทำ:
 
@@ -115,7 +116,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/security.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/security.py)
 - [`app/api/v1/auth.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/auth.py)
 - [`security.md`](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
 
@@ -138,7 +139,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/worker.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/worker.py)
 
 สิ่งที่ควรทำ:
 
@@ -153,7 +154,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/delivery.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/delivery.py)
 
 สิ่งที่ควรทำ:
 
@@ -169,7 +170,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/config.py`](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [`app/core/settings/observability.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/observability.py)
 
 สิ่งที่ควรทำ:
 

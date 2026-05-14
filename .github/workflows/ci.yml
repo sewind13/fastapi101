@@ -64,7 +64,10 @@ jobs:
         uses: astral-sh/setup-uv@v6
 
       - name: Install dependencies
-        run: uv sync --frozen --all-groups
+        run: uv sync --frozen --all-groups --all-extras
+
+      - name: Check formatting
+        run: uv run ruff format --check .
 
       - name: Lint
         run: uv run ruff check .
@@ -79,3 +82,52 @@ jobs:
 
       - name: Run tests
         run: uv run pytest -q
+
+  postgres_integration:
+    runs-on: ubuntu-latest
+    needs:
+      - quality
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: app_test
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d app_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-groups --all-extras
+
+      - name: Run Postgres-backed integration tests
+        env:
+          TEST_DATABASE_URL: postgresql+psycopg://app:app@localhost:5432/app_test
+        run: uv run pytest tests/integration/postgres -q
+
+  docker_build:
+    runs-on: ubuntu-latest
+    needs:
+      - quality
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build production image
+        run: docker build --tag fastapi-template:ci .

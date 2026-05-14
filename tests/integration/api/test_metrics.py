@@ -1,12 +1,14 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.main import app
+from app.factory import create_app
 
 
 @pytest.mark.integration
 @pytest.mark.asyncio
 async def test_metrics_endpoint_exposes_prometheus_metrics():
+    app = create_app()
+
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         health_response = await client.get("/health/live")
         metrics_response = await client.get("/metrics")
@@ -41,7 +43,7 @@ async def test_metrics_include_exception_and_readiness_dependency_series(monkeyp
         "_redis_check",
         lambda: health.CheckResult(name="redis", status="ok"),
     )
-    monkeypatch.setattr("app.main.run_readiness_checks", health.run_readiness_checks)
+    monkeypatch.setattr("app.api.health.run_readiness_checks", health.run_readiness_checks)
     monkeypatch.setattr(
         "app.api.v1.auth.authenticate_user",
         lambda session, username, password: ServiceResult(
@@ -51,6 +53,7 @@ async def test_metrics_include_exception_and_readiness_dependency_series(monkeyp
             )
         ),
     )
+    app = create_app()
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         readiness_response = await client.get("/health/ready")
@@ -87,6 +90,7 @@ async def test_metrics_include_cache_series(monkeypatch):
     cache.get_json("missing-key", cache_name="items_list")
     cache.set_json("items-key", [{"id": 1}], cache_name="items_list", ttl_seconds=60)
     cache.get_json("items-key", cache_name="items_list")
+    app = create_app()
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         metrics_response = await client.get("/metrics")
@@ -104,7 +108,8 @@ async def test_metrics_include_cache_series(monkeypatch):
 @pytest.mark.integration
 @pytest.mark.asyncio
 async def test_metrics_endpoint_requires_bearer_token_when_configured(monkeypatch):
-    monkeypatch.setattr("app.main.settings.metrics.auth_token", "metrics-secret")
+    monkeypatch.setattr("app.api.metrics.settings.metrics.auth_token", "metrics-secret")
+    app = create_app()
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         unauthorized = await client.get("/metrics")

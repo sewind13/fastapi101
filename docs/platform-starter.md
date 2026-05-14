@@ -61,6 +61,8 @@ Extensions include:
 - production-oriented auth rate limiting
 - richer deployment guidance and security guidance
 
+Some extension dependencies are optional runtime extras. Redis-backed cache/rate limiting needs `fastapi101[redis]`, SES/S3 integration needs `fastapi101[aws]`, and OpenTelemetry needs `fastapi101[observability]`.
+
 These features are valuable, but many teams can ship an internal API without turning all of them on immediately.
 
 ### Advanced
@@ -76,6 +78,8 @@ Advanced includes:
 - DLQ replay tooling
 - operations endpoints and maintenance jobs
 - Kubernetes deployment baselines
+
+AMQP worker, outbox dispatch, and DLQ replay paths need the `fastapi101[worker]` extra.
 
 These are strong platform features, but they should be treated as capabilities to opt into, not assumptions every service must understand on day one.
 
@@ -101,7 +105,9 @@ The lists below are meant to help a team decide what to learn first and what can
 ### Core: Main Application And API Surface
 
 - [app/main.py](/Users/pluto/Documents/git/fastapi101/app/main.py)
-  App assembly, middleware, health endpoints, and centralized exception handling.
+  Thin ASGI entrypoint that exports the app created by the factory.
+- [app/factory.py](/Users/pluto/Documents/git/fastapi101/app/factory.py)
+  App assembly, middleware registration, routers, health/metrics routes, telemetry, and exception handlers.
 - [app/api](/Users/pluto/Documents/git/fastapi101/app/api)
   HTTP layer, dependencies, router assembly, and API error mapping.
 - [app/services](/Users/pluto/Documents/git/fastapi101/app/services)
@@ -110,8 +116,10 @@ The lists below are meant to help a team decide what to learn first and what can
   DB session management, SQLModel models, repositories, and Alembic metadata registration.
 - [app/schemas](/Users/pluto/Documents/git/fastapi101/app/schemas)
   Public request/response contracts.
+- [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings)
+  Typed settings sections, optional feature config, legacy env compatibility, and production validation.
 - [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
-  Settings model and environment loading.
+  Compatibility exports for callers that import `settings` from the historic location.
 - [app/core/security.py](/Users/pluto/Documents/git/fastapi101/app/core/security.py)
   Password hashing and token encoding/decoding.
 - [app/core/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/core/exceptions.py)
@@ -120,6 +128,8 @@ The lists below are meant to help a team decide what to learn first and what can
   Structured logging and audit helpers.
 - [app/core/health.py](/Users/pluto/Documents/git/fastapi101/app/core/health.py)
   Health/readiness evaluation.
+- [app/core/middleware.py](/Users/pluto/Documents/git/fastapi101/app/core/middleware.py)
+  Request context, request IDs, access-log sampling, and request metrics.
 - [alembic](/Users/pluto/Documents/git/fastapi101/alembic)
   Schema migration environment and version history.
 - [Dockerfile](/Users/pluto/Documents/git/fastapi101/Dockerfile)

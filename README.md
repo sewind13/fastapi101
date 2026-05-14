@@ -67,6 +67,8 @@ Start here if you are cloning the template for a new product:
 
 Thai onboarding docs are available in [README.th.md](README.th.md) and [docs-thai/README.md](docs-thai/README.md).
 
+Coding agents and AI-assisted contributors should read [AGENTS.md](AGENTS.md) first for repository guardrails, architecture rules, and quality gates.
+
 ### Core
 
 - [docs/platform-starter.md](docs/platform-starter.md): layer model for this starter and a repo map grouped by `Core`, `Extensions`, and `Advanced`
@@ -89,6 +91,25 @@ Thai onboarding docs are available in [README.th.md](README.th.md) and [docs-tha
 - [docs/load-testing.md](docs/load-testing.md): k6 scenarios, load-test matrix, and success criteria for scale testing
 - [docs/openapi.md](docs/openapi.md): OpenAPI, Swagger UI, and docs usage
 
+### Optional Runtime Extras
+
+The production Docker image installs only the core runtime by default. Feature-specific
+dependencies are grouped as extras so teams can keep small services lean:
+
+```bash
+uv sync --extra redis
+uv sync --extra worker
+uv sync --extra aws
+uv sync --extra observability
+uv sync --all-extras
+```
+
+- `redis`: Redis-backed cache, rate limiting, worker idempotency, and Redis readiness checks
+- `worker`: AMQP publishing, worker runner, outbox dispatching, and DLQ replay
+- `aws`: SES email delivery and S3 readiness checks
+- `observability`: OpenTelemetry tracing and SQLAlchemy/FastAPI instrumentation
+- `all`: all optional runtime capabilities for CI and fully loaded local template checks
+
 ### Extensions
 
 - [docs/security.md](docs/security.md): auth model, token lifecycle, rate limiting, and security hardening guidance
@@ -105,10 +126,12 @@ The main directories are best understood by layer:
 ### Core
 
 - `app/api`: HTTP routes, dependencies, and API error mapping
+- `app/factory.py`: FastAPI application assembly for runtime and tests
 - `app/services`: business logic and service results
 - `app/db`: models, sessions, repositories, and Alembic metadata registration
 - `app/schemas`: request/response contracts
-- `app/core`: cross-cutting infrastructure such as config, logging, health, auth, telemetry, and rate limiting
+- `app/core`: cross-cutting infrastructure such as logging, auth, telemetry, middleware, and rate limiting
+- `app/core/settings`: typed settings, legacy env compatibility, and production config validation
 - `tests`: unit, integration, and Postgres-backed test suites
 - `docs`: project documentation for maintainers and users of the template
 

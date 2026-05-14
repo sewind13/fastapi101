@@ -74,18 +74,6 @@ def read_my_items(
     )
 
 
-@router.get("/me-fast", response_model=list[ItemPublic])
-def read_my_items_relationship(
-    *,
-    current_user: UserModel = Depends(get_current_user),
-    offset: int = 0,
-    limit: int = Query(default=10, le=100),
-):
-    """Return items directly from the loaded user relationship."""
-
-    return current_user.items[offset : offset + limit]
-
-
 @router.post("/{item_id}/archive", response_model=ItemPublic)
 def archive_item(
     request: Request,

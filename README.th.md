@@ -39,6 +39,8 @@ make bootstrap-admin-in-container-env args="--username admin --email admin@examp
 
 เริ่มจากชุดเอกสารภาษาไทยที่ [docs-thai/README.md](/Users/pluto/Documents/git/fastapi101/docs-thai/README.md) ซึ่งเป็น index หลักของ docs ไทย
 
+ถ้าใช้ LLM หรือ coding agent ช่วยแก้โค้ด ให้อ่าน [AGENTS.md](/Users/pluto/Documents/git/fastapi101/AGENTS.md) ก่อน เพื่อให้ agent เข้าใจ guardrails, architecture rules, และ quality gates ของ repo นี้
+
 ลำดับแนะนำ:
 
 1. [docs-thai/bootstrap.md](/Users/pluto/Documents/git/fastapi101/docs-thai/bootstrap.md)

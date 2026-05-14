@@ -1,18 +1,29 @@
-import pika  # type: ignore[import-untyped]
+from typing import Any
 
 from app.core.config import settings
 from app.core.logging import configure_logging, logger
 from app.worker.publisher import ensure_worker_topology
 
 DEFAULT_REPLAY_LIMIT = 100
+pika: Any = None
+
+
+def _get_pika() -> Any:
+    global pika
+    if pika is None:
+        import pika as pika_module  # type: ignore[import-untyped]
+
+        pika = pika_module
+    return pika
 
 
 def replay_dead_letter_queue(*, limit: int = DEFAULT_REPLAY_LIMIT) -> int:
     if not settings.worker.broker_url:
         raise RuntimeError("WORKER__BROKER_URL is not configured.")
 
-    parameters = pika.URLParameters(settings.worker.broker_url)
-    connection = pika.BlockingConnection(parameters)
+    pika_module = _get_pika()
+    parameters = pika_module.URLParameters(settings.worker.broker_url)
+    connection = pika_module.BlockingConnection(parameters)
     replayed = 0
 
     try:
@@ -34,7 +45,7 @@ def replay_dead_letter_queue(*, limit: int = DEFAULT_REPLAY_LIMIT) -> int:
                 exchange="",
                 routing_key=settings.worker.queue_name,
                 body=body,
-                properties=pika.BasicProperties(
+                properties=pika_module.BasicProperties(
                     content_type=properties.content_type or "application/json",
                     delivery_mode=2,
                     headers=headers,

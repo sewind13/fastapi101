@@ -7,7 +7,7 @@ from app.schemas.common import DependencyCheckResponse, ReadinessResponse
 @pytest.mark.asyncio
 async def test_readiness_check_returns_ok_when_db_is_available(client, monkeypatch):
     monkeypatch.setattr(
-        "app.main.run_readiness_checks",
+        "app.api.health.run_readiness_checks",
         lambda: ReadinessResponse(
             status="ok",
             checks=[
@@ -44,7 +44,7 @@ async def test_readiness_check_returns_ok_when_db_is_available(client, monkeypat
 @pytest.mark.asyncio
 async def test_readiness_check_returns_503_when_db_is_unavailable(client, monkeypatch):
     monkeypatch.setattr(
-        "app.main.run_readiness_checks",
+        "app.api.health.run_readiness_checks",
         lambda: ReadinessResponse(
             status="degraded",
             checks=[
@@ -86,7 +86,7 @@ async def test_readiness_check_returns_503_when_db_is_unavailable(client, monkey
 @pytest.mark.asyncio
 async def test_readiness_check_includes_optional_dependency_results(client, monkeypatch):
     monkeypatch.setattr(
-        "app.main.run_readiness_checks",
+        "app.api.health.run_readiness_checks",
         lambda: ReadinessResponse(
             status="degraded",
             checks=[

@@ -41,6 +41,8 @@ request flow ปกติคือ:
 - `alembic/versions/*.py`
 - tests ใน `tests/unit` และ `tests/integration`
 
+ไฟล์ revision ของ Alembic ถูก exclude จาก Ruff lint/format เพื่อลด churn ใน migration history ดังนั้นหลัง autogenerate ต้องเปิด review ด้วยมือก่อน commit เสมอ
+
 ## Step-by-step ที่แนะนำ
 
 1. ออกแบบ request/response schema ใน `app/schemas`

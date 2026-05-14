@@ -376,6 +376,7 @@ class SESEmailProvider:
     ) -> None:
         import boto3  # type: ignore[import-untyped]
         from botocore.exceptions import BotoCoreError, ClientError  # type: ignore[import-untyped]
+
         policy = get_event_retry_policy(task_name, provider_name="ses")
 
         if not settings.email.ses_region:

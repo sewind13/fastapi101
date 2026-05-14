@@ -2,7 +2,7 @@
 
 This document explains what each configuration group does and how the main variables affect the application.
 
-The source of truth for settings is [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py). Full example values live in [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example), and a smaller baseline lives in [/.env.min.example](/Users/pluto/Documents/git/fastapi101/.env.min.example).
+The source of truth for settings is [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings). [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) remains as a compatibility shim for existing `from app.core.config import settings` imports. Full example values live in [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example), and a smaller baseline lives in [/.env.min.example](/Users/pluto/Documents/git/fastapi101/.env.min.example).
 
 ## How Configuration Is Loaded
 
@@ -37,6 +37,25 @@ Nested groups map to settings objects:
 - `HEALTH__*` -> `HealthSettings`
 
 The settings layer also supports some older flat env names for compatibility, but new projects should prefer the nested format.
+
+## Optional Runtime Extras
+
+The base production image installs only the core API runtime. Feature-specific integrations are optional extras:
+
+| Extra | Install Command | Enables |
+| --- | --- | --- |
+| `redis` | `uv sync --extra redis` | Redis cache, Redis auth rate limiting, Redis worker idempotency, Redis readiness checks |
+| `worker` | `uv sync --extra worker` | AMQP worker publishing, worker runner, outbox dispatch, DLQ replay |
+| `aws` | `uv sync --extra aws` | SES email delivery and S3 readiness checks |
+| `observability` | `uv sync --extra observability` | OpenTelemetry tracing and FastAPI/SQLAlchemy instrumentation |
+| `all` | `uv sync --all-extras` | Fully loaded local/CI template validation |
+
+Configuration can mention optional services even when the package is not installed, but enabling the related runtime path requires the matching extra. Examples:
+
+- `CACHE__BACKEND="redis"` or `AUTH_RATE_LIMIT__BACKEND="redis"` requires `fastapi101[redis]`.
+- `WORKER__ENABLED="true"`, `HEALTH__ENABLE_QUEUE_CHECK="true"`, or DLQ replay requires `fastapi101[worker]`.
+- `EMAIL__PROVIDER="ses"` or `HEALTH__ENABLE_S3_CHECK="true"` requires `fastapi101[aws]`.
+- `TELEMETRY__ENABLED="true"` requires `fastapi101[observability]`.
 
 ## Quick Reference Table
 
@@ -748,6 +767,7 @@ Recommended follow-up checks:
 
 ## Related Files
 
+- [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings)
 - [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
 - [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example)
 - [app/core/logging.py](/Users/pluto/Documents/git/fastapi101/app/core/logging.py)

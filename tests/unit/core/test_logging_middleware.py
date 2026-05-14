@@ -1,7 +1,7 @@
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-from app.main import app
+from app.factory import create_app
 from app.schemas.common import DependencyCheckResponse, ReadinessResponse
 
 
@@ -9,16 +9,16 @@ from app.schemas.common import DependencyCheckResponse, ReadinessResponse
 async def test_sampling_skips_success_logs_when_sample_rate_is_zero(monkeypatch):
     entries = []
 
-    monkeypatch.setattr("app.main.random", lambda: 0.9)
-    monkeypatch.setattr("app.main.settings.logging.access_log_sample_rate", 0.0)
-    monkeypatch.setattr("app.main.settings.logging.access_log_skip_paths", [])
-    monkeypatch.setattr("app.main.settings.logging.access_log_skip_prefixes", [])
+    monkeypatch.setattr("app.core.middleware.random", lambda: 0.9)
+    monkeypatch.setattr("app.core.middleware.settings.logging.access_log_sample_rate", 0.0)
+    monkeypatch.setattr("app.core.middleware.settings.logging.access_log_skip_paths", [])
+    monkeypatch.setattr("app.core.middleware.settings.logging.access_log_skip_prefixes", [])
     monkeypatch.setattr(
-        "app.main.logger.info",
+        "app.core.middleware.logger.info",
         lambda message, extra=None: entries.append((message, extra)),
     )
     monkeypatch.setattr(
-        "app.main.run_readiness_checks",
+        "app.api.health.run_readiness_checks",
         lambda: ReadinessResponse(
             status="ok",
             checks=[
@@ -41,6 +41,7 @@ async def test_sampling_skips_success_logs_when_sample_rate_is_zero(monkeypatch)
             ],
         ),
     )
+    app = create_app()
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/health/ready")
@@ -53,14 +54,15 @@ async def test_sampling_skips_success_logs_when_sample_rate_is_zero(monkeypatch)
 async def test_sampling_always_logs_error_responses(monkeypatch):
     entries = []
 
-    monkeypatch.setattr("app.main.random", lambda: 0.9)
-    monkeypatch.setattr("app.main.settings.logging.access_log_sample_rate", 0.0)
-    monkeypatch.setattr("app.main.settings.logging.access_log_skip_paths", [])
-    monkeypatch.setattr("app.main.settings.logging.access_log_skip_prefixes", [])
+    monkeypatch.setattr("app.core.middleware.random", lambda: 0.9)
+    monkeypatch.setattr("app.core.middleware.settings.logging.access_log_sample_rate", 0.0)
+    monkeypatch.setattr("app.core.middleware.settings.logging.access_log_skip_paths", [])
+    monkeypatch.setattr("app.core.middleware.settings.logging.access_log_skip_prefixes", [])
     monkeypatch.setattr(
-        "app.main.logger.info",
+        "app.core.middleware.logger.info",
         lambda message, extra=None: entries.append((message, extra)),
     )
+    app = create_app()
 
     async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
         response = await client.get("/missing-route")

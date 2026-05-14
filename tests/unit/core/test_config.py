@@ -231,8 +231,9 @@ def test_non_local_environments_require_non_default_secret_key():
             },
         )
 
-    assert "SECURITY__SECRET_KEY must be replaced before deploying to non-local environments." in str(
-        exc_info.value
+    assert (
+        "SECURITY__SECRET_KEY must be replaced before deploying to non-local environments."
+        in str(exc_info.value)
     )
 
 
@@ -373,9 +374,7 @@ def test_production_worker_requires_broker_url():
             },
         )
 
-    assert "WORKER__BROKER_URL must be configured when WORKER__ENABLED=true." in str(
-        exc_info.value
-    )
+    assert "WORKER__BROKER_URL must be configured when WORKER__ENABLED=true." in str(exc_info.value)
 
 
 def test_production_worker_redis_idempotency_requires_redis_url():
@@ -406,6 +405,69 @@ def test_production_worker_redis_idempotency_requires_redis_url():
         )
 
     assert "WORKER__IDEMPOTENCY_REDIS_URL must be configured" in str(exc_info.value)
+
+
+@pytest.mark.parametrize(
+    ("overrides", "expected_message"),
+    [
+        (
+            {
+                "database": {
+                    "url": "sqlite:///./database.db",
+                    "echo": False,
+                    "pool_size": 10,
+                    "max_overflow": 20,
+                    "pool_timeout": 30,
+                    "pool_recycle": 1800,
+                }
+            },
+            "DATABASE__URL must point to a production database",
+        ),
+        (
+            {
+                "metrics": {
+                    "enabled": True,
+                    "path": "/metrics",
+                    "include_in_schema": False,
+                    "auth_token": None,
+                }
+            },
+            "METRICS__AUTH_TOKEN must be configured",
+        ),
+        (
+            {
+                "cache": {
+                    "enabled": True,
+                    "backend": "redis",
+                    "redis_url": None,
+                    "key_prefix": "cache",
+                    "default_ttl_seconds": 60,
+                    "items_list_ttl_seconds": 30,
+                }
+            },
+            "CACHE__REDIS_URL must be configured",
+        ),
+        (
+            {
+                "api": {
+                    "v1_prefix": "/api/v1",
+                    "cors_origins": ["https://app.example.com"],
+                    "public_registration_enabled": True,
+                },
+                "ops": {"enabled": True},
+            },
+            "API__PUBLIC_REGISTRATION_ENABLED should be false",
+        ),
+    ],
+)
+def test_production_guardrails_fail_independently(overrides, expected_message):
+    with pytest.raises(ValidationError) as exc_info:
+        build_settings(
+            app={"name": "FastAPI Template", "debug": False, "env": "production"},
+            **overrides,
+        )
+
+    assert expected_message in str(exc_info.value)
 
 
 def test_external_retry_statuses_parse_from_string():

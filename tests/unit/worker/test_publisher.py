@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 from typing import cast
 
 from app.core.config import settings
@@ -89,10 +90,13 @@ def test_publish_task_sends_durable_message(monkeypatch):
     monkeypatch.setattr(settings.worker, "dead_letter_queue_name", "app.default.dlq")
     monkeypatch.setattr(settings.worker, "retry_delay_ms", 30000)
 
-    monkeypatch.setattr("app.worker.publisher.pika.URLParameters", lambda url: url)
     monkeypatch.setattr(
-        "app.worker.publisher.pika.BlockingConnection",
-        lambda parameters: fake_connection,
+        "app.worker.publisher._get_pika",
+        lambda: SimpleNamespace(
+            URLParameters=lambda url: url,
+            BlockingConnection=lambda parameters: fake_connection,
+            BasicProperties=lambda **kwargs: SimpleNamespace(**kwargs),
+        ),
     )
 
     published = publish_task(

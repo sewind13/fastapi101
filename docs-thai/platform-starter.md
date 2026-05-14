@@ -58,6 +58,8 @@ repo นี้ควรถูกใช้งานผ่าน 3 ชั้น:
 
 แนวคิดคือ feature เหล่านี้ควรรู้สึกว่า “supported และ documented” แต่ยัง optional ในมุม product adoption
 
+runtime dependency ของ extension หลายตัวถูกแยกเป็น optional extras เพื่อให้ production image พื้นฐานไม่แบก dependency ที่ยังไม่ใช้ เช่น Redis-backed cache/rate limit ใช้ `fastapi101[redis]`, SES/S3 ใช้ `fastapi101[aws]`, และ OpenTelemetry exporter ใช้ `fastapi101[observability]`
+
 ### Advanced
 
 สิ่งที่มีภาระ operation สูงขึ้น:
@@ -71,6 +73,8 @@ repo นี้ควรถูกใช้งานผ่าน 3 ชั้น:
 - Kubernetes deployment baselines
 
 สิ่งเหล่านี้มีประโยชน์มาก แต่ควรถูกมองเป็น capability ที่ opt-in ไม่ใช่ assumption ว่าทุกทีมต้องเข้าใจตั้งแต่วันแรก
+
+ถ้าเปิด AMQP worker, outbox dispatcher, หรือ DLQ replay ให้ติดตั้ง worker extra ด้วย `fastapi101[worker]`
 
 ## Suggested adoption path
 
@@ -92,11 +96,14 @@ repo นี้ควรถูกใช้งานผ่าน 3 ชั้น:
 ### Core
 
 - `app/main.py`
+- `app/factory.py`
 - `app/api`
 - `app/services`
 - `app/db`
 - `app/schemas`
+- `app/core/settings`
 - `app/core/config.py`
+- `app/core/middleware.py`
 - `app/core/security.py`
 - `app/core/logging.py`
 - `app/core/health.py`

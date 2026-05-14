@@ -203,9 +203,7 @@ def request_verification_email(
     current_user: UserModel = Depends(get_current_user),
     session: Session = Depends(get_session),
 ):
-    message = unwrap_result(
-        request_email_verification(session=session, user=current_user)
-    )
+    message = unwrap_result(request_email_verification(session=session, user=current_user))
     return MessageResponse(message=message)
 
 

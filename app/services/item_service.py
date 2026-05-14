@@ -211,7 +211,6 @@ class ItemService(BaseService):
             ttl_seconds=settings.cache.items_list_ttl_seconds,
         )
         return self.success(items)
-    
 
     def restore_item_for_user(
         self,

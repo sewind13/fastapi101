@@ -22,8 +22,13 @@ The application is organized into distinct layers with clear responsibilities.
 
 ```mermaid
 flowchart TD
-    Client["External Client"] --> Main["app.main"]
-    Main --> Router["app/api/router.py"]
+    Client["External Client"] --> Main["app/main.py"]
+    Main --> Factory["app/factory.py"]
+    Factory --> Router["app/api/router.py"]
+    Factory --> HealthApi["app/api/health.py"]
+    Factory --> MetricsApi["app/api/metrics.py"]
+    Factory --> ExceptionHandlers["app/api/exception_handlers.py"]
+    Factory --> Middleware["app/core/middleware.py"]
     Router --> Endpoint["app/api/v1/*.py"]
     Endpoint --> Deps["app/api/deps.py"]
     Endpoint --> ApiErrors["app/api/errors.py"]
@@ -40,7 +45,8 @@ flowchart TD
     WorkerRunner --> WorkerTasks["app/worker/tasks.py"]
     Service --> Models["app/db/models/*.py"]
     Endpoint --> Schemas["app/schemas/*.py"]
-    Core["app/core/*.py"] --> Main
+    Core["app/core/*.py"] --> Factory
+    Settings["app/core/settings/*.py"] --> Core
     Core --> Deps
     Core --> Service
     Core --> Repo
@@ -50,18 +56,19 @@ Each layer should depend "downward" toward more concrete implementation details,
 
 ## Main Application Wiring
 
-[app/main.py](/Users/pluto/Documents/git/fastapi101/app/main.py) is the assembly point of the application.
+[app/main.py](/Users/pluto/Documents/git/fastapi101/app/main.py) is the ASGI entrypoint. It intentionally stays thin and exports the app created by [app/factory.py](/Users/pluto/Documents/git/fastapi101/app/factory.py).
 
-It is responsible for:
+[app/factory.py](/Users/pluto/Documents/git/fastapi101/app/factory.py) is the application assembly point. It is responsible for:
 
 - creating the FastAPI app
-- loading middleware
+- registering middleware from [app/core/middleware.py](/Users/pluto/Documents/git/fastapi101/app/core/middleware.py)
 - connecting telemetry
 - registering routers
-- defining health endpoints
-- centralizing exception handling
+- registering health endpoints from [app/api/health.py](/Users/pluto/Documents/git/fastapi101/app/api/health.py)
+- registering metrics endpoints from [app/api/metrics.py](/Users/pluto/Documents/git/fastapi101/app/api/metrics.py)
+- centralizing exception handling through [app/api/exception_handlers.py](/Users/pluto/Documents/git/fastapi101/app/api/exception_handlers.py)
 
-This file should remain mostly declarative. If business rules start appearing here, the architecture is drifting.
+These files should remain mostly declarative. If business rules start appearing in app assembly, the architecture is drifting.
 
 ## API Layer
 
@@ -274,7 +281,7 @@ The app emits:
 - exception logs
 - audit logs for auth/security events
 
-The middleware in [app/main.py](/Users/pluto/Documents/git/fastapi101/app/main.py) attaches request IDs, duration, and request/response metadata so logs are useful in production.
+The middleware in [app/core/middleware.py](/Users/pluto/Documents/git/fastapi101/app/core/middleware.py) attaches request IDs, duration, and request/response metadata so logs are useful in production.
 
 Telemetry is optional and config-driven. If enabled, the app can attach trace context to logs and export spans through OpenTelemetry.
 
@@ -473,7 +480,7 @@ These run against a real Postgres database and use transaction-per-test rollback
 
 ## Configuration Model
 
-Settings are grouped logically in [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py):
+Settings are grouped logically under [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings). [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) remains as a compatibility shim for existing imports.
 
 - `APP__*`
 - `EXAMPLES__*`

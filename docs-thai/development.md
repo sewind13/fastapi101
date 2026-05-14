@@ -218,6 +218,8 @@ repo นี้มี:
 - ruff
 - pytest
 
+`alembic/versions` ถูก exclude จาก Ruff lint/format โดยตั้งใจ เพราะ migration เป็น history artifact ที่ควรถูก review และแก้ด้วยมือหลัง autogenerate ส่วน `alembic/env.py` และ code ส่วนอื่นยังอยู่ใต้ Ruff ตามปกติ
+
 ดังนั้นควรถือว่าคำสั่งเหล่านี้เป็น baseline ในการพัฒนา
 
 ## Workflow ตอนเพิ่ม feature ใหม่

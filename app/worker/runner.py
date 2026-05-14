@@ -1,6 +1,7 @@
-import json
+from __future__ import annotations
 
-import pika  # type: ignore[import-untyped]
+import json
+from typing import Any
 
 from app.core.config import settings
 from app.core.logging import configure_logging, logger
@@ -9,6 +10,17 @@ from app.worker.idempotency import worker_idempotency_backend
 from app.worker.publisher import ensure_worker_topology
 from app.worker.schemas import TaskEnvelope
 from app.worker.tasks import dispatch_envelope, get_task_retry_policy
+
+pika: Any = None
+
+
+def _get_pika() -> Any:
+    global pika
+    if pika is None:
+        import pika as pika_module  # type: ignore[import-untyped]
+
+        pika = pika_module
+    return pika
 
 
 def _extract_retry_count(properties: pika.BasicProperties) -> int:
@@ -26,6 +38,7 @@ def _publish_retry(
     envelope: TaskEnvelope,
     retry_count: int,
 ) -> None:
+    pika_module = _get_pika()
     retry_policy = get_task_retry_policy(envelope.task)
     retry_delay_ms = min(
         retry_policy.base_delay_ms * (2 ** max(retry_count - 1, 0)),
@@ -35,7 +48,7 @@ def _publish_retry(
         exchange="",
         routing_key=settings.worker.retry_queue_name,
         body=envelope.model_dump_json().encode("utf-8"),
-        properties=pika.BasicProperties(
+        properties=pika_module.BasicProperties(
             content_type="application/json",
             delivery_mode=2,
             headers={"x-retry-count": retry_count},
@@ -50,11 +63,12 @@ def _publish_dead_letter(
     envelope: TaskEnvelope,
     retry_count: int,
 ) -> None:
+    pika_module = _get_pika()
     channel.basic_publish(
         exchange="",
         routing_key=settings.worker.dead_letter_queue_name,
         body=envelope.model_dump_json().encode("utf-8"),
-        properties=pika.BasicProperties(
+        properties=pika_module.BasicProperties(
             content_type="application/json",
             delivery_mode=2,
             headers={"x-retry-count": retry_count},
@@ -171,8 +185,9 @@ def main() -> int:
             "queue_name": settings.worker.queue_name,
         },
     )
-    parameters = pika.URLParameters(settings.worker.broker_url)
-    connection = pika.BlockingConnection(parameters)
+    pika_module = _get_pika()
+    parameters = pika_module.URLParameters(settings.worker.broker_url)
+    connection = pika_module.BlockingConnection(parameters)
     channel = connection.channel()
     ensure_worker_topology(channel)
     _observe_queue_depths(channel)

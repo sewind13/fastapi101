@@ -11,8 +11,10 @@ from sqlmodel.pool import StaticPool
 from alembic import command
 from app.db.base import metadata
 from app.db.session import get_session
-from app.main import app
+from app.factory import create_app
 from tests.conftest import build_token_headers, create_test_user
+
+app = create_app()
 
 sqlite_url = "sqlite://"
 sqlite_engine = create_engine(

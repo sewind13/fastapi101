@@ -77,12 +77,12 @@ def test_replay_dead_letter_queue_republishes_messages(monkeypatch):
         "app.default.dlq",
     )
     monkeypatch.setattr(
-        "app.jobs.replay_dead_letter_queue.pika.URLParameters",
-        lambda url: url,
-    )
-    monkeypatch.setattr(
-        "app.jobs.replay_dead_letter_queue.pika.BlockingConnection",
-        lambda parameters: fake_connection,
+        "app.jobs.replay_dead_letter_queue._get_pika",
+        lambda: SimpleNamespace(
+            URLParameters=lambda url: url,
+            BlockingConnection=lambda parameters: fake_connection,
+            BasicProperties=lambda **kwargs: SimpleNamespace(**kwargs),
+        ),
     )
 
     replayed = replay_dead_letter_queue(limit=10)

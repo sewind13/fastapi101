@@ -26,9 +26,7 @@ def get_reservation_by_id_for_update(
     reservation_id: int,
 ) -> UsageReservation | None:
     statement = (
-        select(UsageReservation)
-        .where(UsageReservation.id == reservation_id)
-        .with_for_update()
+        select(UsageReservation).where(UsageReservation.id == reservation_id).with_for_update()
     )
     return session.exec(statement).first()
 

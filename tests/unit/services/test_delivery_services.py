@@ -32,6 +32,7 @@ def test_send_welcome_email_dry_run(monkeypatch):
 
     assert provider.calls[0]["email"] == "user@example.com"
 
+
 def test_send_user_registered_webhook_delegates_to_provider(monkeypatch):
     provider = FakeWebhookProvider()
     monkeypatch.setattr("app.services.webhook_service.get_webhook_provider", lambda: provider)

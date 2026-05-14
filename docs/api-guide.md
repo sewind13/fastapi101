@@ -39,6 +39,8 @@ If you want to add a new resource such as `orders`, the usual touch points are:
 - `alembic/versions/*.py`
 - tests under `tests/unit` and `tests/integration`
 
+Alembic revision files are intentionally excluded from Ruff lint/format to avoid churn in migration history. Review generated migrations manually before committing them.
+
 ## Step-By-Step: Add A New Resource
 
 1. Define request/response schemas in `app/schemas/<resource>.py`.
@@ -162,7 +164,7 @@ Service failures are converted to API errors through:
 
 - [`app/services/result.py`](../app/services/result.py)
 - [`app/api/errors.py`](../app/api/errors.py)
-- centralized handlers in [`app/main.py`](../app/main.py)
+- centralized handlers in [`app/api/exception_handlers.py`](../app/api/exception_handlers.py)
 
 This gives you:
 

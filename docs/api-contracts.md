@@ -83,7 +83,7 @@ Validation errors may also include:
 Source:
 
 - [`app/schemas/common.py`](../app/schemas/common.py)
-- [`app/main.py`](../app/main.py)
+- [`app/api/exception_handlers.py`](../app/api/exception_handlers.py)
 
 ## Status Code Conventions
 

@@ -14,7 +14,7 @@ With the default config, that means:
 
 Source:
 
-- [`app/main.py`](../app/main.py)
+- [`app/factory.py`](../app/factory.py)
 
 ## Swagger UI
 

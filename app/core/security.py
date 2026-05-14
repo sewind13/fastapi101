@@ -22,6 +22,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
         hashed_password.encode("utf-8"),
     )
 
+
 def _create_token(
     *,
     subject: str,
@@ -102,9 +103,7 @@ def validate_password_policy(
     email: str | None = None,
 ) -> str | None:
     if len(password) < settings.security.password_min_length:
-        return (
-            f"Password must be at least {settings.security.password_min_length} characters long."
-        )
+        return f"Password must be at least {settings.security.password_min_length} characters long."
     if settings.security.password_require_uppercase and not any(
         char.isupper() for char in password
     ):

@@ -292,6 +292,8 @@ pre-commit install
 
 This repository also includes GitHub Actions CI in [../.github/workflows/ci.yml](../.github/workflows/ci.yml) so the same checks run again on push and pull request.
 
+Alembic revision history under `alembic/versions` is excluded from Ruff lint/format on purpose. Treat migration files as reviewed artifacts: generated revisions should be read and corrected manually, while `alembic/env.py` and the rest of the application still follow normal Ruff rules.
+
 ## Adding A New Feature Slice
 
 The preferred pattern is a full vertical slice:

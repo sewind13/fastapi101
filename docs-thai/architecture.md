@@ -16,17 +16,25 @@
 ## Layer หลัก
 
 - `app/main.py`
+  ASGI entrypoint แบบบางสำหรับ production server
+- `app/factory.py`
   จุดประกอบระบบทั้งหมด
 - `app/api`
   route, dependencies, API error mapping
+- `app/api/health.py`, `app/api/metrics.py`, `app/api/exception_handlers.py`
+  health/readiness, metrics endpoint, และ centralized exception handlers
 - `app/services`
   business logic
 - `app/db`
   models, repositories, sessions, Alembic discovery
 - `app/schemas`
   request/response contracts
+- `app/core/settings`
+  settings source of truth ที่แยกตาม domain
 - `app/core`
   settings, security, logging, health, telemetry, cache, rate limiting
+- `app/core/middleware.py`
+  request ID, logging, และ request metadata middleware wiring
 - `app/worker`
   async task publishing, consuming, idempotency, outbox integration
 
@@ -34,22 +42,23 @@
 
 ## Main application wiring
 
-`app/main.py` คือ assembly point ของระบบ
+`app/main.py` เป็น ASGI entrypoint แบบบาง ส่วน `app/factory.py` คือ assembly point ของระบบ
 
 หน้าที่หลัก:
 
 - สร้าง FastAPI app
-- load middleware
+- load middleware จาก `app/core/middleware.py`
 - ผูก telemetry
 - register routers
-- define health endpoints
-- รวม exception handling ไว้กลางระบบ
+- register health endpoints จาก `app/api/health.py`
+- register metrics endpoint จาก `app/api/metrics.py`
+- รวม exception handling จาก `app/api/exception_handlers.py`
 
 ไฟล์นี้ควรยังเป็น declarative wiring เป็นหลัก ถ้าเริ่มมี business rule หนา ๆ โผล่มาที่นี่ แปลว่า architecture กำลัง drift
 
 ## Request flow ปกติ
 
-1. request เข้า `app.main`
+1. request เข้า `app.main:app` ที่ถูกสร้างผ่าน `app/factory.py`
 2. router เลือก endpoint
 3. route resolve dependencies
 4. route เรียก service
@@ -238,7 +247,7 @@ observability ส่วนใหญ่กระจุกอยู่ใน:
 - exception logs
 - audit logs สำหรับ auth/security events
 
-middleware ใน `app/main.py` ยังช่วย attach request IDs, duration, และ metadata เพื่อให้ logs ใช้งานใน production ได้จริง
+middleware ใน `app/core/middleware.py` ยังช่วย attach request IDs, duration, และ metadata เพื่อให้ logs ใช้งานใน production ได้จริง
 
 ## Background worker
 
@@ -279,7 +288,7 @@ endpoint หลัก:
 
 สิ่งที่สำคัญจริงในมุม ops คือ `/health/ready` เพราะมัน report ระดับ dependency
 
-แนวคิดคือเพิ่ม checks ใหม่ได้โดยไม่ทำให้ `main.py` บวม
+แนวคิดคือเพิ่ม checks ใหม่ได้โดยไม่ทำให้ application wiring บวม
 
 ## Example สำคัญใน repo ตอนนี้
 

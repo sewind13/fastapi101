@@ -2,7 +2,7 @@
 
 ไฟล์นี้อธิบายว่ากลุ่ม config หลักของ template นี้มีอะไรบ้าง ควรแก้ตัวไหนก่อน และตัวไหนเป็น optional
 
-source of truth จริงอยู่ที่ [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) ส่วนตัวอย่างค่าดูได้ที่:
+source of truth จริงอยู่ที่ [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings) ส่วน [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) เป็น compatibility shim สำหรับ import path เดิม ตัวอย่างค่าดูได้ที่:
 
 - [/.env.min.example](/Users/pluto/Documents/git/fastapi101/.env.min.example)
 - [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example)
@@ -45,6 +45,25 @@ settings groups ที่สำคัญในระบบนี้ เช่น
 - `WEBHOOK__*`
 - `WORKER__*`
 - `HEALTH__*`
+
+## Optional Runtime Extras
+
+production image พื้นฐานติดตั้งเฉพาะ core runtime เท่านั้น ส่วน dependency ของ capability ที่ยังไม่ใช้ถูกแยกเป็น optional extras:
+
+| Extra | ใช้เมื่อเปิด |
+| --- | --- |
+| `fastapi101[redis]` | Redis-backed cache, auth rate limiting, worker idempotency, Redis readiness checks |
+| `fastapi101[aws]` | SES email provider, S3 readiness checks |
+| `fastapi101[observability]` | OpenTelemetry FastAPI/SQLAlchemy instrumentation และ OTLP exporter |
+| `fastapi101[worker]` | AMQP worker, task publisher/runner, DLQ replay |
+| `fastapi101[all]` | local/dev หรือ CI ที่ต้องการ dependency optional ครบชุด |
+
+config ที่ควรจับคู่กับ extras:
+
+- `CACHE__BACKEND="redis"` หรือ `AUTH_RATE_LIMIT__BACKEND="redis"` ต้องมี `fastapi101[redis]`
+- `WORKER__ENABLED="true"`, `HEALTH__ENABLE_QUEUE_CHECK="true"`, หรือ DLQ replay ต้องมี `fastapi101[worker]`
+- `EMAIL__PROVIDER="ses"` หรือ `HEALTH__ENABLE_S3_CHECK="true"` ต้องมี `fastapi101[aws]`
+- `TELEMETRY__ENABLED="true"` ต้องมี `fastapi101[observability]`
 
 ## วิธีคิดเวลาอ่าน config
 

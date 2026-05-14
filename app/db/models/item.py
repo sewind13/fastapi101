@@ -6,6 +6,7 @@ from sqlmodel import Field, Relationship, SQLModel
 if TYPE_CHECKING:
     from app.db.models.user import User
 
+
 class Item(SQLModel, table=True):
     __table_args__ = {"extend_existing": True}
 
@@ -24,4 +25,3 @@ class Item(SQLModel, table=True):
 
     restored_at: datetime | None = Field(default=None, nullable=True)
     restore_count: int = Field(default=0, nullable=False)
-

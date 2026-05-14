@@ -304,8 +304,7 @@ class AuthService(BaseService):
             )
 
         return self.success(
-            "If an account exists for that email address, "
-            "a password reset email has been queued."
+            "If an account exists for that email address, a password reset email has been queued."
         )
 
     def confirm_password_reset(

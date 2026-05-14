@@ -23,10 +23,7 @@ def get_active_entitlement_for_update(
         .where(FeatureEntitlement.resource_key == resource_key)
         .where(FeatureEntitlement.status == "active")
         .where((col(valid_from).is_(None)) | (valid_from <= now))
-        .where(
-            (col(valid_until).is_(None))
-            | (valid_until >= now)
-        )
+        .where((col(valid_until).is_(None)) | (valid_until >= now))
         .order_by(col(FeatureEntitlement.id).desc())
         .with_for_update()
     )
@@ -93,10 +90,7 @@ def sum_remaining_units(
         .where(FeatureEntitlement.resource_key == resource_key)
         .where(FeatureEntitlement.status == "active")
         .where((col(valid_from).is_(None)) | (valid_from <= now))
-        .where(
-            (col(valid_until).is_(None))
-            | (valid_until >= now)
-        )
+        .where((col(valid_until).is_(None)) | (valid_until >= now))
     )
     result = session.exec(statement).one()
     return int(result or 0)
