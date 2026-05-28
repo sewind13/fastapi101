@@ -91,6 +91,8 @@ For a new internal API, the recommended path is:
 2. Add Extensions after the first real runtime need appears.
 3. Add Advanced features only when synchronous request handling is no longer enough.
 
+For copy-friendly presets, use the `core-only`, `redis-enabled`, and `full-async` quick reference in [docs/adoption-checklists.md](/Users/pluto/Documents/git/fastapi101/docs/adoption-checklists.md).
+
 Examples:
 
 - If the service only does CRUD over Postgres, stay mostly in Core.

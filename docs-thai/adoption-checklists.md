@@ -62,6 +62,77 @@
 
 ## Starter Profiles
 
+profile ด้านล่างเป็น guidance ไม่ใช่ product mode แยกชุด เป้าหมายคือให้ทีมเลือกจุดเริ่มต้นได้เร็วโดยไม่ต้องเปิดทุก subsystem พร้อมกัน
+
+## Preset แบบเร็ว
+
+| Preset | เหมาะเมื่อ | Runtime extras | Docker image | Helm shape |
+| --- | --- | --- | --- | --- |
+| `core-only` | API เป็น request/response กับ Postgres และยังไม่ต้องใช้ Redis หรือ worker | ไม่ต้องเพิ่ม extra | `docker build --tag fastapi-template:core .` | ปิด `worker`, `outboxDispatcher`, Redis checks, cache, metrics และ ops API ถ้ายังไม่ใช้ |
+| `redis-enabled` | API ต้องใช้ Redis-backed rate limiting, cache, idempotency หรือ readiness checks | `redis` | `docker build --build-arg RUNTIME_EXTRAS=redis --tag fastapi-template:redis .` | เปิด API ตามปกติ ตั้ง Redis URLs และเปิดเฉพาะ feature ที่ใช้จริง |
+| `full-async` | service ต้องใช้ worker + outbox + broker-backed side effects ตั้งแต่ต้น | `all` | `docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .` | เปิด API, worker, outbox dispatcher, queue checks, Redis idempotency, ops API และ migration job |
+
+env ตั้งต้นที่ copy ไปปรับต่อได้:
+
+```env
+# core-only
+CACHE__ENABLED="false"
+AUTH_RATE_LIMIT__BACKEND="memory"
+METRICS__ENABLED="false"
+OPS__ENABLED="false"
+WORKER__ENABLED="false"
+HEALTH__ENABLE_REDIS_CHECK="false"
+HEALTH__ENABLE_QUEUE_CHECK="false"
+```
+
+```env
+# redis-enabled
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+AUTH_RATE_LIMIT__BACKEND="redis"
+HEALTH__ENABLE_REDIS_CHECK="true"
+```
+
+```env
+# full-async
+WORKER__ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+OPS__ENABLED="true"
+HEALTH__ENABLE_QUEUE_CHECK="true"
+```
+
+ตัวอย่าง Helm:
+
+```bash
+# core-only
+helm upgrade --install api deploy/helm/fastapi-template \
+  --set worker.enabled=false \
+  --set outboxDispatcher.enabled=false \
+  --set config.CACHE__ENABLED=false \
+  --set config.METRICS__ENABLED=false \
+  --set config.OPS__ENABLED=false \
+  --set config.HEALTH__ENABLE_REDIS_CHECK=false \
+  --set config.HEALTH__ENABLE_QUEUE_CHECK=false
+
+# redis-enabled
+helm upgrade --install api deploy/helm/fastapi-template \
+  --set worker.enabled=false \
+  --set outboxDispatcher.enabled=false \
+  --set config.AUTH_RATE_LIMIT__BACKEND=redis \
+  --set config.CACHE__ENABLED=true \
+  --set config.CACHE__BACKEND=redis \
+  --set config.HEALTH__ENABLE_REDIS_CHECK=true
+
+# full-async
+helm upgrade --install api deploy/helm/fastapi-template \
+  --set worker.enabled=true \
+  --set outboxDispatcher.enabled=true \
+  --set config.WORKER__ENABLED=true \
+  --set config.WORKER__IDEMPOTENCY_BACKEND=redis \
+  --set config.OPS__ENABLED=true \
+  --set config.HEALTH__ENABLE_QUEUE_CHECK=true
+```
+
 ### CRUD API Profile
 
 เหมาะกับ:

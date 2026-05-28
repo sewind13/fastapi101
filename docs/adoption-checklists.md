@@ -28,6 +28,77 @@ Quick rule of thumb:
 
 If a team wants a faster default than building feature-by-feature from the matrix, start from one of these profiles.
 
+## Preset Quick Reference
+
+These presets are intentionally guidance, not separate product modes. They map the same template to common adoption shapes.
+
+| Preset | Use When | Runtime Extras | Docker Image | Helm Shape |
+| --- | --- | --- | --- | --- |
+| `core-only` | request/response API over Postgres with no Redis or worker requirement yet | none | `docker build --tag fastapi-template:core .` | disable `worker`, `outboxDispatcher`, Redis checks, cache, and metrics unless your platform already provides them |
+| `redis-enabled` | the API needs Redis-backed rate limiting, cache, idempotency, or readiness checks | `redis` | `docker build --build-arg RUNTIME_EXTRAS=redis --tag fastapi-template:redis .` | keep API enabled, set Redis URLs, enable only the Redis-backed features the service actually uses |
+| `full-async` | the service needs worker + outbox + broker-backed side effects from the start | `all` | `docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .` | enable API, worker, outbox dispatcher, queue checks, Redis idempotency, ops API, and migration job |
+
+Copy-friendly environment starting points:
+
+```env
+# core-only
+CACHE__ENABLED="false"
+AUTH_RATE_LIMIT__BACKEND="memory"
+METRICS__ENABLED="false"
+OPS__ENABLED="false"
+WORKER__ENABLED="false"
+HEALTH__ENABLE_REDIS_CHECK="false"
+HEALTH__ENABLE_QUEUE_CHECK="false"
+```
+
+```env
+# redis-enabled
+CACHE__ENABLED="true"
+CACHE__BACKEND="redis"
+AUTH_RATE_LIMIT__BACKEND="redis"
+HEALTH__ENABLE_REDIS_CHECK="true"
+```
+
+```env
+# full-async
+WORKER__ENABLED="true"
+WORKER__IDEMPOTENCY_BACKEND="redis"
+OPS__ENABLED="true"
+HEALTH__ENABLE_QUEUE_CHECK="true"
+```
+
+Helm examples:
+
+```bash
+# core-only
+helm upgrade --install api deploy/helm/fastapi-template \
+  --set worker.enabled=false \
+  --set outboxDispatcher.enabled=false \
+  --set config.CACHE__ENABLED=false \
+  --set config.METRICS__ENABLED=false \
+  --set config.OPS__ENABLED=false \
+  --set config.HEALTH__ENABLE_REDIS_CHECK=false \
+  --set config.HEALTH__ENABLE_QUEUE_CHECK=false
+
+# redis-enabled
+helm upgrade --install api deploy/helm/fastapi-template \
+  --set worker.enabled=false \
+  --set outboxDispatcher.enabled=false \
+  --set config.AUTH_RATE_LIMIT__BACKEND=redis \
+  --set config.CACHE__ENABLED=true \
+  --set config.CACHE__BACKEND=redis \
+  --set config.HEALTH__ENABLE_REDIS_CHECK=true
+
+# full-async
+helm upgrade --install api deploy/helm/fastapi-template \
+  --set worker.enabled=true \
+  --set outboxDispatcher.enabled=true \
+  --set config.WORKER__ENABLED=true \
+  --set config.WORKER__IDEMPOTENCY_BACKEND=redis \
+  --set config.OPS__ENABLED=true \
+  --set config.HEALTH__ENABLE_QUEUE_CHECK=true
+```
+
 ### CRUD API Profile
 
 Use this for:
