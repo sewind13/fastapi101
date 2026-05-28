@@ -19,16 +19,29 @@ This mode:
 - does not mount local source into the container
 - uses dependencies baked into the image
 - avoids installing packages during container startup
+- uses a multi-stage image with a non-root runtime user
 - is closer to a real deployment runtime shape
 - keeps compose-exposed ports bound to `127.0.0.1` by default for safer local use
 - uses `LOCAL_POSTGRES_*` and `LOCAL_RABBITMQ_*` variables so local credentials are clearly separated from real deployment secrets
 
+The default Docker build installs the core API runtime only. If the image will
+run Redis-backed features, worker processes, AWS providers, or OpenTelemetry,
+build it with `RUNTIME_EXTRAS`:
+
+```bash
+docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
+```
+
 The container starts through [`scripts/start-web.sh`](../scripts/start-web.sh):
 
 ```bash
-alembic upgrade head
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
+
+Migrations intentionally do not run inside API startup. Run Alembic through
+a migration job, init step, or release pipeline before admitting traffic to
+new API instances. Runtime migration jobs should call `alembic upgrade head`
+from the image virtualenv directly.
 
 If you enable the background worker, run it as a separate process from the same image:
 
@@ -116,6 +129,7 @@ This order matters:
 - migrations happen before traffic cutover
 - API readiness gates traffic admission
 - background processes are rolled after the schema they depend on is in place
+- API containers do not run migrations during startup
 
 ## Runtime Responsibilities
 
@@ -523,11 +537,11 @@ Suggested Kubernetes workflow:
 
 Suggested Helm workflow:
 
-1. copy `deploy/helm/fastapi-template/values.yaml`
-2. use `deploy/helm/fastapi-template/values.prod.example.yaml` as a production-oriented starting point when you want a fuller baseline
+1. copy `deploy/helm/fastapi-template/values.yaml` for the lean `core-only` API baseline
+2. use `deploy/helm/fastapi-template/values.prod.example.yaml` as a production-oriented full async/Redis/ops starting point when you want a fuller baseline
 3. replace image, hostnames, and all secret placeholders
 4. decide whether Helm should create the migration job or whether your release system runs migrations separately
-5. disable worker or dispatcher templates if the service does not use them
+5. enable worker, outbox dispatcher, Redis-backed settings, metrics, or ops endpoints only when the service uses them
 6. render and review with `helm template`
 7. install or upgrade with your normal Helm release workflow
 

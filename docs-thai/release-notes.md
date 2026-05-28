@@ -1,0 +1,44 @@
+# Release Notes
+
+## v1.0.0 - 2026-05-29
+
+baseline แรกที่ถือว่า stable สำหรับ production-grade product template
+
+### สถานะ
+
+- Stability: stable template baseline
+- Breaking changes สำหรับ adopter เดิม: ไม่มี เพราะเป็น stable release แรก
+- tag ที่แนะนำ: `v1.0.0`
+
+### สิ่งสำคัญใน release นี้
+
+- โครงสร้าง FastAPI แบบ production-minded: routes บาง, service/repository layering, schemas ชัด, และใช้ `app.main:app` เป็น ASGI entrypoint
+- settings แยกตาม domain, มี production validation, compatibility shims สำหรับ env เก่า, และใช้ nested env variables
+- workflow DB ยึด Alembic เป็นหลัก และแยก migration ออกจาก API startup
+- Docker runtime แข็งขึ้นด้วย multi-stage build, optional runtime extras, และ non-root user
+- มี Helm/Kubernetes baseline โดย Helm default เป็น profile แบบ lean `core-only` ส่วน `values.prod.example.yaml` เป็นตัวอย่าง full async/Redis/ops
+- auth baseline มี JWT access/refresh tokens, revocation, email verification, password reset, account lockout, rate limiting, และ password policy
+- observability และ operations surfaces ถูกวางเป็น opt-in production capabilities
+- CI ครอบคลุม format, lint, typecheck, tests, workflow validation, dependency audit, secret scan, Docker builds, Trivy image scan, และ SBOM
+- docs อังกฤษและไทยครอบคลุม architecture, configuration, deployment, security, operations, และ adoption profiles
+
+### สิ่งที่ adopter ต้องทำ
+
+- เปลี่ยน secrets และ URLs ตัวอย่างทั้งหมดก่อน deploy
+- เลือก adoption preset: `core-only`, `redis-enabled`, หรือ `full-async`
+- ตัดสินใจว่าจะเก็บ sample `items` module และ entitlement example ไว้หรือไม่
+- รัน quality gates ครบก่อน tag product-specific fork
+- บันทึกว่า product เริ่มจาก template baseline `v1.0.0`
+
+### Validation
+
+- `uv run ruff format --check .`
+- `uv run ruff check .`
+- `uv run mypy app tests`
+- `uv run pytest -q`
+- `helm lint deploy/helm/fastapi-template`
+- `helm template fastapi-template deploy/helm/fastapi-template`
+- `actionlint .github/workflows/ci.yml`
+- `pip-audit --no-deps --disable-pip`
+- `gitleaks detect`
+- Docker core และ full image smoke checks

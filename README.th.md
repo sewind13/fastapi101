@@ -80,6 +80,7 @@ make bootstrap-admin-in-container-env args="--username admin --email admin@examp
 
 - docs อังกฤษยังเป็น reference หลักที่ละเอียดที่สุด
 - แต่ `docs-thai` ตอนนี้ถูกขยายให้ใช้เป็น onboarding/reference ภาษาไทยได้จริงมากขึ้นแล้ว
+- release notes ภาษาไทยอยู่ที่ [docs-thai/release-notes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/release-notes.md)
 - ถ้าจะเริ่มงานใหม่ day-0/day-1 ให้อ่านฝั่งไทยก่อนได้เลย
 - ถ้าจะลงลึก implementation หรือเทียบ behavior รายละเอียดมาก ๆ ค่อยเปิด docs อังกฤษประกบ
 

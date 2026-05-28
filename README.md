@@ -87,6 +87,7 @@ Coding agents and AI-assisted contributors should read [AGENTS.md](AGENTS.md) fi
 - [docs/bootstrap.md](docs/bootstrap.md): secure day-0/day-1 setup, first-admin bootstrap, and minimum hardening path after cloning
 - [docs/secret-management.md](docs/secret-management.md): what should be treated as secrets, where to store them, and how to rotate them safely
 - [docs/versioning.md](docs/versioning.md): how to version the template itself and communicate breaking vs non-breaking changes
+- [docs/release-notes.md](docs/release-notes.md): stable template release notes and adopter action items
 - [docs/development.md](docs/development.md): local setup, Docker dev flow, testing, and day-to-day commands
 - [docs/load-testing.md](docs/load-testing.md): k6 scenarios, load-test matrix, and success criteria for scale testing
 - [docs/openapi.md](docs/openapi.md): OpenAPI, Swagger UI, and docs usage
@@ -102,6 +103,15 @@ uv sync --extra worker
 uv sync --extra aws
 uv sync --extra observability
 uv sync --all-extras
+```
+
+Docker builds use the same split. Build the lean API image by default, or pass
+`RUNTIME_EXTRAS` when the image will run optional capabilities:
+
+```bash
+docker build --tag fastapi-template:core .
+docker build --build-arg RUNTIME_EXTRAS=worker --tag fastapi-template:worker .
+docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
 ```
 
 - `redis`: Redis-backed cache, rate limiting, worker idempotency, and Redis readiness checks
@@ -214,6 +224,7 @@ Automation included in the repo:
 
 - use the included [MIT License](LICENSE) unless your organization needs a different license model
 - version the template itself with semantic versioning; see [docs/versioning.md](docs/versioning.md)
+- record release notes for stable baselines; see [docs/release-notes.md](docs/release-notes.md)
 - tag stable template releases so adopting teams can record which baseline they started from
 
 ## Design Rules

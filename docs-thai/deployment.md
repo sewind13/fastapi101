@@ -62,16 +62,28 @@ mode นี้:
 - ใช้ image ที่ build แล้วจริง
 - ไม่ bind mount source code
 - ไม่ต้องติดตั้ง packages ระหว่าง container startup
+- ใช้ multi-stage image และ runtime user ที่ไม่ใช่ root
 - ใกล้กับ runtime จริงมากกว่า dev mode
 - bind ports เป็น `127.0.0.1` เป็นค่าเริ่มต้นเพื่อให้ปลอดภัยขึ้นใน local
 - แยก local credentials ออกจาก production secrets ชัดกว่าเดิม
+
+Docker build ค่าเริ่มต้นจะติดตั้งเฉพาะ core API runtime ถ้า image นั้นจะใช้
+Redis-backed features, worker processes, AWS providers, หรือ OpenTelemetry ให้ build
+พร้อม `RUNTIME_EXTRAS`:
+
+```bash
+docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
+```
 
 ## Container start flow
 
 web container ปกติจะเริ่มผ่าน script ที่ทำประมาณนี้:
 
-1. `alembic upgrade head`
-2. `uvicorn app.main:app --host 0.0.0.0 --port 8000`
+1. `uvicorn app.main:app --host 0.0.0.0 --port 8000`
+
+migrations จะไม่รันใน API startup โดยตั้งใจ ให้รัน Alembic ผ่าน migration job,
+init step, หรือ release pipeline ก่อนเปิด traffic ให้ API version ใหม่ runtime
+migration job ควรเรียก `alembic upgrade head` จาก virtualenv ใน image โดยตรง
 
 ถ้าเปิด worker/outbox:
 
@@ -261,7 +273,7 @@ workflow ที่แนะนำ:
 - ถ้าใช้ Kustomize:
   apply base manifests ก่อน แล้วค่อย apply `deploy/kubernetes/migration-job.yaml` ตอน release
 - ถ้าใช้ Helm:
-  copy `values.yaml` หรือใช้ `deploy/helm/fastapi-template/values.prod.example.yaml` เป็นจุดเริ่มต้น, เปลี่ยน image/hostnames/secrets, แล้วตัดสินใจก่อนว่า migration job จะให้ Helm สร้างหรือจะไปรันใน release system แยก
+  copy `values.yaml` สำหรับ baseline แบบ lean `core-only` หรือใช้ `deploy/helm/fastapi-template/values.prod.example.yaml` เป็นจุดเริ่มต้นแบบ full async/Redis/ops, เปลี่ยน image/hostnames/secrets, แล้วตัดสินใจก่อนว่า migration job จะให้ Helm สร้างหรือจะไปรันใน release system แยก
 
 ตัวอย่าง GitHub Actions release workflow ดูได้ที่:
 

@@ -17,14 +17,14 @@ Typical flow:
 1. copy `values.yaml`
 2. replace image, hostnames, and secrets
 3. decide whether the migration job should be run by Helm or by your release pipeline
-4. disable worker or dispatcher if your service does not use them
+4. enable worker, outbox dispatcher, Redis, metrics, or ops endpoints only when the service needs them
 
 Useful files:
 
 - `values.yaml`
-  baseline chart defaults
+  lean `core-only` chart defaults for the API, Postgres, and migration job
 - `values.prod.example.yaml`
-  production-oriented example values file you can copy into your own environment-specific values file
+  production-oriented full async/Redis/ops example values file you can copy into your own environment-specific values file
 - `../../../.github/workflows/helm-validate-example.yml`
   example CI workflow for `helm lint`, `helm template`, and `kubeconform` render validation
 - `../../../.github/workflows/ci.yml`

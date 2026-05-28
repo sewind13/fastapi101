@@ -65,6 +65,7 @@
 - [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md): ภาพรวม security baseline ของ template
 - [security-hardening.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security-hardening.md): checklist รอบแรกสำหรับปิด unsafe defaults และ review sensitive surfaces ก่อนขึ้น shared env
 - [versioning.md](/Users/pluto/Documents/git/fastapi101/docs-thai/versioning.md): วิธีคิดเรื่อง version ของ template
+- [release-notes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/release-notes.md): release notes ของ stable template baseline และ action items สำหรับ adopter
 
 ## สถานะความครอบคลุมของ docs-thai
 

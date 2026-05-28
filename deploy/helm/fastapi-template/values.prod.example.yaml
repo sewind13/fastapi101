@@ -82,7 +82,7 @@ migrationJob:
   command:
     - /bin/sh
     - -c
-    - uv run alembic upgrade head
+    - alembic upgrade head
 
 config:
   APP__ENV: "production"
