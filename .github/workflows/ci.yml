@@ -83,6 +83,36 @@ jobs:
       - name: Run tests
         run: uv run pytest -q
 
+  security_validation:
+    runs-on: ubuntu-latest
+    needs:
+      - workflow_validation
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Export runtime dependency inventory
+        run: >
+          uv export --frozen --all-extras --no-dev --no-hashes
+          --format requirements-txt --output-file /tmp/runtime-requirements.txt
+          > /dev/null
+
+      - name: Audit Python runtime dependencies
+        run: uvx pip-audit --no-deps --disable-pip -r /tmp/runtime-requirements.txt
+
+      - name: Scan repository for committed secrets
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   postgres_integration:
     runs-on: ubuntu-latest
     needs:
@@ -125,9 +155,36 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - quality
+      - security_validation
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Build production image
+      - name: Build core production image
         run: docker build --tag fastapi-template:ci .
+
+      - name: Build full production image
+        run: docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:ci-all .
+
+      - name: Scan full production image
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: fastapi-template:ci-all
+          format: table
+          exit-code: "0"
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+
+      - name: Generate full production image SBOM
+        uses: aquasecurity/trivy-action@0.33.1
+        with:
+          image-ref: fastapi-template:ci-all
+          format: cyclonedx
+          output: trivy-sbom.cdx.json
+          exit-code: "0"
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fastapi-template-ci-all-sbom
+          path: trivy-sbom.cdx.json
