@@ -49,6 +49,8 @@ services:
   web:
     build:
       context: .
+      args:
+        RUNTIME_EXTRAS: ${RUNTIME_EXTRAS:-}
     depends_on:
       db:
         condition: service_healthy
@@ -69,6 +71,8 @@ services:
   worker:
     build:
       context: .
+      args:
+        RUNTIME_EXTRAS: ${RUNTIME_EXTRAS:-all}
     profiles: ["worker"]
     depends_on:
       db:
@@ -87,6 +91,8 @@ services:
   outbox-dispatcher:
     build:
       context: .
+      args:
+        RUNTIME_EXTRAS: ${RUNTIME_EXTRAS:-all}
     profiles: ["worker"]
     depends_on:
       db:

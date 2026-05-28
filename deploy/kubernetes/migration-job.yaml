@@ -14,7 +14,7 @@ spec:
           command:
             - /bin/sh
             - -c
-            - uv run alembic upgrade head
+            - alembic upgrade head
           envFrom:
             - secretRef:
                 name: fastapi-template-app-secrets
