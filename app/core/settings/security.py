@@ -12,7 +12,7 @@ class SecuritySettings(BaseModel):
     audience: str = DEFAULT_AUDIENCE
     access_token_expire_minutes: int = 30
     refresh_token_expire_minutes: int = 60 * 24 * 7
-    password_min_length: int = 8
+    password_min_length: int = 12
     password_require_uppercase: bool = False
     password_require_lowercase: bool = True
     password_require_digit: bool = False
@@ -21,6 +21,7 @@ class SecuritySettings(BaseModel):
     password_forbid_email_localpart: bool = True
     email_verification_enabled: bool = True
     email_verification_token_expire_minutes: int = 60 * 24
+    password_reset_token_expire_minutes: int = 60
     require_verified_email_for_login: bool = False
 
 

@@ -55,7 +55,7 @@ class HealthSettings(BaseModel):
 
 
 class MetricsSettings(BaseModel):
-    enabled: bool = True
+    enabled: bool = False
     path: str = "/metrics"
     include_in_schema: bool = False
     auth_token: str | None = None

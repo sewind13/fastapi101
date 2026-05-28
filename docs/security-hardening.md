@@ -75,7 +75,7 @@ Hardening action:
 
 Current behavior:
 
-- metrics are enabled by default
+- metrics are disabled by default
 - `/metrics` is protected only when `METRICS__AUTH_TOKEN` is set
 
 Relevant file:
@@ -85,7 +85,8 @@ Relevant file:
 Hardening action:
 
 - keep `/metrics` internal-only through routing or network policy
-- or set `METRICS__AUTH_TOKEN` and configure Prometheus to use it
+- set `METRICS__ENABLED=true` only when scraping is intended
+- set `METRICS__AUTH_TOKEN` and configure Prometheus to use it when app-level auth is needed
 
 Why it matters:
 

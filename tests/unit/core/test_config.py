@@ -2,6 +2,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.core.config import Settings
+from app.core.settings.observability import MetricsSettings
 
 
 def build_settings(**overrides) -> Settings:
@@ -252,6 +253,12 @@ def test_local_like_environments_allow_default_secret_key_for_development():
 
     assert settings.app.env == "testing"
     assert settings.security.secret_key == "change-me-to-a-32-character-minimum-secret"
+
+
+def test_metrics_are_disabled_by_default():
+    settings = MetricsSettings()
+
+    assert settings.enabled is False
 
 
 def test_production_settings_accept_safe_values():

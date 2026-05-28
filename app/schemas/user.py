@@ -9,7 +9,7 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8, max_length=72, examples=["secret1234"])
+    password: str = Field(..., min_length=8, max_length=72, examples=["strongpassword123"])
     phone: str | None = None
 
 

@@ -36,7 +36,7 @@ The template supports:
 - rejecting passwords that contain the username
 - rejecting passwords that contain the email local part
 
-This keeps the default policy approachable for development while still letting production environments tighten it without changing code.
+The default policy is length-focused: at least 12 characters, lowercase required, username/email-local-part reuse rejected, and composition rules left configurable. This is stricter than many starter templates without forcing brittle character recipes by default.
 
 ## Email Verification
 
@@ -53,8 +53,6 @@ Relevant endpoints:
 
 - `POST /api/v1/auth/verify-email/request`
 - `GET /api/v1/auth/verify-email/confirm?token=...`
-- `POST /api/v1/auth/password-reset/request`
-- `POST /api/v1/auth/password-reset/confirm`
 
 Relevant config:
 
@@ -73,6 +71,16 @@ Current behavior:
 - if the email exists, a reset email is queued through the outbox/worker flow
 - reset confirmation validates a signed token and applies the same password policy as registration
 - a successful reset also clears account lockout state
+
+Relevant endpoints:
+
+- `POST /api/v1/auth/password-reset/request`
+- `POST /api/v1/auth/password-reset/confirm`
+
+Relevant config:
+
+- `APP__PUBLIC_BASE_URL`
+- `SECURITY__PASSWORD_RESET_TOKEN_EXPIRE_MINUTES`
 
 ## Auth Flow
 

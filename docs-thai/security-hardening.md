@@ -71,7 +71,7 @@ behavior ปัจจุบัน:
 
 behavior ปัจจุบัน:
 
-- metrics เปิดอยู่เป็น default
+- metrics ปิดเป็น default
 - `/metrics` จะถูกป้องกันก็ต่อเมื่อกำหนด `METRICS__AUTH_TOKEN`
 
 ไฟล์ที่เกี่ยว:
@@ -81,7 +81,8 @@ behavior ปัจจุบัน:
 สิ่งที่ควรทำ:
 
 - ให้ `/metrics` อยู่หลัง internal routing หรือ network policy
-- หรือกำหนด `METRICS__AUTH_TOKEN` แล้วตั้ง Prometheus ให้ส่ง token นี้
+- เปิด `METRICS__ENABLED=true` เฉพาะเมื่อมี scrape path ที่ตั้งใจไว้แล้ว
+- กำหนด `METRICS__AUTH_TOKEN` แล้วตั้ง Prometheus ให้ส่ง token นี้เมื่ออยากป้องกันที่ตัว app
 
 เหตุผล:
 

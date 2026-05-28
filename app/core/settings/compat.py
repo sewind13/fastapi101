@@ -52,6 +52,7 @@ def promote_legacy_flat_env(data: object) -> object:
             "PASSWORD_FORBID_EMAIL_LOCALPART": "password_forbid_email_localpart",
             "EMAIL_VERIFICATION_ENABLED": "email_verification_enabled",
             "EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES": "email_verification_token_expire_minutes",
+            "PASSWORD_RESET_TOKEN_EXPIRE_MINUTES": "password_reset_token_expire_minutes",
             "REQUIRE_VERIFIED_EMAIL_FOR_LOGIN": "require_verified_email_for_login",
         },
     )

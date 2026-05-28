@@ -29,7 +29,7 @@ async def test_register_duplicate_username(client):
     payload = {
         "username": "sameuser",
         "email": "user1@example.com",
-        "password": "password123",
+        "password": "password12345",
     }
     await client.post("/api/v1/users/", json=payload)
 

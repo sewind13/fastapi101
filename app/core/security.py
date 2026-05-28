@@ -82,7 +82,7 @@ def create_password_reset_token(*, subject: str, username: str) -> str:
         subject=subject,
         username=username,
         token_type="password_reset",
-        expires_minutes=settings.security.email_verification_token_expire_minutes,
+        expires_minutes=settings.security.password_reset_token_expire_minutes,
     )
 
 

@@ -23,7 +23,7 @@ def create_test_user(
     *,
     username: str = "testuser",
     email: str = "test@example.com",
-    password: str = "password123",
+    password: str = "password12345",
     role: str = "user",
 ) -> User:
     account = Account(name=f"{username}-account")

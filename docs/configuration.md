@@ -50,6 +50,15 @@ The base production image installs only the core API runtime. Feature-specific i
 | `observability` | `uv sync --extra observability` | OpenTelemetry tracing and FastAPI/SQLAlchemy instrumentation |
 | `all` | `uv sync --all-extras` | Fully loaded local/CI template validation |
 
+Docker builds use the same optional dependency model:
+
+```bash
+docker build --tag fastapi-template:core .
+docker build --build-arg RUNTIME_EXTRAS=redis --tag fastapi-template:redis .
+docker build --build-arg RUNTIME_EXTRAS=worker --tag fastapi-template:worker .
+docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
+```
+
 Configuration can mention optional services even when the package is not installed, but enabling the related runtime path requires the matching extra. Examples:
 
 - `CACHE__BACKEND="redis"` or `AUTH_RATE_LIMIT__BACKEND="redis"` requires `fastapi101[redis]`.
@@ -69,8 +78,10 @@ Configuration can mention optional services even when the package is not install
 | `SECURITY__SECRET_KEY` | sample value | Yes | JWT signing secret |
 | `SECURITY__ISSUER` | `fastapi-template` | Yes | JWT issuer claim |
 | `SECURITY__AUDIENCE` | `fastapi-template-users` | Yes | JWT audience claim |
-| `SECURITY__PASSWORD_MIN_LENGTH` | `8` | Optional | Minimum password length |
+| `SECURITY__PASSWORD_MIN_LENGTH` | `12` | Optional | Minimum password length |
 | `SECURITY__EMAIL_VERIFICATION_ENABLED` | `true` | Optional | Enables email verification for new users |
+| `SECURITY__EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES` | `1440` | Optional | Email-verification token lifetime in minutes |
+| `SECURITY__PASSWORD_RESET_TOKEN_EXPIRE_MINUTES` | `60` | Optional | Password-reset token lifetime in minutes |
 | `SECURITY__REQUIRE_VERIFIED_EMAIL_FOR_LOGIN` | `false` | Optional | Blocks login until `email_verified=true` |
 | `AUTH_RATE_LIMIT__BACKEND` | `memory` | Yes in production | Rate-limit backend, `memory` or `redis` |
 | `AUTH_RATE_LIMIT__TRUST_PROXY_HEADERS` | `false` | Optional | Trust proxy headers such as `X-Forwarded-For` for client IP extraction |
@@ -84,7 +95,7 @@ Configuration can mention optional services even when the package is not install
 | `LOGGING__ACCESS_LOG_SAMPLE_RATE` | `1.0` | Optional | Access-log sampling rate |
 | `TELEMETRY__ENABLED` | `false` | Optional | Enables OpenTelemetry |
 | `TELEMETRY__SERVICE_NAME` | `fastapi-template` | Yes in production | Service name sent to telemetry backend |
-| `METRICS__ENABLED` | `true` | Optional | Enables Prometheus metrics endpoint |
+| `METRICS__ENABLED` | `false` | Optional | Enables Prometheus metrics endpoint |
 | `METRICS__PATH` | `/metrics` | Optional | Path used for Prometheus scraping |
 | `METRICS__AUTH_TOKEN` | empty | Yes in production when metrics enabled | Bearer token required by the `/metrics` endpoint when configured |
 | `EXTERNAL__MAX_ATTEMPTS` | `3` | Optional | Maximum retry attempts for external dependency calls |
@@ -175,7 +186,7 @@ JWT and authentication behavior.
   Refresh token lifetime in minutes.
 
 - `SECURITY__PASSWORD_MIN_LENGTH`
-  Minimum password length enforced by the password-policy validator.
+  Minimum password length enforced by the password-policy validator. The template defaults to `12` for a stronger length-focused baseline.
 
 - `SECURITY__PASSWORD_REQUIRE_UPPERCASE`
   Requires at least one uppercase letter in new passwords.
@@ -200,6 +211,9 @@ JWT and authentication behavior.
 
 - `SECURITY__EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES`
   Expiration window for email-verification tokens.
+
+- `SECURITY__PASSWORD_RESET_TOKEN_EXPIRE_MINUTES`
+  Expiration window for password-reset tokens. Keep this shorter than email verification in most production environments.
 
 - `SECURITY__REQUIRE_VERIFIED_EMAIL_FOR_LOGIN`
   When `true`, login is blocked until the user verifies their email address.
@@ -354,7 +368,7 @@ Health and readiness behavior.
 Prometheus metrics exposure.
 
 - `METRICS__ENABLED`
-  Enables the Prometheus metrics endpoint.
+  Enables the Prometheus metrics endpoint. It defaults to `false`; enable it only when the endpoint is routed internally or protected.
 
 - `METRICS__PATH`
   Path that serves Prometheus-formatted metrics.

@@ -58,6 +58,15 @@ production image พื้นฐานติดตั้งเฉพาะ core 
 | `fastapi101[worker]` | AMQP worker, task publisher/runner, DLQ replay |
 | `fastapi101[all]` | local/dev หรือ CI ที่ต้องการ dependency optional ครบชุด |
 
+Docker build ใช้แนวคิดเดียวกัน:
+
+```bash
+docker build --tag fastapi-template:core .
+docker build --build-arg RUNTIME_EXTRAS=redis --tag fastapi-template:redis .
+docker build --build-arg RUNTIME_EXTRAS=worker --tag fastapi-template:worker .
+docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
+```
+
 config ที่ควรจับคู่กับ extras:
 
 - `CACHE__BACKEND="redis"` หรือ `AUTH_RATE_LIMIT__BACKEND="redis"` ต้องมี `fastapi101[redis]`
@@ -122,8 +131,9 @@ config ที่ควรจับคู่กับ extras:
 - `SECURITY__SECRET_KEY`
 - `SECURITY__ISSUER`
 - `SECURITY__AUDIENCE`
-- password policy ต่าง ๆ
-- email verification toggles
+- password policy ต่าง ๆ เช่น `SECURITY__PASSWORD_MIN_LENGTH` ที่ default เป็น `12`
+- email verification toggles และ token expiry
+- `SECURITY__PASSWORD_RESET_TOKEN_EXPIRE_MINUTES`
 - `SECURITY__REQUIRE_VERIFIED_EMAIL_FOR_LOGIN`
 
 ถ้าจะขึ้น production ต้องเปลี่ยน `SECURITY__SECRET_KEY` ก่อนเสมอ
@@ -178,7 +188,7 @@ config ที่ควรจับคู่กับ extras:
 
 แนวคิดที่แนะนำ:
 
-- local/dev เปิดเมื่ออยากดู metrics
+- metrics ปิดเป็นค่าเริ่มต้น ให้เปิดเมื่ออยากดู metrics หรือมี scrape path ที่ชัดเจน
 - production ควรเปิดพร้อม internal scrape path และ auth/network controls
 
 ### `CACHE__*`

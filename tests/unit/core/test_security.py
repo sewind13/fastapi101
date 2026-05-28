@@ -65,6 +65,30 @@ def test_create_password_reset_token_uses_expected_token_type():
     assert payload["token_type"] == "password_reset"
 
 
+def test_create_password_reset_token_uses_dedicated_expiry(monkeypatch):
+    monkeypatch.setattr(settings.security, "email_verification_token_expire_minutes", 1440)
+    monkeypatch.setattr(settings.security, "password_reset_token_expire_minutes", 15)
+
+    token = create_password_reset_token(subject="123", username="alice")
+    payload = jwt.decode(
+        token,
+        settings.security.secret_key,
+        algorithms=[settings.security.algorithm],
+        issuer=settings.security.issuer,
+        audience=settings.security.audience,
+    )
+
+    assert payload["exp"] - payload["iat"] == 15 * 60
+
+
+def test_default_password_policy_requires_at_least_twelve_characters(monkeypatch):
+    monkeypatch.setattr(settings.security, "password_min_length", 12)
+
+    message = validate_password_policy("shortpass")
+
+    assert message == "Password must be at least 12 characters long."
+
+
 def test_validate_password_policy_rejects_username_in_password():
     message = validate_password_policy(
         "alice-password",
