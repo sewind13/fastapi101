@@ -9,7 +9,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: migrate
-          image: ghcr.io/your-org/fastapi-template:latest
+          image: ghcr.io/your-org/fastapi-template:1.0.3
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh

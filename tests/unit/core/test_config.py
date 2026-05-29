@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 import yaml
@@ -320,7 +321,7 @@ def test_default_helm_values_pass_production_settings_validation(monkeypatch):
     for key, value in env_values.items():
         monkeypatch.setenv(key, str(value))
 
-    settings = Settings(_env_file=None)
+    settings = cast(Any, Settings)(_env_file=None)
 
     assert settings.app.env == "production"
     assert settings.auth_rate_limit.enabled is False

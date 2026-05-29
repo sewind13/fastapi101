@@ -1,5 +1,21 @@
 # Release Notes
 
+## v1.0.3 - 2026-05-30
+
+patch release สำหรับ production-readiness quality gates และ immutable deployment examples
+
+### สิ่งที่แก้
+
+- เพิ่ม `types-pyyaml` ใน dev dependencies เพื่อให้ `uv run mypy app tests` ผ่านตาม quality gate ที่ repo ระบุไว้
+- ปรับ typing ของ test ที่ validate Helm values settings ให้ mypy ยอมรับ `_env_file=None` ซึ่งเป็น runtime override ที่ตั้งใจใช้
+- เปลี่ยน image tag แบบ mutable `latest` ใน raw Kubernetes manifests และ release workflow examples เป็น example tag แบบ immutable คือ `1.0.3`
+- bump package, lockfile, และ Helm chart/app versions เป็น `1.0.3`
+
+### สิ่งที่ adopter ต้องทำ
+
+- adopter ใหม่ควรใช้ `v1.0.3`
+- ก่อน deploy ให้เปลี่ยน image repository และ immutable tag ตัวอย่างเป็น image ของ product จริง
+
 ## v1.0.2 - 2026-05-30
 
 patch release สำหรับ Helm release safety และ CI coverage

@@ -15,7 +15,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: cleanup-revoked-tokens
-              image: ghcr.io/your-org/fastapi-template:latest
+              image: ghcr.io/your-org/fastapi-template:1.0.3
               imagePullPolicy: IfNotPresent
               command:
                 - /bin/sh
