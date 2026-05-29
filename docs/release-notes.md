@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.2 - 2026-05-30
+
+Patch release for Helm release safety and CI coverage.
+
+### Fixes
+
+- Added CI validation that loads bundled Helm values through the application's startup settings validation, not just manifest schema validation.
+- Added `scripts/validate_helm_settings.py` so local and CI checks can verify Helm values before release.
+- Replaced the default Helm image tag `latest` with immutable example tag `1.0.2`.
+
+### Adopter Action Items
+
+- Prefer `v1.0.2` for new adopters.
+- Replace the example image repository and immutable tag with your own published product image before deployment.
+
 ## v1.0.1 - 2026-05-30
 
 Patch release for the default Helm chart baseline.

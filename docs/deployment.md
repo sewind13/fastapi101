@@ -539,7 +539,7 @@ Suggested Helm workflow:
 
 1. copy `deploy/helm/fastapi-template/values.yaml` for the lean `core-only` API baseline
 2. use `deploy/helm/fastapi-template/values.prod.example.yaml` as a production-oriented full async/Redis/ops starting point when you want a fuller baseline
-3. replace image, hostnames, and all secret placeholders
+3. replace image repository, immutable tag, hostnames, and all secret placeholders
 4. decide whether Helm should create the migration job or whether your release system runs migrations separately
 5. enable worker, outbox dispatcher, Redis-backed settings, metrics, or ops endpoints only when the service uses them
 6. render and review with `helm template`

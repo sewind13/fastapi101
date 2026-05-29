@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.2 - 2026-05-30
+
+patch release สำหรับ Helm release safety และ CI coverage
+
+### สิ่งที่แก้
+
+- เพิ่ม CI validation ที่โหลด Helm values ผ่าน startup settings validation ของแอปจริง ไม่ใช่ตรวจแค่ manifest schema
+- เพิ่ม `scripts/validate_helm_settings.py` เพื่อให้ local และ CI ตรวจ Helm values ก่อน release ได้
+- เปลี่ยน Helm default image tag จาก `latest` เป็น example tag แบบ immutable คือ `1.0.2`
+
+### สิ่งที่ adopter ต้องทำ
+
+- adopter ใหม่ควรใช้ `v1.0.2`
+- ก่อน deploy ให้เปลี่ยน image repository และ immutable tag ตัวอย่างเป็น image ของ product จริง
+
 ## v1.0.1 - 2026-05-30
 
 patch release สำหรับ Helm chart baseline

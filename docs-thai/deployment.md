@@ -273,7 +273,7 @@ workflow ที่แนะนำ:
 - ถ้าใช้ Kustomize:
   apply base manifests ก่อน แล้วค่อย apply `deploy/kubernetes/migration-job.yaml` ตอน release
 - ถ้าใช้ Helm:
-  copy `values.yaml` สำหรับ baseline แบบ lean `core-only` หรือใช้ `deploy/helm/fastapi-template/values.prod.example.yaml` เป็นจุดเริ่มต้นแบบ full async/Redis/ops, เปลี่ยน image/hostnames/secrets, แล้วตัดสินใจก่อนว่า migration job จะให้ Helm สร้างหรือจะไปรันใน release system แยก
+  copy `values.yaml` สำหรับ baseline แบบ lean `core-only` หรือใช้ `deploy/helm/fastapi-template/values.prod.example.yaml` เป็นจุดเริ่มต้นแบบ full async/Redis/ops, เปลี่ยน image repository/tag แบบ immutable, hostnames, และ secrets, แล้วตัดสินใจก่อนว่า migration job จะให้ Helm สร้างหรือจะไปรันใน release system แยก
 
 ตัวอย่าง GitHub Actions release workflow ดูได้ที่:
 

@@ -15,7 +15,7 @@ It includes templates for:
 Typical flow:
 
 1. copy `values.yaml`
-2. replace image, hostnames, and secrets
+2. replace image, immutable tag, hostnames, and secrets
 3. decide whether the migration job should be run by Helm or by your release pipeline
 4. enable worker, outbox dispatcher, Redis, metrics, or ops endpoints only when the service needs them
 
@@ -23,6 +23,7 @@ Useful files:
 
 - `values.yaml`
   lean `core-only` chart defaults for the API, Postgres, and migration job
+  The default image tag is versioned, not `latest`, so example rollouts are reproducible by default.
 - `values.prod.example.yaml`
   production-oriented full async/Redis/ops example values file you can copy into your own environment-specific values file
 - `../../../.github/workflows/helm-validate-example.yml`
