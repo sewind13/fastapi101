@@ -95,7 +95,7 @@ config:
   DATABASE__MAX_OVERFLOW: "20"
   SECURITY__ISSUER: "https://api.example.com"
   SECURITY__AUDIENCE: "fastapi-product-template"
-  AUTH_RATE_LIMIT__ENABLED: "true"
+  AUTH_RATE_LIMIT__ENABLED: "false"
   AUTH_RATE_LIMIT__BACKEND: "memory"
   AUTH_RATE_LIMIT__TRUST_PROXY_HEADERS: "true"
   AUTH_RATE_LIMIT__TRUSTED_PROXY_CIDRS: '["10.0.0.0/8"]'

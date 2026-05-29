@@ -1,8 +1,13 @@
+from pathlib import Path
+
 import pytest
+import yaml
 from pydantic import ValidationError
 
 from app.core.config import Settings
 from app.core.settings.observability import MetricsSettings
+
+ROOT_DIR = Path(__file__).resolve().parents[3]
 
 
 def build_settings(**overrides) -> Settings:
@@ -306,6 +311,20 @@ def test_production_settings_accept_safe_values():
     )
 
     assert settings.app.env == "production"
+
+
+def test_default_helm_values_pass_production_settings_validation(monkeypatch):
+    values = yaml.safe_load((ROOT_DIR / "deploy/helm/fastapi-template/values.yaml").read_text())
+    env_values = values["config"] | values["secretData"]
+
+    for key, value in env_values.items():
+        monkeypatch.setenv(key, str(value))
+
+    settings = Settings(_env_file=None)
+
+    assert settings.app.env == "production"
+    assert settings.auth_rate_limit.enabled is False
+    assert settings.auth_rate_limit.backend == "memory"
     assert settings.api.cors_origins == ["https://app.example.com"]
 
 

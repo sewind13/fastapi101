@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.1 - 2026-05-30
+
+patch release สำหรับ Helm chart baseline
+
+### สิ่งที่แก้
+
+- แก้ `deploy/helm/fastapi-template/values.yaml` ให้ Helm default แบบ lean `core-only` ผ่าน production settings validation
+- default chart จะปิด auth rate limiting เมื่อยังไม่ได้เปิด Redis ส่วน Redis-backed rate limiting ยังใช้ได้ผ่าน preset `redis-enabled` และ `full-async`
+- เพิ่ม unit test ที่โหลด default Helm values เข้า `Settings(_env_file=None)` เพื่อกัน chart/config drift ในอนาคต
+
+### สิ่งที่ adopter ต้องทำ
+
+- ถ้าใช้ default Helm values ให้ใช้ `v1.0.1` แทน `v1.0.0`
+- ถ้าจะเปิด auth rate limiting ใน production ให้ตั้ง `AUTH_RATE_LIMIT__ENABLED=true`, `AUTH_RATE_LIMIT__BACKEND=redis`, และ `AUTH_RATE_LIMIT__REDIS_URL`
+
 ## v1.0.0 - 2026-05-29
 
 baseline แรกที่ถือว่า stable สำหรับ production-grade product template

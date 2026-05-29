@@ -77,6 +77,7 @@ env ตั้งต้นที่ copy ไปปรับต่อได้:
 ```env
 # core-only
 CACHE__ENABLED="false"
+AUTH_RATE_LIMIT__ENABLED="false"
 AUTH_RATE_LIMIT__BACKEND="memory"
 METRICS__ENABLED="false"
 OPS__ENABLED="false"
@@ -108,6 +109,7 @@ HEALTH__ENABLE_QUEUE_CHECK="true"
 helm upgrade --install api deploy/helm/fastapi-template \
   --set worker.enabled=false \
   --set outboxDispatcher.enabled=false \
+  --set config.AUTH_RATE_LIMIT__ENABLED=false \
   --set config.CACHE__ENABLED=false \
   --set config.METRICS__ENABLED=false \
   --set config.OPS__ENABLED=false \
