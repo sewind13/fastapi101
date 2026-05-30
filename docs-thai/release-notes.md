@@ -1,5 +1,21 @@
 # Release Notes
 
+## v1.0.7 - 2026-05-30
+
+patch release สำหรับ cleanup เอกสารเรื่อง package name และ branding ฝั่ง adopter
+
+### สิ่งที่แก้
+
+- เปลี่ยนตัวอย่าง package extras ที่ hard-code ชื่อแพ็กเกจ template เป็น placeholder แบบ `<your-package>[redis]`
+- เปลี่ยนตัวอย่าง Docker image ใน configuration docs เป็น placeholder `ghcr.io/your-org/your-api`
+- ปรับ quick-reference defaults ของชื่อ product, issuer, audience, และ telemetry service name ให้เป็น placeholder
+- bump package, lockfile, Helm chart/app versions, และ immutable example image tags เป็น `1.0.7`
+
+### สิ่งที่ adopter ต้องทำ
+
+- adopter ใหม่ควรใช้ `v1.0.7`
+- ตอน adopt ให้ rename package และ product-facing config examples ก่อน publish docs ภายในทีม
+
 ## v1.0.6 - 2026-05-30
 
 patch release สำหรับ review comments รอบสุดท้ายใน workflow และ docs

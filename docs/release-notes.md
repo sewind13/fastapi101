@@ -1,5 +1,21 @@
 # Release Notes
 
+## v1.0.7 - 2026-05-30
+
+Patch release for adopter-facing package and branding documentation cleanup.
+
+### Fixes
+
+- Replaced hard-coded template package extra examples with adopter placeholders such as `<your-package>[redis]`.
+- Replaced branded Docker image examples in configuration docs with `ghcr.io/your-org/your-api` placeholders.
+- Updated configuration quick-reference defaults for product-facing names, issuer, audience, and telemetry service name to placeholder values.
+- Bumped the package, lockfile, Helm chart/app versions, and immutable example image tags to `1.0.7`.
+
+### Adopter Action Items
+
+- Prefer `v1.0.7` for new adopters.
+- During adoption, rename the package and product-facing config examples before publishing internal docs.
+
 ## v1.0.6 - 2026-05-30
 
 Patch release for final workflow and documentation review comments.

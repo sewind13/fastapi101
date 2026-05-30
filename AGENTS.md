@@ -59,10 +59,10 @@ schema -> model/repository -> service -> route -> router -> tests -> docs
 - Keep `app/core/config.py` as a compatibility layer; do not move new settings logic there.
 - Production-like safety checks belong in `app/core/settings/validation.py`.
 - Optional runtime dependencies must match the feature being enabled:
-  - Redis-backed cache, rate limit, idempotency, or Redis readiness checks need `fastapi101[redis]`.
-  - AMQP worker, queue health checks, outbox dispatch, or DLQ replay need `fastapi101[worker]`.
-  - SES or S3 checks need `fastapi101[aws]`.
-  - OpenTelemetry runtime instrumentation needs `fastapi101[observability]`.
+  - Redis-backed cache, rate limit, idempotency, or Redis readiness checks need the Redis extra, for example `<your-package>[redis]` after adoption.
+  - AMQP worker, queue health checks, outbox dispatch, or DLQ replay need the worker extra, for example `<your-package>[worker]` after adoption.
+  - SES or S3 checks need the AWS extra, for example `<your-package>[aws]` after adoption.
+  - OpenTelemetry runtime instrumentation needs the observability extra, for example `<your-package>[observability]` after adoption.
 
 Read [docs/configuration.md](docs/configuration.md) before changing env behavior.
 

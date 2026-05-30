@@ -14,9 +14,9 @@ source of truth จริงอยู่ที่ [app/core/settings](../app/cor
 ตัวอย่าง:
 
 ```env
-APP__NAME="FastAPI Template"
+APP__NAME="Your Product API"
 DATABASE__URL="postgresql+psycopg://app:app@db:5432/app"
-SECURITY__ISSUER="your-template"
+SECURITY__ISSUER="your-product-api"
 ```
 
 แนวคิดคือ:
@@ -52,27 +52,27 @@ production image พื้นฐานติดตั้งเฉพาะ core 
 
 | Extra | ใช้เมื่อเปิด |
 | --- | --- |
-| `fastapi101[redis]` | Redis-backed cache, auth rate limiting, worker idempotency, Redis readiness checks |
-| `fastapi101[aws]` | SES email provider, S3 readiness checks |
-| `fastapi101[observability]` | OpenTelemetry FastAPI/SQLAlchemy instrumentation และ OTLP exporter |
-| `fastapi101[worker]` | AMQP worker, task publisher/runner, DLQ replay |
-| `fastapi101[all]` | local/dev หรือ CI ที่ต้องการ dependency optional ครบชุด |
+| `<your-package>[redis]` | Redis-backed cache, auth rate limiting, worker idempotency, Redis readiness checks |
+| `<your-package>[aws]` | SES email provider, S3 readiness checks |
+| `<your-package>[observability]` | OpenTelemetry FastAPI/SQLAlchemy instrumentation และ OTLP exporter |
+| `<your-package>[worker]` | AMQP worker, task publisher/runner, DLQ replay |
+| `<your-package>[all]` | local/dev หรือ CI ที่ต้องการ dependency optional ครบชุด |
 
 Docker build ใช้แนวคิดเดียวกัน:
 
 ```bash
-docker build --tag fastapi-template:core .
-docker build --build-arg RUNTIME_EXTRAS=redis --tag fastapi-template:redis .
-docker build --build-arg RUNTIME_EXTRAS=worker --tag fastapi-template:worker .
-docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
+docker build --tag ghcr.io/your-org/your-api:core .
+docker build --build-arg RUNTIME_EXTRAS=redis --tag ghcr.io/your-org/your-api:redis .
+docker build --build-arg RUNTIME_EXTRAS=worker --tag ghcr.io/your-org/your-api:worker .
+docker build --build-arg RUNTIME_EXTRAS=all --tag ghcr.io/your-org/your-api:full .
 ```
 
 config ที่ควรจับคู่กับ extras:
 
-- `CACHE__BACKEND="redis"` หรือ `AUTH_RATE_LIMIT__BACKEND="redis"` ต้องมี `fastapi101[redis]`
-- `WORKER__ENABLED="true"`, `HEALTH__ENABLE_QUEUE_CHECK="true"`, หรือ DLQ replay ต้องมี `fastapi101[worker]`
-- `EMAIL__PROVIDER="ses"` หรือ `HEALTH__ENABLE_S3_CHECK="true"` ต้องมี `fastapi101[aws]`
-- `TELEMETRY__ENABLED="true"` ต้องมี `fastapi101[observability]`
+- `CACHE__BACKEND="redis"` หรือ `AUTH_RATE_LIMIT__BACKEND="redis"` ต้องมี Redis extra เช่น `<your-package>[redis]`
+- `WORKER__ENABLED="true"`, `HEALTH__ENABLE_QUEUE_CHECK="true"`, หรือ DLQ replay ต้องมี worker extra เช่น `<your-package>[worker]`
+- `EMAIL__PROVIDER="ses"` หรือ `HEALTH__ENABLE_S3_CHECK="true"` ต้องมี AWS extra เช่น `<your-package>[aws]`
+- `TELEMETRY__ENABLED="true"` ต้องมี observability extra เช่น `<your-package>[observability]`
 
 ## วิธีคิดเวลาอ่าน config
 

@@ -11,9 +11,9 @@ The application uses `pydantic-settings` with nested environment variables.
 Example:
 
 ```env
-APP__NAME="FastAPI Template"
+APP__NAME="Your Product API"
 DATABASE__URL="postgresql+psycopg://app:app@db:5432/app"
-SECURITY__ISSUER="your-template"
+SECURITY__ISSUER="your-product-api"
 ```
 
 Nested groups map to settings objects:
@@ -53,31 +53,31 @@ The base production image installs only the core API runtime. Feature-specific i
 Docker builds use the same optional dependency model:
 
 ```bash
-docker build --tag fastapi-template:core .
-docker build --build-arg RUNTIME_EXTRAS=redis --tag fastapi-template:redis .
-docker build --build-arg RUNTIME_EXTRAS=worker --tag fastapi-template:worker .
-docker build --build-arg RUNTIME_EXTRAS=all --tag fastapi-template:full .
+docker build --tag ghcr.io/your-org/your-api:core .
+docker build --build-arg RUNTIME_EXTRAS=redis --tag ghcr.io/your-org/your-api:redis .
+docker build --build-arg RUNTIME_EXTRAS=worker --tag ghcr.io/your-org/your-api:worker .
+docker build --build-arg RUNTIME_EXTRAS=all --tag ghcr.io/your-org/your-api:full .
 ```
 
 Configuration can mention optional services even when the package is not installed, but enabling the related runtime path requires the matching extra. Examples:
 
-- `CACHE__BACKEND="redis"` or `AUTH_RATE_LIMIT__BACKEND="redis"` requires `fastapi101[redis]`.
-- `WORKER__ENABLED="true"`, `HEALTH__ENABLE_QUEUE_CHECK="true"`, or DLQ replay requires `fastapi101[worker]`.
-- `EMAIL__PROVIDER="ses"` or `HEALTH__ENABLE_S3_CHECK="true"` requires `fastapi101[aws]`.
-- `TELEMETRY__ENABLED="true"` requires `fastapi101[observability]`.
+- `CACHE__BACKEND="redis"` or `AUTH_RATE_LIMIT__BACKEND="redis"` requires the Redis extra, for example `<your-package>[redis]`.
+- `WORKER__ENABLED="true"`, `HEALTH__ENABLE_QUEUE_CHECK="true"`, or DLQ replay requires the worker extra, for example `<your-package>[worker]`.
+- `EMAIL__PROVIDER="ses"` or `HEALTH__ENABLE_S3_CHECK="true"` requires the AWS extra, for example `<your-package>[aws]`.
+- `TELEMETRY__ENABLED="true"` requires the observability extra, for example `<your-package>[observability]`.
 
 ## Quick Reference Table
 
 | Variable | Default | Required To Change | Purpose |
 | --- | --- | --- | --- |
-| `APP__NAME` | `FastAPI Template` | Yes | App title and docs label |
+| `APP__NAME` | `<your-product-name>` | Yes | App title and docs label |
 | `APP__ENV` | `development` | Usually | Logical environment name |
 | `APP__PUBLIC_BASE_URL` | `http://localhost:8000` | Yes when verification links are sent | Public base URL used to build verification links |
 | `EXAMPLES__ENABLE_ITEMS_MODULE` | `true` | Optional | Keeps or disables the sample `items` module |
 | `API__V1_PREFIX` | `/api/v1` | Optional | Base API version prefix |
 | `SECURITY__SECRET_KEY` | sample value | Yes | JWT signing secret |
-| `SECURITY__ISSUER` | `fastapi-template` | Yes | JWT issuer claim |
-| `SECURITY__AUDIENCE` | `fastapi-template-users` | Yes | JWT audience claim |
+| `SECURITY__ISSUER` | `<your-service-issuer>` | Yes | JWT issuer claim |
+| `SECURITY__AUDIENCE` | `<your-client-audience>` | Yes | JWT audience claim |
 | `SECURITY__PASSWORD_MIN_LENGTH` | `12` | Optional | Minimum password length |
 | `SECURITY__EMAIL_VERIFICATION_ENABLED` | `true` | Optional | Enables email verification for new users |
 | `SECURITY__EMAIL_VERIFICATION_TOKEN_EXPIRE_MINUTES` | `1440` | Optional | Email-verification token lifetime in minutes |
@@ -94,7 +94,7 @@ Configuration can mention optional services even when the package is not install
 | `LOGGING__LEVEL` | `INFO` | Optional | Main application log level |
 | `LOGGING__ACCESS_LOG_SAMPLE_RATE` | `1.0` | Optional | Access-log sampling rate |
 | `TELEMETRY__ENABLED` | `false` | Optional | Enables OpenTelemetry |
-| `TELEMETRY__SERVICE_NAME` | `fastapi-template` | Yes in production | Service name sent to telemetry backend |
+| `TELEMETRY__SERVICE_NAME` | `<your-service-name>` | Yes in production | Service name sent to telemetry backend |
 | `METRICS__ENABLED` | `false` | Optional | Enables Prometheus metrics endpoint |
 | `METRICS__PATH` | `/metrics` | Optional | Path used for Prometheus scraping |
 | `METRICS__AUTH_TOKEN` | empty | Yes in production when metrics enabled | Bearer token required by the `/metrics` endpoint when configured |

@@ -61,7 +61,7 @@ Extensions include:
 - production-oriented auth rate limiting
 - richer deployment guidance and security guidance
 
-Some extension dependencies are optional runtime extras. Redis-backed cache/rate limiting needs `fastapi101[redis]`, SES/S3 integration needs `fastapi101[aws]`, and OpenTelemetry needs `fastapi101[observability]`.
+Some extension dependencies are optional runtime extras. Redis-backed cache/rate limiting needs the Redis extra, for example `<your-package>[redis]`; SES/S3 integration needs `<your-package>[aws]`; and OpenTelemetry needs `<your-package>[observability]`.
 
 These features are valuable, but many teams can ship an internal API without turning all of them on immediately.
 
@@ -79,7 +79,7 @@ Advanced includes:
 - operations endpoints and maintenance jobs
 - Kubernetes deployment baselines
 
-AMQP worker, outbox dispatch, and DLQ replay paths need the `fastapi101[worker]` extra.
+AMQP worker, outbox dispatch, and DLQ replay paths need the worker extra, for example `<your-package>[worker]`.
 
 These are strong platform features, but they should be treated as capabilities to opt into, not assumptions every service must understand on day one.
 
