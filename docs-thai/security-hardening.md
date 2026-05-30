@@ -6,12 +6,12 @@
 
 ## ควรเริ่ม review จากไฟล์ไหนก่อน
 
-- [`app/core/settings`](/Users/pluto/Documents/git/fastapi101/app/core/settings)
-- [`app/api/deps.py`](/Users/pluto/Documents/git/fastapi101/app/api/deps.py)
-- [`app/factory.py`](/Users/pluto/Documents/git/fastapi101/app/factory.py)
-- [`app/api/exception_handlers.py`](/Users/pluto/Documents/git/fastapi101/app/api/exception_handlers.py)
-- [`app/api/v1/auth.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/auth.py)
-- [`app/api/v1/ops.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/ops.py)
+- [`app/core/settings`](../app/core/settings)
+- [`app/api/deps.py`](../app/api/deps.py)
+- [`app/factory.py`](../app/factory.py)
+- [`app/api/exception_handlers.py`](../app/api/exception_handlers.py)
+- [`app/api/v1/auth.py`](../app/api/v1/auth.py)
+- [`app/api/v1/ops.py`](../app/api/v1/ops.py)
 
 ## สิ่งที่ควร harden ก่อนใน codebase ปัจจุบัน
 
@@ -19,7 +19,7 @@
 
 ใน code ตอนนี้มี fallback secret ติดมาด้วย:
 
-- [`app/core/settings/constants.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/constants.py)
+- [`app/core/settings/constants.py`](../app/core/settings/constants.py)
 
 behavior ปัจจุบัน:
 
@@ -44,8 +44,8 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/settings/base.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/base.py)
-- [`app/api/v1/users.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/users.py)
+- [`app/core/settings/base.py`](../app/core/settings/base.py)
+- [`app/api/v1/users.py`](../app/api/v1/users.py)
 
 สิ่งที่ควรทำ:
 
@@ -60,7 +60,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/settings/security.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/security.py)
+- [`app/core/settings/security.py`](../app/core/settings/security.py)
 
 สิ่งที่ควรทำ:
 
@@ -76,7 +76,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/api/metrics.py`](/Users/pluto/Documents/git/fastapi101/app/api/metrics.py)
+- [`app/api/metrics.py`](../app/api/metrics.py)
 
 สิ่งที่ควรทำ:
 
@@ -98,9 +98,9 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/api/deps.py`](/Users/pluto/Documents/git/fastapi101/app/api/deps.py)
-- [`app/api/v1/ops.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/ops.py)
-- [`app/core/settings/base.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/base.py)
+- [`app/api/deps.py`](../app/api/deps.py)
+- [`app/api/v1/ops.py`](../app/api/v1/ops.py)
+- [`app/core/settings/base.py`](../app/core/settings/base.py)
 
 สิ่งที่ควรทำ:
 
@@ -117,9 +117,9 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/settings/security.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/security.py)
-- [`app/api/v1/auth.py`](/Users/pluto/Documents/git/fastapi101/app/api/v1/auth.py)
-- [`security.md`](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
+- [`app/core/settings/security.py`](../app/core/settings/security.py)
+- [`app/api/v1/auth.py`](../app/api/v1/auth.py)
+- [`security.md`](../docs-thai/security.md)
 
 สิ่งที่ควรทำ:
 
@@ -140,7 +140,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/settings/worker.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/worker.py)
+- [`app/core/settings/worker.py`](../app/core/settings/worker.py)
 
 สิ่งที่ควรทำ:
 
@@ -155,7 +155,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/settings/delivery.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/delivery.py)
+- [`app/core/settings/delivery.py`](../app/core/settings/delivery.py)
 
 สิ่งที่ควรทำ:
 
@@ -171,7 +171,7 @@ behavior ปัจจุบัน:
 
 ไฟล์ที่เกี่ยว:
 
-- [`app/core/settings/observability.py`](/Users/pluto/Documents/git/fastapi101/app/core/settings/observability.py)
+- [`app/core/settings/observability.py`](../app/core/settings/observability.py)
 
 สิ่งที่ควรทำ:
 
@@ -199,7 +199,7 @@ behavior ปัจจุบัน:
 
 ## เอกสารที่ควรอ่านต่อ
 
-- [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
-- [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
-- [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
-- [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
+- [security.md](../docs-thai/security.md)
+- [first-deploy-checklist.md](../docs-thai/first-deploy-checklist.md)
+- [deployment.md](../docs-thai/deployment.md)
+- [secret-management.md](../docs-thai/secret-management.md)

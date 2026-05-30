@@ -41,8 +41,8 @@ Recommended effort values:
 
 Why:
 
-- API startup previously ran migrations in [scripts/start-web.sh](/Users/pluto/Documents/git/fastapi101/scripts/start-web.sh:5).
-- Kubernetes and Helm already include a separate migration job in [deploy/kubernetes/migration-job.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/migration-job.yaml:1) and [deploy/helm/fastapi-template/templates/migration-job.yaml](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template/templates/migration-job.yaml:1).
+- API startup previously ran migrations in [scripts/start-web.sh](../scripts/start-web.sh:5).
+- Kubernetes and Helm already include a separate migration job in [deploy/kubernetes/migration-job.yaml](../deploy/kubernetes/migration-job.yaml:1) and [deploy/helm/fastapi-template/templates/migration-job.yaml](../deploy/helm/fastapi-template/templates/migration-job.yaml:1).
 
 Risks if unchanged:
 
@@ -71,9 +71,9 @@ Notes:
 
 Why:
 
-- Helm defaults in [deploy/helm/fastapi-template/values.yaml](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template/values.yaml:85) provide a lean production-safe `core-only` setup.
-- Validation in [app/core/settings/validation.py](/Users/pluto/Documents/git/fastapi101/app/core/settings/validation.py:85) rejects `API__PUBLIC_REGISTRATION_ENABLED=true` when `OPS__ENABLED=true`.
-- Current settings defaults in [app/core/settings/base.py](/Users/pluto/Documents/git/fastapi101/app/core/settings/base.py:17) and [app/core/settings/base.py](/Users/pluto/Documents/git/fastapi101/app/core/settings/base.py:50) can still produce that invalid combination.
+- Helm defaults in [deploy/helm/fastapi-template/values.yaml](../deploy/helm/fastapi-template/values.yaml:85) provide a lean production-safe `core-only` setup.
+- Validation in [app/core/settings/validation.py](../app/core/settings/validation.py:85) rejects `API__PUBLIC_REGISTRATION_ENABLED=true` when `OPS__ENABLED=true`.
+- Current settings defaults in [app/core/settings/base.py](../app/core/settings/base.py:17) and [app/core/settings/base.py](../app/core/settings/base.py:50) can still produce that invalid combination.
 
 Risks if unchanged:
 
@@ -101,9 +101,9 @@ Notes:
 
 Why:
 
-- Optional dependencies are declared in [pyproject.toml](/Users/pluto/Documents/git/fastapi101/pyproject.toml:20).
-- The default image in [Dockerfile](/Users/pluto/Documents/git/fastapi101/Dockerfile:16) installs core dependencies only.
-- Production examples enable Redis, worker, and telemetry features in [deploy/helm/fastapi-template/values.prod.example.yaml](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template/values.prod.example.yaml:101).
+- Optional dependencies are declared in [pyproject.toml](../pyproject.toml:20).
+- The default image in [Dockerfile](../Dockerfile:16) installs core dependencies only.
+- Production examples enable Redis, worker, and telemetry features in [deploy/helm/fastapi-template/values.prod.example.yaml](../deploy/helm/fastapi-template/values.prod.example.yaml:101).
 
 Risks if unchanged:
 
@@ -131,8 +131,8 @@ Notes:
 
 Why:
 
-- Metrics are enabled by default in [app/core/settings/observability.py](/Users/pluto/Documents/git/fastapi101/app/core/settings/observability.py:57).
-- The route in [app/api/metrics.py](/Users/pluto/Documents/git/fastapi101/app/api/metrics.py:11) only requires auth when a token is configured.
+- Metrics are enabled by default in [app/core/settings/observability.py](../app/core/settings/observability.py:57).
+- The route in [app/api/metrics.py](../app/api/metrics.py:11) only requires auth when a token is configured.
 
 Risks if unchanged:
 
@@ -159,7 +159,7 @@ Notes:
 
 Why:
 
-- The current image in [Dockerfile](/Users/pluto/Documents/git/fastapi101/Dockerfile:1) is functional but still uses a root runtime and keeps build tooling in the final image.
+- The current image in [Dockerfile](../Dockerfile:1) is functional but still uses a root runtime and keeps build tooling in the final image.
 
 Risks if unchanged:
 
@@ -187,7 +187,7 @@ Notes:
 
 Why:
 
-- The CI workflow in [`.github/workflows/ci.yml`](/Users/pluto/Documents/git/fastapi101/.github/workflows/ci.yml:1) already covers quality and deployment validation well.
+- The CI workflow in [`.github/workflows/ci.yml`](../.github/workflows/ci.yml:1) already covers quality and deployment validation well.
 - It does not yet include baseline security automation such as dependency audit, secret scanning, container scanning, or SBOM generation.
 
 Risks if unchanged:
@@ -205,7 +205,7 @@ Definition of done:
 Notes:
 
 - Added blocking Python dependency audit and committed-secret scan. Added informational Trivy image scan and CycloneDX SBOM artifact for the full image.
-- The first dependency audit found known vulnerabilities in `idna`, `mako`, `pygments`, `python-multipart`, `starlette`, and `urllib3`; updated [uv.lock](/Users/pluto/Documents/git/fastapi101/uv.lock:1) to fixed versions and re-ran `pip-audit` successfully.
+- The first dependency audit found known vulnerabilities in `idna`, `mako`, `pygments`, `python-multipart`, `starlette`, and `urllib3`; updated [uv.lock](../uv.lock:1) to fixed versions and re-ran `pip-audit` successfully.
 
 ### TR-007: Split Password Reset Expiry From Email Verification Expiry
 
@@ -217,7 +217,7 @@ Notes:
 
 Why:
 
-- Password reset token creation in [app/core/security.py](/Users/pluto/Documents/git/fastapi101/app/core/security.py:80) currently reuses the email verification expiry setting.
+- Password reset token creation in [app/core/security.py](../app/core/security.py:80) currently reuses the email verification expiry setting.
 
 Risks if unchanged:
 
@@ -244,7 +244,7 @@ Notes:
 
 Why:
 
-- Security defaults in [app/core/settings/security.py](/Users/pluto/Documents/git/fastapi101/app/core/settings/security.py:8) are configurable but relatively permissive for a shared production template.
+- Security defaults in [app/core/settings/security.py](../app/core/settings/security.py:8) are configurable but relatively permissive for a shared production template.
 
 Risks if unchanged:
 

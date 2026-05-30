@@ -12,7 +12,7 @@
 
 template นี้รองรับ `.env` สำหรับ local ได้ดี แต่ production ไม่ควรใช้ `.env` เป็น source of truth ระยะยาว
 
-ถ้าต้องการจุดเริ่มต้นสำหรับ production-oriented env ให้ดู [/.env.prod.example](/Users/pluto/Documents/git/fastapi101/.env.prod.example) ใช้เป็น inventory/checklist ได้ แต่ไม่ควร treat เป็นที่เก็บ real secrets ระยะยาว
+ถ้าต้องการจุดเริ่มต้นสำหรับ production-oriented env ให้ดู [/.env.prod.example](../.env.prod.example) ใช้เป็น inventory/checklist ได้ แต่ไม่ควร treat เป็นที่เก็บ real secrets ระยะยาว
 
 ## อะไรควรถูกมองเป็น secret
 
@@ -264,4 +264,4 @@ backup ที่ไม่เคยถูก restore จริง ยังไม
 - หมุน secret แล้วไม่รู้ว่ากระทบ worker / metrics / provider integrations ตรงไหนบ้าง
 - หมุน JWT signing secret โดยไม่เตรียมการเรื่อง token invalidation
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/secret-management.md](/Users/pluto/Documents/git/fastapi101/docs/secret-management.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/secret-management.md](../docs/secret-management.md)

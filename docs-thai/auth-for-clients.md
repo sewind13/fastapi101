@@ -217,6 +217,6 @@ Authorization: Bearer <access_token>
 - ให้ใส่ `username` และ `password`
 - ปล่อย `client_id` และ `client_secret` ว่างได้ใน flow ปกติ
 
-อ่านต่อได้ที่ [docs-thai/openapi.md](/Users/pluto/Documents/git/fastapi101/docs-thai/openapi.md)
+อ่านต่อได้ที่ [docs-thai/openapi.md](../docs-thai/openapi.md)
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/auth-for-clients.md](/Users/pluto/Documents/git/fastapi101/docs/auth-for-clients.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/auth-for-clients.md](../docs/auth-for-clients.md)

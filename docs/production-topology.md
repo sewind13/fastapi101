@@ -4,10 +4,10 @@ This guide turns the template into a concrete production deployment shape.
 
 Use it together with:
 
-- [docs/deployment.md](/Users/pluto/Documents/git/fastapi101/docs/deployment.md)
-- [docs/secret-management.md](/Users/pluto/Documents/git/fastapi101/docs/secret-management.md)
-- [docs/observability.md](/Users/pluto/Documents/git/fastapi101/docs/observability.md)
-- [docs/first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs/first-deploy-checklist.md)
+- [docs/deployment.md](../docs/deployment.md)
+- [docs/secret-management.md](../docs/secret-management.md)
+- [docs/observability.md](../docs/observability.md)
+- [docs/first-deploy-checklist.md](../docs/first-deploy-checklist.md)
 
 ## Recommended Baseline
 

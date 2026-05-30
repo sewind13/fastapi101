@@ -4,10 +4,10 @@
 
 ควรอ่านคู่กับ:
 
-- [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
-- [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
-- [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md)
-- [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
+- [deployment.md](../docs-thai/deployment.md)
+- [secret-management.md](../docs-thai/secret-management.md)
+- [observability.md](../docs-thai/observability.md)
+- [first-deploy-checklist.md](../docs-thai/first-deploy-checklist.md)
 
 ## baseline topology ที่แนะนำ
 

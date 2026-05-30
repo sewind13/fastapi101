@@ -229,4 +229,4 @@ report นี้จะ group ตาม:
 2. รับ reset email
 3. `POST /api/v1/auth/password-reset/confirm`
 
-อ่านเวอร์ชันอังกฤษได้ที่ [docs/api-recipes.md](/Users/pluto/Documents/git/fastapi101/docs/api-recipes.md)
+อ่านเวอร์ชันอังกฤษได้ที่ [docs/api-recipes.md](../docs/api-recipes.md)

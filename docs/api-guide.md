@@ -266,7 +266,7 @@ For most endpoint work in this template, you will only implement `commit` and `r
 
 See also:
 
-- [billing-entitlements-draft.md](/Users/pluto/Documents/git/fastapi101/docs/billing-entitlements-draft.md)
+- [billing-entitlements-draft.md](../docs/billing-entitlements-draft.md)
 
 ### File-By-File Example: `items.archive -> item_archive`
 

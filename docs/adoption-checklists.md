@@ -210,11 +210,11 @@ The service should have these decisions made:
 
 The team should understand these parts of the repo:
 
-- [README.md](/Users/pluto/Documents/git/fastapi101/README.md)
-- [docs/architecture.md](/Users/pluto/Documents/git/fastapi101/docs/architecture.md)
-- [docs/api-guide.md](/Users/pluto/Documents/git/fastapi101/docs/api-guide.md)
-- [docs/configuration.md](/Users/pluto/Documents/git/fastapi101/docs/configuration.md)
-- [docs/development.md](/Users/pluto/Documents/git/fastapi101/docs/development.md)
+- [README.md](../README.md)
+- [docs/architecture.md](../docs/architecture.md)
+- [docs/api-guide.md](../docs/api-guide.md)
+- [docs/configuration.md](../docs/configuration.md)
+- [docs/development.md](../docs/development.md)
 
 The implementation baseline should be true:
 
@@ -252,9 +252,9 @@ Decisions to make before enabling Extensions:
 
 The team should read these docs in addition to Core:
 
-- [docs/security.md](/Users/pluto/Documents/git/fastapi101/docs/security.md)
-- [docs/deployment.md](/Users/pluto/Documents/git/fastapi101/docs/deployment.md)
-- relevant sections in [docs/configuration.md](/Users/pluto/Documents/git/fastapi101/docs/configuration.md)
+- [docs/security.md](../docs/security.md)
+- [docs/deployment.md](../docs/deployment.md)
+- relevant sections in [docs/configuration.md](../docs/configuration.md)
 
 The implementation baseline should be true:
 
@@ -293,9 +293,9 @@ Decisions to make before enabling Advanced:
 
 The team should read these docs in addition to Core and Extensions:
 
-- [docs/operations.md](/Users/pluto/Documents/git/fastapi101/docs/operations.md)
-- worker/outbox sections in [docs/architecture.md](/Users/pluto/Documents/git/fastapi101/docs/architecture.md)
-- deployment notes for worker and dispatcher in [docs/deployment.md](/Users/pluto/Documents/git/fastapi101/docs/deployment.md)
+- [docs/operations.md](../docs/operations.md)
+- worker/outbox sections in [docs/architecture.md](../docs/architecture.md)
+- deployment notes for worker and dispatcher in [docs/deployment.md](../docs/deployment.md)
 
 The implementation baseline should be true:
 

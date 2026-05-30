@@ -116,4 +116,4 @@
 - ใช้ `423` เพื่อบอกว่า account ถูก lock ชั่วคราว
 - log `request_id` ไว้เสมอเวลาต้องส่งเรื่องให้ backend team
 
-อ่าน catalog อังกฤษฉบับเต็มได้ที่ [docs/error-codes.md](/Users/pluto/Documents/git/fastapi101/docs/error-codes.md)
+อ่าน catalog อังกฤษฉบับเต็มได้ที่ [docs/error-codes.md](../docs/error-codes.md)

@@ -36,12 +36,12 @@ baseline ที่แนะนำ:
 
 ตัวอย่าง production-oriented env baseline ดูได้ที่:
 
-- [/.env.prod.example](/Users/pluto/Documents/git/fastapi101/.env.prod.example)
-- [deploy/helm/fastapi-template](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template)
+- [/.env.prod.example](../.env.prod.example)
+- [deploy/helm/fastapi-template](../deploy/helm/fastapi-template)
 
 ตอนนี้ workflow CI หลักก็มี deployment guardrails พื้นฐานเพิ่มแล้ว:
 
-- [/.github/workflows/ci.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/ci.yml)
+- [/.github/workflows/ci.yml](../.github/workflows/ci.yml)
 - รัน `actionlint` เพื่อตรวจ workflow files
 - รัน `helm lint`, `helm template`, และ `kubeconform` กับ Helm chart ที่มากับ repo
 - ให้ validation พวกนี้ผ่านก่อนค่อยไปรัน Python quality job หลัก
@@ -210,10 +210,10 @@ baseline metrics ตอนนี้ครอบ:
 
 ตัวอย่าง Kubernetes ใน repo ตอนนี้แยก:
 
-- non-secret config ไว้ใน [deploy/kubernetes/app-configmap.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/app-configmap.yaml)
-- secret-bearing values ไว้ใน [deploy/kubernetes/app-secret.example.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/app-secret.example.yaml)
-- migration job แยกอยู่ที่ [deploy/kubernetes/migration-job.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/migration-job.yaml)
-- Helm baseline อยู่ที่ [deploy/helm/fastapi-template](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template)
+- non-secret config ไว้ใน [deploy/kubernetes/app-configmap.yaml](../deploy/kubernetes/app-configmap.yaml)
+- secret-bearing values ไว้ใน [deploy/kubernetes/app-secret.example.yaml](../deploy/kubernetes/app-secret.example.yaml)
+- migration job แยกอยู่ที่ [deploy/kubernetes/migration-job.yaml](../deploy/kubernetes/migration-job.yaml)
+- Helm baseline อยู่ที่ [deploy/helm/fastapi-template](../deploy/helm/fastapi-template)
 
 ## Alerting starting points
 
@@ -277,12 +277,12 @@ workflow ที่แนะนำ:
 
 ตัวอย่าง GitHub Actions release workflow ดูได้ที่:
 
-- [/.github/workflows/release-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/release-example.yml)
-- [/.github/workflows/helm-validate-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/helm-validate-example.yml)
-- [/.github/workflows/release-eks-oidc-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/release-eks-oidc-example.yml)
-- [/.github/workflows/release-gke-oidc-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/release-gke-oidc-example.yml)
-- [/.github/workflows/release-aks-oidc-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/release-aks-oidc-example.yml)
-- [/.github/workflows/workflow-validate-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/workflow-validate-example.yml)
+- [/.github/workflows/release-example.yml](../.github/workflows/release-example.yml)
+- [/.github/workflows/helm-validate-example.yml](../.github/workflows/helm-validate-example.yml)
+- [/.github/workflows/release-eks-oidc-example.yml](../.github/workflows/release-eks-oidc-example.yml)
+- [/.github/workflows/release-gke-oidc-example.yml](../.github/workflows/release-gke-oidc-example.yml)
+- [/.github/workflows/release-aks-oidc-example.yml](../.github/workflows/release-aks-oidc-example.yml)
+- [/.github/workflows/workflow-validate-example.yml](../.github/workflows/workflow-validate-example.yml)
 
 workflow นี้สมมติว่ามี repository secret ชื่อ `KUBE_CONFIG` และจะ:
 
@@ -331,7 +331,7 @@ workflow นี้สมมติว่ามี repository secret ชื่อ 
 
 ถ้าอยาก validate workflow files เองใน CI โดยยังไม่แตะ release flow ให้เริ่มจาก:
 
-- [/.github/workflows/workflow-validate-example.yml](/Users/pluto/Documents/git/fastapi101/.github/workflows/workflow-validate-example.yml)
+- [/.github/workflows/workflow-validate-example.yml](../.github/workflows/workflow-validate-example.yml)
 
 ซึ่งใช้ `actionlint` เพื่อจับ syntax และ mistake ที่พบบ่อยของ GitHub Actions
 
@@ -382,9 +382,9 @@ rule ที่แนะนำ:
 
 อ่านต่อ:
 
-- [production-topology.md](/Users/pluto/Documents/git/fastapi101/docs-thai/production-topology.md)
-- [observability.md](/Users/pluto/Documents/git/fastapi101/docs-thai/observability.md)
-- [first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs-thai/first-deploy-checklist.md)
-- [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
+- [production-topology.md](../docs-thai/production-topology.md)
+- [observability.md](../docs-thai/observability.md)
+- [first-deploy-checklist.md](../docs-thai/first-deploy-checklist.md)
+- [secret-management.md](../docs-thai/secret-management.md)
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/deployment.md](/Users/pluto/Documents/git/fastapi101/docs/deployment.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/deployment.md](../docs/deployment.md)

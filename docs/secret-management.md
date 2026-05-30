@@ -12,7 +12,7 @@ Use this guide to keep a clear split between:
 
 The template supports nested environment variables, but production deployments should not treat `.env` as the long-term secret source of truth.
 
-For a production-oriented starting point, see [/.env.prod.example](/Users/pluto/Documents/git/fastapi101/.env.prod.example). Use it as an inventory and review aid, not as a committed source of real secrets.
+For a production-oriented starting point, see [/.env.prod.example](../.env.prod.example). Use it as an inventory and review aid, not as a committed source of real secrets.
 
 ## What Counts As A Secret
 
@@ -101,8 +101,8 @@ Recommended split:
 
 See:
 
-- [deploy/kubernetes/app-configmap.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/app-configmap.yaml)
-- [deploy/kubernetes/app-secret.example.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/app-secret.example.yaml)
+- [deploy/kubernetes/app-configmap.yaml](../deploy/kubernetes/app-configmap.yaml)
+- [deploy/kubernetes/app-secret.example.yaml](../deploy/kubernetes/app-secret.example.yaml)
 
 ### Cloud Secret Managers
 
@@ -297,7 +297,7 @@ Before calling the template production-ready, document:
 
 ## Related Docs
 
-- [docs/configuration.md](/Users/pluto/Documents/git/fastapi101/docs/configuration.md)
-- [docs/deployment.md](/Users/pluto/Documents/git/fastapi101/docs/deployment.md)
-- [docs/operations.md](/Users/pluto/Documents/git/fastapi101/docs/operations.md)
-- [docs/security.md](/Users/pluto/Documents/git/fastapi101/docs/security.md)
+- [docs/configuration.md](../docs/configuration.md)
+- [docs/deployment.md](../docs/deployment.md)
+- [docs/operations.md](../docs/operations.md)
+- [docs/security.md](../docs/security.md)

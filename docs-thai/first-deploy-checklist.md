@@ -4,7 +4,7 @@
 
 เอกสาร review ที่ควรอ่านคู่กัน:
 
-- [security-hardening.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security-hardening.md)
+- [security-hardening.md](../docs-thai/security-hardening.md)
 
 ## configuration และ secrets
 

@@ -2,7 +2,7 @@
 
 ไฟล์นี้รวมเรื่อง day-2 operations ของ template นี้ เช่น maintenance, worker/outbox, account lockout, billing ops, monitoring, และ incident checks เบื้องต้น
 
-สำหรับเรื่อง secret ownership/rotation โดยตรง ให้ดู [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md) เพิ่ม
+สำหรับเรื่อง secret ownership/rotation โดยตรง ให้ดู [secret-management.md](../docs-thai/secret-management.md) เพิ่ม
 
 ## งานดูแลระบบที่ template นี้รองรับ
 
@@ -198,4 +198,4 @@ Prometheus series ที่ useful เช่น:
 - queue readiness ไม่ได้แปลว่า consumer throughput ปกติดีเสมอ
 - worker stack แม้มี retry/DLQ/outbox แล้ว ก็ยังไม่ใช่ exactly-once guarantee เต็มรูปแบบ
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/operations.md](/Users/pluto/Documents/git/fastapi101/docs/operations.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/operations.md](../docs/operations.md)

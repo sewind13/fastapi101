@@ -61,7 +61,7 @@ This separation is what makes the entitlement system reusable. Multiple features
 
 Target file:
 
-- [app/db/models/account.py](/Users/pluto/Documents/git/fastapi101/app/db/models/account.py)
+- [app/db/models/account.py](../app/db/models/account.py)
 
 Suggested shape:
 
@@ -91,7 +91,7 @@ Also add:
 
 Target file:
 
-- [app/db/models/feature_entitlement.py](/Users/pluto/Documents/git/fastapi101/app/db/models/feature_entitlement.py)
+- [app/db/models/feature_entitlement.py](../app/db/models/feature_entitlement.py)
 
 Suggested shape:
 
@@ -127,7 +127,7 @@ Recommended rules:
 
 Target file:
 
-- [app/db/models/usage_reservation.py](/Users/pluto/Documents/git/fastapi101/app/db/models/usage_reservation.py)
+- [app/db/models/usage_reservation.py](../app/db/models/usage_reservation.py)
 
 Suggested shape:
 
@@ -157,7 +157,7 @@ class UsageReservation(SQLModel, table=True):
 
 Target file:
 
-- [app/db/models/usage_event.py](/Users/pluto/Documents/git/fastapi101/app/db/models/usage_event.py)
+- [app/db/models/usage_event.py](../app/db/models/usage_event.py)
 
 Suggested shape:
 
@@ -188,7 +188,7 @@ For phase 1, keep the feature map in code rather than creating a DB table.
 
 Suggested location:
 
-- [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
+- [app/services/entitlement_service.py](../app/services/entitlement_service.py)
 
 Suggested draft:
 
@@ -397,10 +397,10 @@ The current template primarily implements the normal `reserve -> commit/release`
 
 Suggested files:
 
-- [app/db/repositories/account.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/account.py)
-- [app/db/repositories/feature_entitlement.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/feature_entitlement.py)
-- [app/db/repositories/usage_reservation.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/usage_reservation.py)
-- [app/db/repositories/usage_event.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/usage_event.py)
+- [app/db/repositories/account.py](../app/db/repositories/account.py)
+- [app/db/repositories/feature_entitlement.py](../app/db/repositories/feature_entitlement.py)
+- [app/db/repositories/usage_reservation.py](../app/db/repositories/usage_reservation.py)
+- [app/db/repositories/usage_event.py](../app/db/repositories/usage_event.py)
 
 Suggested responsibilities:
 
@@ -428,8 +428,8 @@ Suggested responsibilities:
 
 Suggested files:
 
-- [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
-- [app/services/billing_service.py](/Users/pluto/Documents/git/fastapi101/app/services/billing_service.py)
+- [app/services/entitlement_service.py](../app/services/entitlement_service.py)
+- [app/services/billing_service.py](../app/services/billing_service.py)
 
 Suggested service interface:
 
@@ -449,7 +449,7 @@ class BillingService:
 
 ## Error Code Draft
 
-Suggested additions in [app/services/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/services/exceptions.py):
+Suggested additions in [app/services/exceptions.py](../app/services/exceptions.py):
 
 - `billing.no_entitlement`
 - `billing.quota_exhausted`
@@ -484,16 +484,16 @@ For a future route such as `POST /api/v1/service-a/run`:
 
 Add:
 
-- [app/db/models/account.py](/Users/pluto/Documents/git/fastapi101/app/db/models/account.py)
-- [app/db/models/feature_entitlement.py](/Users/pluto/Documents/git/fastapi101/app/db/models/feature_entitlement.py)
-- [app/db/models/usage_reservation.py](/Users/pluto/Documents/git/fastapi101/app/db/models/usage_reservation.py)
-- [app/db/models/usage_event.py](/Users/pluto/Documents/git/fastapi101/app/db/models/usage_event.py)
+- [app/db/models/account.py](../app/db/models/account.py)
+- [app/db/models/feature_entitlement.py](../app/db/models/feature_entitlement.py)
+- [app/db/models/usage_reservation.py](../app/db/models/usage_reservation.py)
+- [app/db/models/usage_event.py](../app/db/models/usage_event.py)
 
 Update:
 
-- [app/db/models/user.py](/Users/pluto/Documents/git/fastapi101/app/db/models/user.py)
-- [app/db/models/__init__.py](/Users/pluto/Documents/git/fastapi101/app/db/models/__init__.py)
-- [app/db/base.py](/Users/pluto/Documents/git/fastapi101/app/db/base.py)
+- [app/db/models/user.py](../app/db/models/user.py)
+- [app/db/models/__init__.py](../app/db/models/__init__.py)
+- [app/db/base.py](../app/db/base.py)
 
 ### Step 2: migration
 
@@ -507,23 +507,23 @@ Create one Alembic migration that:
 
 Create:
 
-- [app/db/repositories/account.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/account.py)
-- [app/db/repositories/feature_entitlement.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/feature_entitlement.py)
-- [app/db/repositories/usage_reservation.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/usage_reservation.py)
-- [app/db/repositories/usage_event.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/usage_event.py)
+- [app/db/repositories/account.py](../app/db/repositories/account.py)
+- [app/db/repositories/feature_entitlement.py](../app/db/repositories/feature_entitlement.py)
+- [app/db/repositories/usage_reservation.py](../app/db/repositories/usage_reservation.py)
+- [app/db/repositories/usage_event.py](../app/db/repositories/usage_event.py)
 
 ### Step 4: services
 
 Create:
 
-- [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
-- [app/services/billing_service.py](/Users/pluto/Documents/git/fastapi101/app/services/billing_service.py)
+- [app/services/entitlement_service.py](../app/services/entitlement_service.py)
+- [app/services/billing_service.py](../app/services/billing_service.py)
 
 ### Step 5: schemas
 
 Create:
 
-- [app/schemas/billing.py](/Users/pluto/Documents/git/fastapi101/app/schemas/billing.py)
+- [app/schemas/billing.py](../app/schemas/billing.py)
 
 Initial useful schemas:
 

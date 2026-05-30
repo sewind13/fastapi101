@@ -37,51 +37,51 @@ make bootstrap-admin-in-container-env args="--username admin --email admin@examp
 
 ## ถัดไปควรอ่านอะไร
 
-เริ่มจากชุดเอกสารภาษาไทยที่ [docs-thai/README.md](/Users/pluto/Documents/git/fastapi101/docs-thai/README.md) ซึ่งเป็น index หลักของ docs ไทย
+เริ่มจากชุดเอกสารภาษาไทยที่ [docs-thai/README.md](docs-thai/README.md) ซึ่งเป็น index หลักของ docs ไทย
 
-ถ้าใช้ LLM หรือ coding agent ช่วยแก้โค้ด ให้อ่าน [AGENTS.md](/Users/pluto/Documents/git/fastapi101/AGENTS.md) ก่อน เพื่อให้ agent เข้าใจ guardrails, architecture rules, และ quality gates ของ repo นี้
+ถ้าใช้ LLM หรือ coding agent ช่วยแก้โค้ด ให้อ่าน [AGENTS.md](AGENTS.md) ก่อน เพื่อให้ agent เข้าใจ guardrails, architecture rules, และ quality gates ของ repo นี้
 
 ลำดับแนะนำ:
 
-1. [docs-thai/bootstrap.md](/Users/pluto/Documents/git/fastapi101/docs-thai/bootstrap.md)
-2. [docs-thai/development.md](/Users/pluto/Documents/git/fastapi101/docs-thai/development.md)
-3. [docs-thai/platform-starter.md](/Users/pluto/Documents/git/fastapi101/docs-thai/platform-starter.md)
-4. [docs-thai/architecture.md](/Users/pluto/Documents/git/fastapi101/docs-thai/architecture.md)
-5. [docs-thai/database-schema.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-schema.md)
-6. [docs-thai/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
-7. [docs-thai/configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md)
+1. [docs-thai/bootstrap.md](docs-thai/bootstrap.md)
+2. [docs-thai/development.md](docs-thai/development.md)
+3. [docs-thai/platform-starter.md](docs-thai/platform-starter.md)
+4. [docs-thai/architecture.md](docs-thai/architecture.md)
+5. [docs-thai/database-schema.md](docs-thai/database-schema.md)
+6. [docs-thai/database-migrations.md](docs-thai/database-migrations.md)
+7. [docs-thai/configuration.md](docs-thai/configuration.md)
 
-ถ้าอยากเห็นภาพรวม database แบบเร็วที่สุด ให้เปิด ERD ใน [docs-thai/database-schema.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-schema.md) ก่อน
+ถ้าอยากเห็นภาพรวม database แบบเร็วที่สุด ให้เปิด ERD ใน [docs-thai/database-schema.md](docs-thai/database-schema.md) ก่อน
 
 ## ถ้าอยากดูตามบทบาท
 
 ถ้าคุณเป็น backend developer:
 
-- [docs-thai/api-guide.md](/Users/pluto/Documents/git/fastapi101/docs-thai/api-guide.md)
-- [docs-thai/architecture.md](/Users/pluto/Documents/git/fastapi101/docs-thai/architecture.md)
-- [docs-thai/database-schema.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-schema.md)
-- [docs-thai/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
+- [docs-thai/api-guide.md](docs-thai/api-guide.md)
+- [docs-thai/architecture.md](docs-thai/architecture.md)
+- [docs-thai/database-schema.md](docs-thai/database-schema.md)
+- [docs-thai/database-migrations.md](docs-thai/database-migrations.md)
 
 ถ้าคุณเป็น frontend/mobile/client developer:
 
-- [docs-thai/auth-for-clients.md](/Users/pluto/Documents/git/fastapi101/docs-thai/auth-for-clients.md)
-- [docs-thai/api-recipes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/api-recipes.md)
-- [docs-thai/openapi.md](/Users/pluto/Documents/git/fastapi101/docs-thai/openapi.md)
+- [docs-thai/auth-for-clients.md](docs-thai/auth-for-clients.md)
+- [docs-thai/api-recipes.md](docs-thai/api-recipes.md)
+- [docs-thai/openapi.md](docs-thai/openapi.md)
 
 ถ้าคุณเป็น ops/platform engineer:
 
-- [docs-thai/deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
-- [docs-thai/operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md)
-- [docs-thai/security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
-- [docs-thai/secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
-- [docs-thai/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
+- [docs-thai/deployment.md](docs-thai/deployment.md)
+- [docs-thai/operations.md](docs-thai/operations.md)
+- [docs-thai/security.md](docs-thai/security.md)
+- [docs-thai/secret-management.md](docs-thai/secret-management.md)
+- [docs-thai/database-migrations.md](docs-thai/database-migrations.md)
 
 ## หมายเหตุ
 
 - docs อังกฤษยังเป็น reference หลักที่ละเอียดที่สุด
 - แต่ `docs-thai` ตอนนี้ถูกขยายให้ใช้เป็น onboarding/reference ภาษาไทยได้จริงมากขึ้นแล้ว
-- release notes ภาษาไทยอยู่ที่ [docs-thai/release-notes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/release-notes.md)
+- release notes ภาษาไทยอยู่ที่ [docs-thai/release-notes.md](docs-thai/release-notes.md)
 - ถ้าจะเริ่มงานใหม่ day-0/day-1 ให้อ่านฝั่งไทยก่อนได้เลย
 - ถ้าจะลงลึก implementation หรือเทียบ behavior รายละเอียดมาก ๆ ค่อยเปิด docs อังกฤษประกบ
 
-ดู README อังกฤษได้ที่ [README.md](/Users/pluto/Documents/git/fastapi101/README.md)
+ดู README อังกฤษได้ที่ [README.md](README.md)

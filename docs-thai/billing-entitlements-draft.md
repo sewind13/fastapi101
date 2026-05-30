@@ -61,7 +61,7 @@ rule of thumb:
 
 ไฟล์เป้าหมาย:
 
-- [app/db/models/account.py](/Users/pluto/Documents/git/fastapi101/app/db/models/account.py)
+- [app/db/models/account.py](../app/db/models/account.py)
 
 แนวคิด:
 
@@ -72,7 +72,7 @@ rule of thumb:
 
 ไฟล์เป้าหมาย:
 
-- [app/db/models/feature_entitlement.py](/Users/pluto/Documents/git/fastapi101/app/db/models/feature_entitlement.py)
+- [app/db/models/feature_entitlement.py](../app/db/models/feature_entitlement.py)
 
 ใช้เก็บว่า account นี้มีสิทธิ์ใช้ `resource_key` อะไร และเหลือเท่าไร
 
@@ -92,7 +92,7 @@ field สำคัญ:
 
 ไฟล์เป้าหมาย:
 
-- [app/db/models/usage_reservation.py](/Users/pluto/Documents/git/fastapi101/app/db/models/usage_reservation.py)
+- [app/db/models/usage_reservation.py](../app/db/models/usage_reservation.py)
 
 เอาไว้จอง quota ก่อนทำงานจริง เพื่อกัน race condition
 
@@ -110,7 +110,7 @@ field สำคัญ:
 
 ไฟล์เป้าหมาย:
 
-- [app/db/models/usage_event.py](/Users/pluto/Documents/git/fastapi101/app/db/models/usage_event.py)
+- [app/db/models/usage_event.py](../app/db/models/usage_event.py)
 
 เป็น ledger ของการใช้งานจริง
 
@@ -332,10 +332,10 @@ reverse ใช้ในกรณีที่ usage ถูก commit ไปแล
 
 ## repository ที่ควรมี
 
-- [app/db/repositories/account.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/account.py)
-- [app/db/repositories/feature_entitlement.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/feature_entitlement.py)
-- [app/db/repositories/usage_reservation.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/usage_reservation.py)
-- [app/db/repositories/usage_event.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/usage_event.py)
+- [app/db/repositories/account.py](../app/db/repositories/account.py)
+- [app/db/repositories/feature_entitlement.py](../app/db/repositories/feature_entitlement.py)
+- [app/db/repositories/usage_reservation.py](../app/db/repositories/usage_reservation.py)
+- [app/db/repositories/usage_event.py](../app/db/repositories/usage_event.py)
 
 หน้าที่หลัก:
 
@@ -348,8 +348,8 @@ reverse ใช้ในกรณีที่ usage ถูก commit ไปแล
 
 ## service ที่ควรมี
 
-- [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
-- [app/services/billing_service.py](/Users/pluto/Documents/git/fastapi101/app/services/billing_service.py)
+- [app/services/entitlement_service.py](../app/services/entitlement_service.py)
+- [app/services/billing_service.py](../app/services/billing_service.py)
 
 method หลัก:
 
@@ -378,7 +378,7 @@ flow:
 
 ## error codes ที่ควรเพิ่ม
 
-ใน [app/services/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/services/exceptions.py):
+ใน [app/services/exceptions.py](../app/services/exceptions.py):
 
 - `billing.no_entitlement`
 - `billing.quota_exhausted`

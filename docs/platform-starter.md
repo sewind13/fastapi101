@@ -91,7 +91,7 @@ For a new internal API, the recommended path is:
 2. Add Extensions after the first real runtime need appears.
 3. Add Advanced features only when synchronous request handling is no longer enough.
 
-For copy-friendly presets, use the `core-only`, `redis-enabled`, and `full-async` quick reference in [docs/adoption-checklists.md](/Users/pluto/Documents/git/fastapi101/docs/adoption-checklists.md).
+For copy-friendly presets, use the `core-only`, `redis-enabled`, and `full-async` quick reference in [docs/adoption-checklists.md](../docs/adoption-checklists.md).
 
 Examples:
 
@@ -106,116 +106,116 @@ The lists below are meant to help a team decide what to learn first and what can
 
 ### Core: Main Application And API Surface
 
-- [app/main.py](/Users/pluto/Documents/git/fastapi101/app/main.py)
+- [app/main.py](../app/main.py)
   Thin ASGI entrypoint that exports the app created by the factory.
-- [app/factory.py](/Users/pluto/Documents/git/fastapi101/app/factory.py)
+- [app/factory.py](../app/factory.py)
   App assembly, middleware registration, routers, health/metrics routes, telemetry, and exception handlers.
-- [app/api](/Users/pluto/Documents/git/fastapi101/app/api)
+- [app/api](../app/api)
   HTTP layer, dependencies, router assembly, and API error mapping.
-- [app/services](/Users/pluto/Documents/git/fastapi101/app/services)
+- [app/services](../app/services)
   Business logic, service result pattern, and domain-level orchestration.
-- [app/db](/Users/pluto/Documents/git/fastapi101/app/db)
+- [app/db](../app/db)
   DB session management, SQLModel models, repositories, and Alembic metadata registration.
-- [app/schemas](/Users/pluto/Documents/git/fastapi101/app/schemas)
+- [app/schemas](../app/schemas)
   Public request/response contracts.
-- [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings)
+- [app/core/settings](../app/core/settings)
   Typed settings sections, optional feature config, legacy env compatibility, and production validation.
-- [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
+- [app/core/config.py](../app/core/config.py)
   Compatibility exports for callers that import `settings` from the historic location.
-- [app/core/security.py](/Users/pluto/Documents/git/fastapi101/app/core/security.py)
+- [app/core/security.py](../app/core/security.py)
   Password hashing and token encoding/decoding.
-- [app/core/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/core/exceptions.py)
+- [app/core/exceptions.py](../app/core/exceptions.py)
   App-level exception types.
-- [app/core/logging.py](/Users/pluto/Documents/git/fastapi101/app/core/logging.py)
+- [app/core/logging.py](../app/core/logging.py)
   Structured logging and audit helpers.
-- [app/core/health.py](/Users/pluto/Documents/git/fastapi101/app/core/health.py)
+- [app/core/health.py](../app/core/health.py)
   Health/readiness evaluation.
-- [app/core/middleware.py](/Users/pluto/Documents/git/fastapi101/app/core/middleware.py)
+- [app/core/middleware.py](../app/core/middleware.py)
   Request context, request IDs, access-log sampling, and request metrics.
-- [alembic](/Users/pluto/Documents/git/fastapi101/alembic)
+- [alembic](../alembic)
   Schema migration environment and version history.
-- [Dockerfile](/Users/pluto/Documents/git/fastapi101/Dockerfile)
+- [Dockerfile](../Dockerfile)
   Application image build.
-- [docker-compose.yml](/Users/pluto/Documents/git/fastapi101/docker-compose.yml)
+- [docker-compose.yml](../docker-compose.yml)
   Production-like local runtime baseline.
-- [docker-compose.dev.yml](/Users/pluto/Documents/git/fastapi101/docker-compose.dev.yml)
+- [docker-compose.dev.yml](../docker-compose.dev.yml)
   Development override with bind mounts and reload flow.
-- [tests](/Users/pluto/Documents/git/fastapi101/tests)
+- [tests](../tests)
   Unit and integration tests across the core architecture.
 
 ### Core: Docs
 
-- [README.md](/Users/pluto/Documents/git/fastapi101/README.md)
-- [docs/architecture.md](/Users/pluto/Documents/git/fastapi101/docs/architecture.md)
-- [docs/api-guide.md](/Users/pluto/Documents/git/fastapi101/docs/api-guide.md)
-- [docs/api-contracts.md](/Users/pluto/Documents/git/fastapi101/docs/api-contracts.md)
-- [docs/api-recipes.md](/Users/pluto/Documents/git/fastapi101/docs/api-recipes.md)
-- [docs/auth-for-clients.md](/Users/pluto/Documents/git/fastapi101/docs/auth-for-clients.md)
-- [docs/openapi.md](/Users/pluto/Documents/git/fastapi101/docs/openapi.md)
-- [docs/error-codes.md](/Users/pluto/Documents/git/fastapi101/docs/error-codes.md)
-- [docs/configuration.md](/Users/pluto/Documents/git/fastapi101/docs/configuration.md)
-- [docs/development.md](/Users/pluto/Documents/git/fastapi101/docs/development.md)
+- [README.md](../README.md)
+- [docs/architecture.md](../docs/architecture.md)
+- [docs/api-guide.md](../docs/api-guide.md)
+- [docs/api-contracts.md](../docs/api-contracts.md)
+- [docs/api-recipes.md](../docs/api-recipes.md)
+- [docs/auth-for-clients.md](../docs/auth-for-clients.md)
+- [docs/openapi.md](../docs/openapi.md)
+- [docs/error-codes.md](../docs/error-codes.md)
+- [docs/configuration.md](../docs/configuration.md)
+- [docs/development.md](../docs/development.md)
 
 ### Extensions: Runtime Capabilities
 
-- [app/core/cache.py](/Users/pluto/Documents/git/fastapi101/app/core/cache.py)
+- [app/core/cache.py](../app/core/cache.py)
   Shared cache backends and read-through helper.
-- [app/core/metrics.py](/Users/pluto/Documents/git/fastapi101/app/core/metrics.py)
+- [app/core/metrics.py](../app/core/metrics.py)
   Prometheus metrics registry and app/business metrics.
-- [app/core/rate_limit.py](/Users/pluto/Documents/git/fastapi101/app/core/rate_limit.py)
+- [app/core/rate_limit.py](../app/core/rate_limit.py)
   Auth-focused rate limiting with production Redis option.
-- [app/core/resilience.py](/Users/pluto/Documents/git/fastapi101/app/core/resilience.py)
+- [app/core/resilience.py](../app/core/resilience.py)
   Timeout/retry policy selection for external dependencies.
-- [app/core/telemetry.py](/Users/pluto/Documents/git/fastapi101/app/core/telemetry.py)
+- [app/core/telemetry.py](../app/core/telemetry.py)
   OpenTelemetry setup hooks.
-- [app/providers](/Users/pluto/Documents/git/fastapi101/app/providers)
+- [app/providers](../app/providers)
   Email and webhook provider adapters.
-- [app/services/email_service.py](/Users/pluto/Documents/git/fastapi101/app/services/email_service.py)
+- [app/services/email_service.py](../app/services/email_service.py)
   Email delivery orchestration on top of provider adapters.
-- [app/services/webhook_service.py](/Users/pluto/Documents/git/fastapi101/app/services/webhook_service.py)
+- [app/services/webhook_service.py](../app/services/webhook_service.py)
   Webhook delivery orchestration on top of provider adapters.
 
 ### Extensions: Docs And Deployment Examples
 
-- [docs/security.md](/Users/pluto/Documents/git/fastapi101/docs/security.md)
-- [docs/deployment.md](/Users/pluto/Documents/git/fastapi101/docs/deployment.md)
-- [deploy/monitoring](/Users/pluto/Documents/git/fastapi101/deploy/monitoring)
+- [docs/security.md](../docs/security.md)
+- [docs/deployment.md](../docs/deployment.md)
+- [deploy/monitoring](../deploy/monitoring)
   Prometheus, Grafana, and Alertmanager examples.
-- [docker-compose.monitoring.yml](/Users/pluto/Documents/git/fastapi101/docker-compose.monitoring.yml)
+- [docker-compose.monitoring.yml](../docker-compose.monitoring.yml)
   Local monitoring stack example.
 
 ### Advanced: Async And Operations Platform Features
 
-- [app/worker](/Users/pluto/Documents/git/fastapi101/app/worker)
+- [app/worker](../app/worker)
   Typed task envelopes, publishers, runner, idempotency, task handlers, and outbox builders.
-- [app/jobs](/Users/pluto/Documents/git/fastapi101/app/jobs)
+- [app/jobs](../app/jobs)
   Outbox dispatch, revoked-token cleanup, DLQ replay, and outbox reporting jobs.
-- [app/db/models/outbox_event.py](/Users/pluto/Documents/git/fastapi101/app/db/models/outbox_event.py)
+- [app/db/models/outbox_event.py](../app/db/models/outbox_event.py)
   Transactional outbox persistence model.
-- [app/db/repositories/outbox_event.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/outbox_event.py)
+- [app/db/repositories/outbox_event.py](../app/db/repositories/outbox_event.py)
   Outbox persistence and polling logic.
-- [app/services/outbox_service.py](/Users/pluto/Documents/git/fastapi101/app/services/outbox_service.py)
+- [app/services/outbox_service.py](../app/services/outbox_service.py)
   Operations-facing outbox summary and query logic.
-- [app/api/v1/ops.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/ops.py)
+- [app/api/v1/ops.py](../app/api/v1/ops.py)
   Protected operations API for outbox visibility and replay actions.
-- [deploy/kubernetes](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes)
+- [deploy/kubernetes](../deploy/kubernetes)
   Kubernetes baseline manifests for app, worker, outbox dispatcher, ingress, HPA, network policy, and maintenance jobs.
-- [deploy/helm/fastapi-template](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template)
+- [deploy/helm/fastapi-template](../deploy/helm/fastapi-template)
   Helm baseline for teams that want chart-driven production deployment.
-- [deploy/nginx/nginx.conf](/Users/pluto/Documents/git/fastapi101/deploy/nginx/nginx.conf)
+- [deploy/nginx/nginx.conf](../deploy/nginx/nginx.conf)
   Reverse-proxy sample for production deployments.
 
 ### Advanced: Docs
 
-- [docs/operations.md](/Users/pluto/Documents/git/fastapi101/docs/operations.md)
+- [docs/operations.md](../docs/operations.md)
   Runbooks, maintenance tasks, and operational caveats for the async/ops side of the platform.
 
 ## How Teams Should Read The Repo
 
 For a team starting a new service:
 
-1. Read [README.md](/Users/pluto/Documents/git/fastapi101/README.md).
-2. Read [docs/architecture.md](/Users/pluto/Documents/git/fastapi101/docs/architecture.md), [docs/api-guide.md](/Users/pluto/Documents/git/fastapi101/docs/api-guide.md), and [docs/configuration.md](/Users/pluto/Documents/git/fastapi101/docs/configuration.md).
+1. Read [README.md](../README.md).
+2. Read [docs/architecture.md](../docs/architecture.md), [docs/api-guide.md](../docs/api-guide.md), and [docs/configuration.md](../docs/configuration.md).
 3. Ignore most of `Extensions` and `Advanced` until a real need appears.
 
 For a team enabling new platform capabilities:
@@ -237,7 +237,7 @@ That framing keeps the repository useful without pretending every feature belong
 
 ## Adoption Checklists
 
-Use [docs/adoption-checklists.md](/Users/pluto/Documents/git/fastapi101/docs/adoption-checklists.md) as the practical rollout guide:
+Use [docs/adoption-checklists.md](../docs/adoption-checklists.md) as the practical rollout guide:
 
 - `Core Only` for teams starting a straightforward internal API
 - `Core + Extensions` for teams adding caching, metrics, richer security, or providers

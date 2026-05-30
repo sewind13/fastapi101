@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.4 - 2026-05-30
+
+patch release สำหรับ documentation hygiene ที่กระทบประสบการณ์ของ adopter
+
+### สิ่งที่แก้
+
+- เปลี่ยน Markdown link target แบบ local absolute เช่น `/Users/.../fastapi101/...` ให้เป็น repository-relative links ทั้ง docs อังกฤษและไทย
+- ทำให้เอกสารของ template portable หลัง adopter clone หรือ rename repo
+- bump package, lockfile, และ Helm chart/app versions เป็น `1.0.4`
+
+### สิ่งที่ adopter ต้องทำ
+
+- adopter ใหม่ควรใช้ `v1.0.4`
+- ถ้า fork จาก release ก่อนหน้า ให้ search docs ที่ copy ไปว่ามี local absolute path เหลือหรือไม่ ก่อนส่งต่อให้ทีมใช้งาน
+
 ## v1.0.3 - 2026-05-30
 
 patch release สำหรับ production-readiness quality gates และ immutable deployment examples

@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.4 - 2026-05-30
+
+Patch release for adopter-facing documentation hygiene.
+
+### Fixes
+
+- Replaced local absolute Markdown link targets such as `/Users/.../fastapi101/...` with repository-relative links across English and Thai docs.
+- Kept template documentation portable after adopters clone or rename the repository.
+- Bumped the package, lockfile, and Helm chart/app versions to `1.0.4`.
+
+### Adopter Action Items
+
+- Prefer `v1.0.4` for new adopters.
+- If you forked an earlier release, search your copied docs for local absolute paths before handing them to your team.
+
 ## v1.0.3 - 2026-05-30
 
 Patch release for production-readiness quality gates and immutable deployment examples.

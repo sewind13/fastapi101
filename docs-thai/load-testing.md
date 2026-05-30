@@ -169,4 +169,4 @@ panel/query ที่ควรดูเป็นอันดับแรก:
 - readiness dependency status
 - worker queue depth
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/load-testing.md](/Users/pluto/Documents/git/fastapi101/docs/load-testing.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/load-testing.md](../docs/load-testing.md)

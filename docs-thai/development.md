@@ -47,7 +47,7 @@ make ps-redis
 make logs-redis
 ```
 
-ถ้ากำลังจะแก้ table หรือ column ให้เปิด [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md) ประกบไว้ก่อน เพราะไฟล์นั้นอธิบาย flow การแก้ schema และวิธี debug ปัญหา local DB โดยตรง
+ถ้ากำลังจะแก้ table หรือ column ให้เปิด [database-migrations.md](../docs-thai/database-migrations.md) ประกบไว้ก่อน เพราะไฟล์นั้นอธิบาย flow การแก้ schema และวิธี debug ปัญหา local DB โดยตรง
 
 ถ้าจะปิด:
 
@@ -250,8 +250,8 @@ pattern หลักของ template นี้คือ:
 
 ถ้าฟีเจอร์ใหม่มี table หรือ column ใหม่ ควรอ่านคู่กับ:
 
-- [database-schema.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-schema.md)
-- [database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/database-migrations.md)
+- [database-schema.md](../docs-thai/database-schema.md)
+- [database-migrations.md](../docs-thai/database-migrations.md)
 
 ## Example ที่ควรดูใน repo นี้
 
@@ -299,8 +299,8 @@ make bootstrap-admin-in-container args="--username admin --email admin@example.c
 
 และควรดู docs เพิ่มที่:
 
-- [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md)
-- [architecture.md](/Users/pluto/Documents/git/fastapi101/docs-thai/architecture.md)
+- [operations.md](../docs-thai/operations.md)
+- [architecture.md](../docs-thai/architecture.md)
 
 ## ถ้าจะพัฒนา quota / billing flow
 
@@ -319,7 +319,7 @@ make bootstrap-admin-in-container args="--username admin --email admin@example.c
 
 ## เอกสารที่ควรอ่านต่อ
 
-- [api-guide.md](/Users/pluto/Documents/git/fastapi101/docs-thai/api-guide.md)
-- [architecture.md](/Users/pluto/Documents/git/fastapi101/docs-thai/architecture.md)
-- [configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md)
-- [docs/development.md](/Users/pluto/Documents/git/fastapi101/docs/development.md)
+- [api-guide.md](../docs-thai/api-guide.md)
+- [architecture.md](../docs-thai/architecture.md)
+- [configuration.md](../docs-thai/configuration.md)
+- [docs/development.md](../docs/development.md)

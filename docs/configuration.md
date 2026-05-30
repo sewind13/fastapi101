@@ -2,7 +2,7 @@
 
 This document explains what each configuration group does and how the main variables affect the application.
 
-The source of truth for settings is [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings). [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) remains as a compatibility shim for existing `from app.core.config import settings` imports. Full example values live in [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example), and a smaller baseline lives in [/.env.min.example](/Users/pluto/Documents/git/fastapi101/.env.min.example).
+The source of truth for settings is [app/core/settings](../app/core/settings). [app/core/config.py](../app/core/config.py) remains as a compatibility shim for existing `from app.core.config import settings` imports. Full example values live in [/.env.example](../.env.example), and a smaller baseline lives in [/.env.min.example](../.env.min.example).
 
 ## How Configuration Is Loaded
 
@@ -781,9 +781,9 @@ Recommended follow-up checks:
 
 ## Related Files
 
-- [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings)
-- [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py)
-- [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example)
-- [app/core/logging.py](/Users/pluto/Documents/git/fastapi101/app/core/logging.py)
-- [app/core/health.py](/Users/pluto/Documents/git/fastapi101/app/core/health.py)
-- [app/core/telemetry.py](/Users/pluto/Documents/git/fastapi101/app/core/telemetry.py)
+- [app/core/settings](../app/core/settings)
+- [app/core/config.py](../app/core/config.py)
+- [/.env.example](../.env.example)
+- [app/core/logging.py](../app/core/logging.py)
+- [app/core/health.py](../app/core/health.py)
+- [app/core/telemetry.py](../app/core/telemetry.py)

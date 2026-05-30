@@ -193,4 +193,4 @@ make logs
 - ทีมตัดสินใจแล้วว่าจะเก็บหรือปิด example items module
 - ทีมรู้แล้วว่าจะเริ่มจาก `Core` อย่างเดียว หรือเปิด `Extensions`/`Advanced` เพิ่ม
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/bootstrap.md](/Users/pluto/Documents/git/fastapi101/docs/bootstrap.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/bootstrap.md](../docs/bootstrap.md)

@@ -196,4 +196,4 @@ public registration คุมผ่าน `API__PUBLIC_REGISTRATION_ENABLED`
 - ป้องกัน `/metrics` และ ops endpoints ด้วย network/auth controls
 - ถ้าจะเปิด real webhook delivery ให้ตั้ง `WEBHOOK__ALLOWED_HOSTS`
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/security.md](/Users/pluto/Documents/git/fastapi101/docs/security.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/security.md](../docs/security.md)

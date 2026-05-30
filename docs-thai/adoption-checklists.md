@@ -241,10 +241,10 @@ mindset ที่เหมาะ:
 
 ทีมควรอ่านอย่างน้อย:
 
-- [bootstrap.md](/Users/pluto/Documents/git/fastapi101/docs-thai/bootstrap.md)
-- [development.md](/Users/pluto/Documents/git/fastapi101/docs-thai/development.md)
-- [configuration.md](/Users/pluto/Documents/git/fastapi101/docs-thai/configuration.md)
-- [security.md](/Users/pluto/Documents/git/fastapi101/docs-thai/security.md)
+- [bootstrap.md](../docs-thai/bootstrap.md)
+- [development.md](../docs-thai/development.md)
+- [configuration.md](../docs-thai/configuration.md)
+- [security.md](../docs-thai/security.md)
 
 สรุปง่าย ๆ:
 
@@ -262,9 +262,9 @@ mindset ที่เหมาะ:
 
 ทีมควรอ่านเพิ่ม:
 
-- [deployment.md](/Users/pluto/Documents/git/fastapi101/docs-thai/deployment.md)
-- [operations.md](/Users/pluto/Documents/git/fastapi101/docs-thai/operations.md)
-- [secret-management.md](/Users/pluto/Documents/git/fastapi101/docs-thai/secret-management.md)
+- [deployment.md](../docs-thai/deployment.md)
+- [operations.md](../docs-thai/operations.md)
+- [secret-management.md](../docs-thai/secret-management.md)
 
 สรุปง่าย ๆ:
 
@@ -282,9 +282,9 @@ mindset ที่เหมาะ:
 
 ทีมควรอ่านเพิ่ม:
 
-- [architecture.md](/Users/pluto/Documents/git/fastapi101/docs-thai/architecture.md)
-- [load-testing.md](/Users/pluto/Documents/git/fastapi101/docs-thai/load-testing.md)
-- [platform-starter.md](/Users/pluto/Documents/git/fastapi101/docs-thai/platform-starter.md)
+- [architecture.md](../docs-thai/architecture.md)
+- [load-testing.md](../docs-thai/load-testing.md)
+- [platform-starter.md](../docs-thai/platform-starter.md)
 
 สรุปง่าย ๆ:
 
@@ -296,4 +296,4 @@ mindset ที่เหมาะ:
 - ถ้า feature ไหนมีผลกับ infra, monitoring, หรือ security ให้ treat เป็นการตัดสินใจระดับทีม ไม่ใช่แค่ code toggle
 - ถ้า product เริ่มขายสิทธิ์ใช้งานหรือมี quota แล้ว ให้เปิด billing/entitlements แบบออกแบบเป็น account-based ตั้งแต่แรก
 
-อ่านฉบับอังกฤษแบบละเอียดได้ที่ [docs/adoption-checklists.md](/Users/pluto/Documents/git/fastapi101/docs/adoption-checklists.md)
+อ่านฉบับอังกฤษแบบละเอียดได้ที่ [docs/adoption-checklists.md](../docs/adoption-checklists.md)

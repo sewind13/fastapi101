@@ -2,7 +2,7 @@
 
 This document explains how the template is organized, why the layers exist, and how data moves through the system.
 
-It is intentionally more detailed than the root [README.md](/Users/pluto/Documents/git/fastapi101/README.md). The README is meant for quick onboarding. This file is meant for developers who want to understand the template deeply before extending it.
+It is intentionally more detailed than the root [README.md](../README.md). The README is meant for quick onboarding. This file is meant for developers who want to understand the template deeply before extending it.
 
 ## Design Goals
 
@@ -56,23 +56,23 @@ Each layer should depend "downward" toward more concrete implementation details,
 
 ## Main Application Wiring
 
-[app/main.py](/Users/pluto/Documents/git/fastapi101/app/main.py) is the ASGI entrypoint. It intentionally stays thin and exports the app created by [app/factory.py](/Users/pluto/Documents/git/fastapi101/app/factory.py).
+[app/main.py](../app/main.py) is the ASGI entrypoint. It intentionally stays thin and exports the app created by [app/factory.py](../app/factory.py).
 
-[app/factory.py](/Users/pluto/Documents/git/fastapi101/app/factory.py) is the application assembly point. It is responsible for:
+[app/factory.py](../app/factory.py) is the application assembly point. It is responsible for:
 
 - creating the FastAPI app
-- registering middleware from [app/core/middleware.py](/Users/pluto/Documents/git/fastapi101/app/core/middleware.py)
+- registering middleware from [app/core/middleware.py](../app/core/middleware.py)
 - connecting telemetry
 - registering routers
-- registering health endpoints from [app/api/health.py](/Users/pluto/Documents/git/fastapi101/app/api/health.py)
-- registering metrics endpoints from [app/api/metrics.py](/Users/pluto/Documents/git/fastapi101/app/api/metrics.py)
-- centralizing exception handling through [app/api/exception_handlers.py](/Users/pluto/Documents/git/fastapi101/app/api/exception_handlers.py)
+- registering health endpoints from [app/api/health.py](../app/api/health.py)
+- registering metrics endpoints from [app/api/metrics.py](../app/api/metrics.py)
+- centralizing exception handling through [app/api/exception_handlers.py](../app/api/exception_handlers.py)
 
 These files should remain mostly declarative. If business rules start appearing in app assembly, the architecture is drifting.
 
 ## API Layer
 
-The API layer lives in [app/api](/Users/pluto/Documents/git/fastapi101/app/api) and [app/api/v1](/Users/pluto/Documents/git/fastapi101/app/api/v1).
+The API layer lives in [app/api](../app/api) and [app/api/v1](../app/api/v1).
 
 Its job is to translate HTTP into application calls:
 
@@ -84,9 +84,9 @@ Its job is to translate HTTP into application calls:
 
 ### Routers
 
-[app/api/router.py](/Users/pluto/Documents/git/fastapi101/app/api/router.py) mounts versioned routers.
+[app/api/router.py](../app/api/router.py) mounts versioned routers.
 
-[app/api/v1/router.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/router.py) registers concrete endpoint groups like:
+[app/api/v1/router.py](../app/api/v1/router.py) registers concrete endpoint groups like:
 
 - auth
 - users
@@ -96,7 +96,7 @@ The `items` module is optional and acts as a sample feature slice.
 
 ### Dependencies
 
-[app/api/deps.py](/Users/pluto/Documents/git/fastapi101/app/api/deps.py) contains shared dependency logic such as:
+[app/api/deps.py](../app/api/deps.py) contains shared dependency logic such as:
 
 - loading a request-scoped DB session
 - extracting and validating the current user from the access token
@@ -105,21 +105,21 @@ This keeps auth/session code out of each individual endpoint.
 
 ### API Error Mapping
 
-[app/api/errors.py](/Users/pluto/Documents/git/fastapi101/app/api/errors.py) is the bridge between service-level failures and HTTP responses.
+[app/api/errors.py](../app/api/errors.py) is the bridge between service-level failures and HTTP responses.
 
 The API layer is where HTTP status codes belong. Services should describe failure in domain terms, not transport terms.
 
 ## Services Layer
 
-The service layer lives in [app/services](/Users/pluto/Documents/git/fastapi101/app/services).
+The service layer lives in [app/services](../app/services).
 
 This is where business logic lives.
 
 Examples:
 
-- [app/services/auth_service.py](/Users/pluto/Documents/git/fastapi101/app/services/auth_service.py)
-- [app/services/user_service.py](/Users/pluto/Documents/git/fastapi101/app/services/user_service.py)
-- [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
+- [app/services/auth_service.py](../app/services/auth_service.py)
+- [app/services/user_service.py](../app/services/user_service.py)
+- [app/services/item_service.py](../app/services/item_service.py)
 
 Services are responsible for:
 
@@ -135,7 +135,7 @@ Services should not:
 
 ## Result Pattern
 
-[app/services/result.py](/Users/pluto/Documents/git/fastapi101/app/services/result.py) defines `ServiceResult`.
+[app/services/result.py](../app/services/result.py) defines `ServiceResult`.
 
 This pattern gives a stable interface between the service layer and the API layer.
 
@@ -154,7 +154,7 @@ This makes services easy to test without spinning up HTTP handlers.
 
 ## Repository Layer
 
-The repository layer lives in [app/db/repositories](/Users/pluto/Documents/git/fastapi101/app/db/repositories).
+The repository layer lives in [app/db/repositories](../app/db/repositories).
 
 Repositories own persistence behavior:
 
@@ -165,7 +165,7 @@ Repositories own persistence behavior:
 
 This gives you a clean place to change persistence behavior later without rewriting route or service code.
 
-The base helper in [app/db/repositories/base.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/base.py) centralizes common save behavior so feature repositories do not duplicate commit/refresh/rollback logic.
+The base helper in [app/db/repositories/base.py](../app/db/repositories/base.py) centralizes common save behavior so feature repositories do not duplicate commit/refresh/rollback logic.
 
 ## Models and Schemas
 
@@ -173,41 +173,41 @@ The template separates database models from external API schemas.
 
 ### Models
 
-Database models live in [app/db/models](/Users/pluto/Documents/git/fastapi101/app/db/models).
+Database models live in [app/db/models](../app/db/models).
 
 These represent persisted state and relationships:
 
-- [app/db/models/user.py](/Users/pluto/Documents/git/fastapi101/app/db/models/user.py)
-- [app/db/models/item.py](/Users/pluto/Documents/git/fastapi101/app/db/models/item.py)
-- [app/db/models/revoked_token.py](/Users/pluto/Documents/git/fastapi101/app/db/models/revoked_token.py)
+- [app/db/models/user.py](../app/db/models/user.py)
+- [app/db/models/item.py](../app/db/models/item.py)
+- [app/db/models/revoked_token.py](../app/db/models/revoked_token.py)
 
 ### Schemas
 
-Request/response schemas live in [app/schemas](/Users/pluto/Documents/git/fastapi101/app/schemas).
+Request/response schemas live in [app/schemas](../app/schemas).
 
 These define the API contract:
 
-- [app/schemas/user.py](/Users/pluto/Documents/git/fastapi101/app/schemas/user.py)
-- [app/schemas/item.py](/Users/pluto/Documents/git/fastapi101/app/schemas/item.py)
-- [app/schemas/token.py](/Users/pluto/Documents/git/fastapi101/app/schemas/token.py)
-- [app/schemas/common.py](/Users/pluto/Documents/git/fastapi101/app/schemas/common.py)
+- [app/schemas/user.py](../app/schemas/user.py)
+- [app/schemas/item.py](../app/schemas/item.py)
+- [app/schemas/token.py](../app/schemas/token.py)
+- [app/schemas/common.py](../app/schemas/common.py)
 
 This separation matters because a database model almost never matches the shape you want to expose externally forever.
 
 ## Database Sessions and Migrations
 
-[app/db/session.py](/Users/pluto/Documents/git/fastapi101/app/db/session.py) creates the engine and request-scoped sessions.
+[app/db/session.py](../app/db/session.py) creates the engine and request-scoped sessions.
 
-[app/db/base.py](/Users/pluto/Documents/git/fastapi101/app/db/base.py) imports model metadata so Alembic can discover the full schema.
+[app/db/base.py](../app/db/base.py) imports model metadata so Alembic can discover the full schema.
 
-For a table-by-table map of the current schema, see [docs/database-schema.md](/Users/pluto/Documents/git/fastapi101/docs/database-schema.md).
+For a table-by-table map of the current schema, see [docs/database-schema.md](../docs/database-schema.md).
 
-For the step-by-step process of changing schema safely, see [docs/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs/database-migrations.md).
+For the step-by-step process of changing schema safely, see [docs/database-migrations.md](../docs/database-migrations.md).
 
 Migrations are managed through:
 
-- [alembic/env.py](/Users/pluto/Documents/git/fastapi101/alembic/env.py)
-- [alembic/versions/20260402_0001_initial_schema.py](/Users/pluto/Documents/git/fastapi101/alembic/versions/20260402_0001_initial_schema.py)
+- [alembic/env.py](../alembic/env.py)
+- [alembic/versions/20260402_0001_initial_schema.py](../alembic/versions/20260402_0001_initial_schema.py)
 
 Important rule:
 
@@ -238,11 +238,11 @@ This reduces the risk of:
 
 Auth is spread across a few focused components:
 
-- [app/core/security.py](/Users/pluto/Documents/git/fastapi101/app/core/security.py): hashing + token creation/decoding
-- [app/api/deps.py](/Users/pluto/Documents/git/fastapi101/app/api/deps.py): current-user dependency
-- [app/services/auth_service.py](/Users/pluto/Documents/git/fastapi101/app/services/auth_service.py): login, refresh, logout logic
-- [app/db/models/revoked_token.py](/Users/pluto/Documents/git/fastapi101/app/db/models/revoked_token.py): revoked refresh token records
-- [app/db/repositories/revoked_token.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/revoked_token.py): revocation persistence
+- [app/core/security.py](../app/core/security.py): hashing + token creation/decoding
+- [app/api/deps.py](../app/api/deps.py): current-user dependency
+- [app/services/auth_service.py](../app/services/auth_service.py): login, refresh, logout logic
+- [app/db/models/revoked_token.py](../app/db/models/revoked_token.py): revoked refresh token records
+- [app/db/repositories/revoked_token.py](../app/db/repositories/revoked_token.py): revocation persistence
 
 ### Auth Request Flow
 
@@ -270,9 +270,9 @@ The key architectural idea is that token lifecycle rules live in the service lay
 
 Observability lives mostly in:
 
-- [app/core/logging.py](/Users/pluto/Documents/git/fastapi101/app/core/logging.py)
-- [app/core/request.py](/Users/pluto/Documents/git/fastapi101/app/core/request.py)
-- [app/core/telemetry.py](/Users/pluto/Documents/git/fastapi101/app/core/telemetry.py)
+- [app/core/logging.py](../app/core/logging.py)
+- [app/core/request.py](../app/core/request.py)
+- [app/core/telemetry.py](../app/core/telemetry.py)
 
 The app emits:
 
@@ -281,21 +281,21 @@ The app emits:
 - exception logs
 - audit logs for auth/security events
 
-The middleware in [app/core/middleware.py](/Users/pluto/Documents/git/fastapi101/app/core/middleware.py) attaches request IDs, duration, and request/response metadata so logs are useful in production.
+The middleware in [app/core/middleware.py](../app/core/middleware.py) attaches request IDs, duration, and request/response metadata so logs are useful in production.
 
 Telemetry is optional and config-driven. If enabled, the app can attach trace context to logs and export spans through OpenTelemetry.
 
 ## Background Worker
 
-Optional background-task support lives in [app/worker](/Users/pluto/Documents/git/fastapi101/app/worker).
+Optional background-task support lives in [app/worker](../app/worker).
 
 The worker layer is split into a few simple pieces:
 
-- [app/worker/publisher.py](/Users/pluto/Documents/git/fastapi101/app/worker/publisher.py): publishes durable task messages to the broker
-- [app/worker/runner.py](/Users/pluto/Documents/git/fastapi101/app/worker/runner.py): long-running consumer process
-- [app/worker/tasks.py](/Users/pluto/Documents/git/fastapi101/app/worker/tasks.py): task registry and handlers
-- [app/worker/schemas.py](/Users/pluto/Documents/git/fastapi101/app/worker/schemas.py): task envelope contract
-- [app/worker/idempotency.py](/Users/pluto/Documents/git/fastapi101/app/worker/idempotency.py): duplicate-protection backend for worker task IDs
+- [app/worker/publisher.py](../app/worker/publisher.py): publishes durable task messages to the broker
+- [app/worker/runner.py](../app/worker/runner.py): long-running consumer process
+- [app/worker/tasks.py](../app/worker/tasks.py): task registry and handlers
+- [app/worker/schemas.py](../app/worker/schemas.py): task envelope contract
+- [app/worker/idempotency.py](../app/worker/idempotency.py): duplicate-protection backend for worker task IDs
 
 Current example flow:
 
@@ -320,7 +320,7 @@ Routes should publish tasks only after the main request succeeds. Background wor
 
 ## Health and Readiness
 
-Health logic lives in [app/core/health.py](/Users/pluto/Documents/git/fastapi101/app/core/health.py).
+Health logic lives in [app/core/health.py](../app/core/health.py).
 
 The app exposes:
 
@@ -360,12 +360,12 @@ It also serves as the quota reference implementation in this template:
 
 Feature files:
 
-- route: [app/api/v1/items.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/items.py)
-- service: [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
-- repository: [app/db/repositories/item.py](/Users/pluto/Documents/git/fastapi101/app/db/repositories/item.py)
-- model: [app/db/models/item.py](/Users/pluto/Documents/git/fastapi101/app/db/models/item.py)
-- schema: [app/schemas/item.py](/Users/pluto/Documents/git/fastapi101/app/schemas/item.py)
-- tests: [tests/integration/api/test_items.py](/Users/pluto/Documents/git/fastapi101/tests/integration/api/test_items.py)
+- route: [app/api/v1/items.py](../app/api/v1/items.py)
+- service: [app/services/item_service.py](../app/services/item_service.py)
+- repository: [app/db/repositories/item.py](../app/db/repositories/item.py)
+- model: [app/db/models/item.py](../app/db/models/item.py)
+- schema: [app/schemas/item.py](../app/schemas/item.py)
+- tests: [tests/integration/api/test_items.py](../tests/integration/api/test_items.py)
 
 If you are starting a real product:
 
@@ -457,8 +457,8 @@ Tests are grouped by architectural purpose.
 
 Located in:
 
-- [tests/unit/core](/Users/pluto/Documents/git/fastapi101/tests/unit/core)
-- [tests/unit/repositories](/Users/pluto/Documents/git/fastapi101/tests/unit/repositories)
+- [tests/unit/core](../tests/unit/core)
+- [tests/unit/repositories](../tests/unit/repositories)
 
 These validate focused logic in isolation.
 
@@ -466,7 +466,7 @@ These validate focused logic in isolation.
 
 Located in:
 
-- [tests/integration/api](/Users/pluto/Documents/git/fastapi101/tests/integration/api)
+- [tests/integration/api](../tests/integration/api)
 
 These validate the behavior of complete request flows through routes, dependencies, services, and repositories.
 
@@ -474,13 +474,13 @@ These validate the behavior of complete request flows through routes, dependenci
 
 Located in:
 
-- [tests/integration/postgres](/Users/pluto/Documents/git/fastapi101/tests/integration/postgres)
+- [tests/integration/postgres](../tests/integration/postgres)
 
 These run against a real Postgres database and use transaction-per-test rollback.
 
 ## Configuration Model
 
-Settings are grouped logically under [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings). [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) remains as a compatibility shim for existing imports.
+Settings are grouped logically under [app/core/settings](../app/core/settings). [app/core/config.py](../app/core/config.py) remains as a compatibility shim for existing imports.
 
 - `APP__*`
 - `EXAMPLES__*`
@@ -493,7 +493,7 @@ Settings are grouped logically under [app/core/settings](/Users/pluto/Documents/
 
 This keeps config scalable as the project grows.
 
-Use [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example) as the starting point for local environments.
+Use [/.env.example](../.env.example) as the starting point for local environments.
 
 ## Extension Rules
 

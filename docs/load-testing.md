@@ -23,14 +23,14 @@ This sequence catches setup issues first, then increases realism and operational
 
 ## k6 Scripts Included
 
-The repository includes ready-to-run k6 scenarios in [loadtests/k6](/Users/pluto/Documents/git/fastapi101/loadtests/k6):
+The repository includes ready-to-run k6 scenarios in [loadtests/k6](../loadtests/k6):
 
-- [loadtests/k6/smoke.js](/Users/pluto/Documents/git/fastapi101/loadtests/k6/smoke.js)
-- [loadtests/k6/read_baseline.js](/Users/pluto/Documents/git/fastapi101/loadtests/k6/read_baseline.js)
-- [loadtests/k6/auth_burst.js](/Users/pluto/Documents/git/fastapi101/loadtests/k6/auth_burst.js)
-- [loadtests/k6/write_async.js](/Users/pluto/Documents/git/fastapi101/loadtests/k6/write_async.js)
-- [loadtests/k6/soak.js](/Users/pluto/Documents/git/fastapi101/loadtests/k6/soak.js)
-- [loadtests/k6/common.js](/Users/pluto/Documents/git/fastapi101/loadtests/k6/common.js)
+- [loadtests/k6/smoke.js](../loadtests/k6/smoke.js)
+- [loadtests/k6/read_baseline.js](../loadtests/k6/read_baseline.js)
+- [loadtests/k6/auth_burst.js](../loadtests/k6/auth_burst.js)
+- [loadtests/k6/write_async.js](../loadtests/k6/write_async.js)
+- [loadtests/k6/soak.js](../loadtests/k6/soak.js)
+- [loadtests/k6/common.js](../loadtests/k6/common.js)
 
 These scripts assume the application is reachable at `BASE_URL`, which defaults to `http://localhost:8000`.
 
@@ -77,7 +77,7 @@ make up-loadtest-worker
 
 ## Compose-Based Runner
 
-The repository also includes [docker-compose.loadtest.yml](/Users/pluto/Documents/git/fastapi101/docker-compose.loadtest.yml), which defines a `k6` runner container.
+The repository also includes [docker-compose.loadtest.yml](../docker-compose.loadtest.yml), which defines a `k6` runner container.
 
 Useful commands:
 
@@ -106,7 +106,7 @@ This flow is useful when:
 
 ## One-Command Orchestration
 
-If you want to run the scenarios in sequence without typing each command, use [scripts/loadtest.sh](/Users/pluto/Documents/git/fastapi101/scripts/loadtest.sh).
+If you want to run the scenarios in sequence without typing each command, use [scripts/loadtest.sh](../scripts/loadtest.sh).
 
 Examples:
 

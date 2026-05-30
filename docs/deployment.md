@@ -69,7 +69,7 @@ Recommended production pattern:
 
 Example production-oriented env baseline:
 
-- [/.env.prod.example](/Users/pluto/Documents/git/fastapi101/.env.prod.example)
+- [/.env.prod.example](../.env.prod.example)
 
 The main CI workflow now also carries baseline deployment validation:
 
@@ -188,10 +188,10 @@ Use:
 
 The Kubernetes examples in this repository now follow that split more closely:
 
-- non-secret values in [deploy/kubernetes/app-configmap.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/app-configmap.yaml)
-- secret-bearing values in [deploy/kubernetes/app-secret.example.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/app-secret.example.yaml)
-- a separate migration job example in [deploy/kubernetes/migration-job.yaml](/Users/pluto/Documents/git/fastapi101/deploy/kubernetes/migration-job.yaml)
-- a Helm baseline in [deploy/helm/fastapi-template](/Users/pluto/Documents/git/fastapi101/deploy/helm/fastapi-template)
+- non-secret values in [deploy/kubernetes/app-configmap.yaml](../deploy/kubernetes/app-configmap.yaml)
+- secret-bearing values in [deploy/kubernetes/app-secret.example.yaml](../deploy/kubernetes/app-secret.example.yaml)
+- a separate migration job example in [deploy/kubernetes/migration-job.yaml](../deploy/kubernetes/migration-job.yaml)
+- a Helm baseline in [deploy/helm/fastapi-template](../deploy/helm/fastapi-template)
 
 ## Migration Strategy
 
@@ -449,10 +449,10 @@ Safer default rollback path:
 
 ## Related Production Docs
 
-- [docs/production-topology.md](/Users/pluto/Documents/git/fastapi101/docs/production-topology.md)
-- [docs/observability.md](/Users/pluto/Documents/git/fastapi101/docs/observability.md)
-- [docs/first-deploy-checklist.md](/Users/pluto/Documents/git/fastapi101/docs/first-deploy-checklist.md)
-- [docs/secret-management.md](/Users/pluto/Documents/git/fastapi101/docs/secret-management.md)
+- [docs/production-topology.md](../docs/production-topology.md)
+- [docs/observability.md](../docs/observability.md)
+- [docs/first-deploy-checklist.md](../docs/first-deploy-checklist.md)
+- [docs/secret-management.md](../docs/secret-management.md)
 - includes Slack and email example receivers as placeholders
 - should be edited before any real use
 
@@ -486,7 +486,7 @@ Before real use, replace placeholder values in:
 - use your platform secret manager in real production
 - treat `docker-compose.yml` as a production-like local artifact, not as a full production manifest
 
-For a fuller secret-handling and rotation playbook, see [docs/secret-management.md](/Users/pluto/Documents/git/fastapi101/docs/secret-management.md).
+For a fuller secret-handling and rotation playbook, see [docs/secret-management.md](../docs/secret-management.md).
 
 ## Kubernetes And Nginx Examples
 

@@ -60,7 +60,7 @@ make ps-redis
 make logs-redis
 ```
 
-If you are changing tables or columns, read [docs/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs/database-migrations.md) first. That file is the dedicated step-by-step guide for schema changes and local DB troubleshooting.
+If you are changing tables or columns, read [docs/database-migrations.md](../docs/database-migrations.md) first. That file is the dedicated step-by-step guide for schema changes and local DB troubleshooting.
 
 Container-oriented helpers:
 
@@ -255,7 +255,7 @@ TEST_DATABASE_URL=postgresql+psycopg://app:app@localhost:5432/app uv run pytest 
 
 ## Load Testing
 
-Load-test guidance and ready-to-run k6 scripts live in [docs/load-testing.md](/Users/pluto/Documents/git/fastapi101/docs/load-testing.md) and [loadtests/k6](/Users/pluto/Documents/git/fastapi101/loadtests/k6).
+Load-test guidance and ready-to-run k6 scripts live in [docs/load-testing.md](../docs/load-testing.md) and [loadtests/k6](../loadtests/k6).
 
 Recommended local sequence:
 
@@ -323,8 +323,8 @@ Typical file touch points:
 
 For schema work, pair this section with:
 
-- [docs/database-schema.md](/Users/pluto/Documents/git/fastapi101/docs/database-schema.md)
-- [docs/database-migrations.md](/Users/pluto/Documents/git/fastapi101/docs/database-migrations.md)
+- [docs/database-schema.md](../docs/database-schema.md)
+- [docs/database-migrations.md](../docs/database-migrations.md)
 
 Operations endpoints are available under `/api/v1/ops/*` and require an authenticated user whose `role` grants platform operations access, such as `ops_admin` or `platform_admin`.
 

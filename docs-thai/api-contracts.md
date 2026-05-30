@@ -31,11 +31,11 @@ template นี้ใช้ JSON response ปกติร่วมกับ expl
 
 schema หลักที่เกี่ยวข้อง:
 
-- [app/schemas/user.py](/Users/pluto/Documents/git/fastapi101/app/schemas/user.py)
-- [app/schemas/item.py](/Users/pluto/Documents/git/fastapi101/app/schemas/item.py)
-- [app/schemas/token.py](/Users/pluto/Documents/git/fastapi101/app/schemas/token.py)
-- [app/schemas/common.py](/Users/pluto/Documents/git/fastapi101/app/schemas/common.py)
-- [app/schemas/billing.py](/Users/pluto/Documents/git/fastapi101/app/schemas/billing.py)
+- [app/schemas/user.py](../app/schemas/user.py)
+- [app/schemas/item.py](../app/schemas/item.py)
+- [app/schemas/token.py](../app/schemas/token.py)
+- [app/schemas/common.py](../app/schemas/common.py)
+- [app/schemas/billing.py](../app/schemas/billing.py)
 
 ## Billing Response Conventions
 
@@ -153,7 +153,7 @@ validation errors อาจมี `details` เพิ่ม เช่น:
 
 - `infra.db_unavailable`
 
-catalog ฉบับเต็มอยู่ที่ [docs-thai/error-codes.md](/Users/pluto/Documents/git/fastapi101/docs-thai/error-codes.md)
+catalog ฉบับเต็มอยู่ที่ [docs-thai/error-codes.md](../docs-thai/error-codes.md)
 
 ## ถ้าจะเพิ่ม error code ใหม่ต้องทำอะไรบ้าง
 
@@ -165,9 +165,9 @@ catalog ฉบับเต็มอยู่ที่ [docs-thai/error-codes.md]
 
 flow ที่แนะนำคือ:
 
-1. เพิ่ม code ใหม่ใน [app/services/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/services/exceptions.py)
+1. เพิ่ม code ใหม่ใน [app/services/exceptions.py](../app/services/exceptions.py)
 2. ให้ service คืนผ่าน `self.failure(...)`
-3. map status ใน [app/api/errors.py](/Users/pluto/Documents/git/fastapi101/app/api/errors.py)
+3. map status ใน [app/api/errors.py](../app/api/errors.py)
 4. เขียน test ให้เช็กทั้ง `status_code` และ `error_code`
 
 ตัวอย่าง:
@@ -230,4 +230,4 @@ Authorization: Bearer <access_token>
 
 ส่วน internal implementation เช่น service/repository internals ไม่ควรถูกถือเป็น client contract
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/api-contracts.md](/Users/pluto/Documents/git/fastapi101/docs/api-contracts.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/api-contracts.md](../docs/api-contracts.md)

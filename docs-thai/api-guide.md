@@ -101,9 +101,9 @@ route ที่ดีใน repo นี้มักจะ:
 
 ตัวอย่างที่ควรดู:
 
-- [app/api/v1/users.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/users.py)
-- [app/api/v1/items.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/items.py)
-- [app/api/v1/auth.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/auth.py)
+- [app/api/v1/users.py](../app/api/v1/users.py)
+- [app/api/v1/items.py](../app/api/v1/items.py)
+- [app/api/v1/auth.py](../app/api/v1/auth.py)
 
 เวลาจะเพิ่ม endpoint ใหม่ ให้ถือว่า route เป็นที่สำหรับ:
 
@@ -198,21 +198,21 @@ pattern ที่แนะนำคือ:
 
 อ่านรายละเอียดเพิ่มได้ที่:
 
-- [billing-entitlements-draft.md](/Users/pluto/Documents/git/fastapi101/docs-thai/billing-entitlements-draft.md)
+- [billing-entitlements-draft.md](../docs-thai/billing-entitlements-draft.md)
 
 ### ตัวอย่างรายไฟล์: `items.archive -> item_archive`
 
 ถ้าอยากได้ตัวอย่างที่ทำตามทีละไฟล์ได้ ให้ใช้ลำดับนี้:
 
-1. แก้ [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
+1. แก้ [app/services/entitlement_service.py](../app/services/entitlement_service.py)
    เพิ่ม `items.archive -> item_archive` ใน `FEATURE_POLICIES`
-2. แก้ [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
+2. แก้ [app/services/item_service.py](../app/services/item_service.py)
    เพิ่ม constant เช่น `ITEMS_ARCHIVE_FEATURE_KEY = "items.archive"`
-3. ใน [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
+3. ใน [app/services/item_service.py](../app/services/item_service.py)
    ปรับ archive flow ให้เช็ก `not_found`, `forbidden`, และ `already_archived` ก่อน แล้วค่อย reserve usage, ทำ archive write, และ commit หรือ release usage
-4. แก้ [app/api/v1/items.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/items.py)
+4. แก้ [app/api/v1/items.py](../app/api/v1/items.py)
    ส่ง `request_id` จาก route ลงไปที่ service ของ archive
-5. แก้ tests ใน [tests/integration/api/test_items.py](/Users/pluto/Documents/git/fastapi101/tests/integration/api/test_items.py)
+5. แก้ tests ใน [tests/integration/api/test_items.py](../tests/integration/api/test_items.py)
    เพิ่มเคส success ที่มี `item_archive` entitlement และเคส `billing.no_entitlement`
 6. ทดลองผ่าน ops billing
    grant `resource_key = item_archive`, archive item, แล้วเช็ก balance กับ usage history
@@ -221,17 +221,17 @@ pattern ที่แนะนำคือ:
 
 ถ้าจะทำ restore flow แบบ follow-along ให้ใช้ลำดับนี้:
 
-1. แก้ [app/services/entitlement_service.py](/Users/pluto/Documents/git/fastapi101/app/services/entitlement_service.py)
+1. แก้ [app/services/entitlement_service.py](../app/services/entitlement_service.py)
    เพิ่ม `items.restore -> item_restore` ใน `FEATURE_POLICIES`
-2. แก้ [app/db/models/item.py](/Users/pluto/Documents/git/fastapi101/app/db/models/item.py)
+2. แก้ [app/db/models/item.py](../app/db/models/item.py)
    เพิ่ม field อย่าง `restored_at` และ `restore_count` ถ้าต้องการเก็บประวัติการ restore จริงใน DB
-3. แก้ [app/services/item_service.py](/Users/pluto/Documents/git/fastapi101/app/services/item_service.py)
+3. แก้ [app/services/item_service.py](../app/services/item_service.py)
    เพิ่ม constant เช่น `ITEMS_RESTORE_FEATURE_KEY = "items.restore"` แล้วทำ flow `not_found` -> `forbidden` -> `not_archived` -> reserve usage -> restore write -> update `restored_at` / `restore_count` -> commit หรือ release usage
-4. แก้ [app/api/v1/items.py](/Users/pluto/Documents/git/fastapi101/app/api/v1/items.py)
+4. แก้ [app/api/v1/items.py](../app/api/v1/items.py)
    ส่ง `request_id` จาก route ลงไปที่ restore service
-5. แก้ [app/api/errors.py](/Users/pluto/Documents/git/fastapi101/app/api/errors.py)
+5. แก้ [app/api/errors.py](../app/api/errors.py)
    map `item.not_archived` เป็น `409 Conflict`
-6. แก้ tests ใน [tests/integration/api/test_items.py](/Users/pluto/Documents/git/fastapi101/tests/integration/api/test_items.py) และ [tests/unit/services/test_item_service.py](/Users/pluto/Documents/git/fastapi101/tests/unit/services/test_item_service.py)
+6. แก้ tests ใน [tests/integration/api/test_items.py](../tests/integration/api/test_items.py) และ [tests/unit/services/test_item_service.py](../tests/unit/services/test_item_service.py)
    เพิ่มเคส success, ไม่มี entitlement, และ `not_archived`
 7. ทดลองผ่าน ops billing
    grant `resource_key = item_restore`, restore item ที่ archived อยู่, แล้วเช็ก balance กับ usage history
@@ -252,9 +252,9 @@ pattern ที่แนะนำคือ:
 
 flow ที่แนะนำคือ:
 
-1. เพิ่ม error code ใหม่ใน [app/services/exceptions.py](/Users/pluto/Documents/git/fastapi101/app/services/exceptions.py)
+1. เพิ่ม error code ใหม่ใน [app/services/exceptions.py](../app/services/exceptions.py)
 2. ให้ service คืน error นั้นผ่าน `self.failure(...)`
-3. ไป map เป็น HTTP status ใน [app/api/errors.py](/Users/pluto/Documents/git/fastapi101/app/api/errors.py)
+3. ไป map เป็น HTTP status ใน [app/api/errors.py](../app/api/errors.py)
 4. ให้ route ใช้ `unwrap_result(...)` เหมือนเดิม
 
 ข้อดีคือ:
@@ -493,4 +493,4 @@ test ที่ควรมีสำหรับตัวอย่างนี้
 - แก้ model แล้วลืม migration
 - response error ไม่สม่ำเสมอ
 
-อ่านเวอร์ชันอังกฤษได้ที่ [docs/api-guide.md](/Users/pluto/Documents/git/fastapi101/docs/api-guide.md)
+อ่านเวอร์ชันอังกฤษได้ที่ [docs/api-guide.md](../docs/api-guide.md)

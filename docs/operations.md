@@ -2,7 +2,7 @@
 
 This guide covers day-2 concerns: maintenance, incidents, and common operational checks.
 
-For secret ownership, storage, and rotation guidance, see [docs/secret-management.md](/Users/pluto/Documents/git/fastapi101/docs/secret-management.md).
+For secret ownership, storage, and rotation guidance, see [docs/secret-management.md](../docs/secret-management.md).
 
 ## Scheduled Maintenance
 

@@ -2,10 +2,10 @@
 
 ไฟล์นี้อธิบายว่ากลุ่ม config หลักของ template นี้มีอะไรบ้าง ควรแก้ตัวไหนก่อน และตัวไหนเป็น optional
 
-source of truth จริงอยู่ที่ [app/core/settings](/Users/pluto/Documents/git/fastapi101/app/core/settings) ส่วน [app/core/config.py](/Users/pluto/Documents/git/fastapi101/app/core/config.py) เป็น compatibility shim สำหรับ import path เดิม ตัวอย่างค่าดูได้ที่:
+source of truth จริงอยู่ที่ [app/core/settings](../app/core/settings) ส่วน [app/core/config.py](../app/core/config.py) เป็น compatibility shim สำหรับ import path เดิม ตัวอย่างค่าดูได้ที่:
 
-- [/.env.min.example](/Users/pluto/Documents/git/fastapi101/.env.min.example)
-- [/.env.example](/Users/pluto/Documents/git/fastapi101/.env.example)
+- [/.env.min.example](../.env.min.example)
+- [/.env.example](../.env.example)
 
 ## วิธีโหลด config
 
@@ -350,4 +350,4 @@ HEALTH__REDIS_URL="redis://redis:6379/0"
 - เวลาเปิด feature ใหม่ ค่อยเปิดกลุ่ม config ที่เกี่ยวข้อง
 - ถ้า config ตัวไหนมีผลกับ security หรือ production safety ให้ treat เป็นทีม decision ไม่ใช่แค่ local tweak
 
-อ่านฉบับอังกฤษละเอียดได้ที่ [docs/configuration.md](/Users/pluto/Documents/git/fastapi101/docs/configuration.md)
+อ่านฉบับอังกฤษละเอียดได้ที่ [docs/configuration.md](../docs/configuration.md)
