@@ -1,5 +1,22 @@
 # Release Notes
 
+## v1.0.6 - 2026-05-30
+
+patch release สำหรับ review comments รอบสุดท้ายใน workflow และ docs
+
+### สิ่งที่แก้
+
+- ปรับ Helm values validator ไม่ให้ import ผ่าน compatibility config shim และ validate ภายใต้ env overlay จาก Helm values
+- ปรับ release workflow examples แบบ generic, AKS, และ GKE ให้ fail เมื่อ worker/outbox dispatcher rollout fail แทนการกลืน error
+- เปลี่ยนคำสั่ง reset Docker volume ที่ผูกกับชื่อ repo เก่าเป็น flow `down --volumes` ของ Docker Compose ซึ่ง portable หลัง adopter rename repo
+- ปรับ production Helm example secret placeholder ให้ผ่าน startup validation แต่ยังชัดเจนว่าต้องเปลี่ยนเป็น secret จริง
+- bump package, lockfile, Helm chart/app versions, และ immutable example image tags เป็น `1.0.6`
+
+### สิ่งที่ adopter ต้องทำ
+
+- adopter ใหม่ควรใช้ `v1.0.6`
+- ถ้า copy release workflow จาก tag ก่อนหน้า ให้เอา `|| true` ออกจาก worker/outbox rollout waits เว้นแต่ตั้งใจให้ workload เหล่านั้น optional จริง ๆ
+
 ## v1.0.5 - 2026-05-30
 
 patch release สำหรับ sync workflow examples ให้มี Helm startup validation เหมือน CI หลัก

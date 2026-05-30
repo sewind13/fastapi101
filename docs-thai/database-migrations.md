@@ -355,8 +355,7 @@ make migrate
 ตัวอย่าง flow:
 
 ```bash
-make down
-docker volume rm fastapi101_postgres_data
+docker compose -f docker-compose.yml -f docker-compose.dev.yml down --volumes
 make up
 make migrate
 ```

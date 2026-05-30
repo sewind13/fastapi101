@@ -6,7 +6,7 @@ on:
       image_tag:
         description: Image tag to build and deploy
         required: true
-        default: "1.0.5"
+        default: "1.0.6"
       release_name:
         description: Helm release name
         required: true
@@ -159,8 +159,8 @@ jobs:
 
       - name: Wait for worker rollout
         run: |
-          kubectl rollout status deployment/${{ inputs.release_name }}-worker --namespace ${{ inputs.namespace }} --timeout=300s || true
+          kubectl rollout status deployment/${{ inputs.release_name }}-worker --namespace ${{ inputs.namespace }} --timeout=300s
 
       - name: Wait for outbox dispatcher rollout
         run: |
-          kubectl rollout status deployment/${{ inputs.release_name }}-outbox-dispatcher --namespace ${{ inputs.namespace }} --timeout=300s || true
+          kubectl rollout status deployment/${{ inputs.release_name }}-outbox-dispatcher --namespace ${{ inputs.namespace }} --timeout=300s

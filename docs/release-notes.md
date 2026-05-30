@@ -1,5 +1,22 @@
 # Release Notes
 
+## v1.0.6 - 2026-05-30
+
+Patch release for final workflow and documentation review comments.
+
+### Fixes
+
+- Updated the Helm values validator to avoid importing through the compatibility config shim and to validate under the Helm values environment overlay.
+- Made generic, AKS, and GKE release workflow examples fail on worker and outbox dispatcher rollout failures instead of swallowing them.
+- Replaced stale Docker volume reset commands with a Compose-managed `down --volumes` flow that works after adopters rename the repository.
+- Updated the production Helm example secret placeholder so it satisfies startup validation while still being clearly replaceable.
+- Bumped the package, lockfile, Helm chart/app versions, and immutable example image tags to `1.0.6`.
+
+### Adopter Action Items
+
+- Prefer `v1.0.6` for new adopters.
+- If you copied a release workflow from an earlier tag, remove `|| true` from worker/outbox rollout waits unless you intentionally make those workloads optional.
+
 ## v1.0.5 - 2026-05-30
 
 Patch release for workflow example parity with Helm startup validation.

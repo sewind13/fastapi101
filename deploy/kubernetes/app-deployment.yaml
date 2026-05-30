@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: app
-          image: ghcr.io/your-org/fastapi-template:1.0.5
+          image: ghcr.io/your-org/fastapi-template:1.0.6
           imagePullPolicy: IfNotPresent
           command:
             - /bin/sh

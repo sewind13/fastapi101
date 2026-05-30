@@ -133,7 +133,7 @@ config:
   HEALTH__ENABLE_QUEUE_CHECK: "true"
 
 secretData:
-  SECURITY__SECRET_KEY: "replace-me-from-secret-manager"
+  SECURITY__SECRET_KEY: "replace-with-a-real-secret-manager-value"
   DATABASE__URL: "postgresql+psycopg://app:replace-me@postgres.example.internal:5432/app"
   AUTH_RATE_LIMIT__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/0"
   CACHE__REDIS_URL: "redis://username:replace-me@redis.example.internal:6379/2"
