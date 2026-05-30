@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.5 - 2026-05-30
+
+Patch release for workflow example parity with Helm startup validation.
+
+### Fixes
+
+- Added Helm values startup validation to `helm-validate-example.yml`.
+- Added a `validate_helm_values` preflight job to generic, AKS, EKS, and GKE release workflow examples before migration/deploy.
+- Bumped the package, lockfile, Helm chart/app versions, and immutable example image tags to `1.0.5`.
+
+### Adopter Action Items
+
+- Prefer `v1.0.5` for new adopters.
+- If you copied a release workflow from an earlier tag, add the Helm values startup validation step before migration/deploy.
+
 ## v1.0.4 - 2026-05-30
 
 Patch release for adopter-facing documentation hygiene.

@@ -6,7 +6,7 @@ on:
       image_tag:
         description: Image tag to build and deploy
         required: true
-        default: "1.0.4"
+        default: "1.0.5"
       release_name:
         description: Helm release name
         required: true
@@ -49,9 +49,34 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.image_ref }}
 
+  validate_helm_values:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+
+      - name: Install runtime dependencies
+        run: uv sync --frozen --no-dev --all-extras
+
+      - name: Validate Helm values against app startup settings
+        run: >
+          uv run python scripts/validate_helm_settings.py
+          deploy/helm/fastapi-template/values.yaml
+          deploy/helm/fastapi-template/values.prod.example.yaml
+
   migrate:
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build
+      - validate_helm_values
     environment: production
     steps:
       - name: Check out repository

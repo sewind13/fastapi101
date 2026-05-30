@@ -1,5 +1,20 @@
 # Release Notes
 
+## v1.0.5 - 2026-05-30
+
+patch release สำหรับ sync workflow examples ให้มี Helm startup validation เหมือน CI หลัก
+
+### สิ่งที่แก้
+
+- เพิ่ม Helm values startup validation ใน `helm-validate-example.yml`
+- เพิ่ม preflight job `validate_helm_values` ใน release workflow examples แบบ generic, AKS, EKS, และ GKE ก่อน migration/deploy
+- bump package, lockfile, Helm chart/app versions, และ immutable example image tags เป็น `1.0.5`
+
+### สิ่งที่ adopter ต้องทำ
+
+- adopter ใหม่ควรใช้ `v1.0.5`
+- ถ้าเคย copy release workflow จาก tag ก่อนหน้า ให้เพิ่ม Helm values startup validation ก่อน migration/deploy
+
 ## v1.0.4 - 2026-05-30
 
 patch release สำหรับ documentation hygiene ที่กระทบประสบการณ์ของ adopter
